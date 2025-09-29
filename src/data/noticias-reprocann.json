@@ -1,0 +1,103 @@
+{
+  "id": "reprocann_1759154998685",
+  "titulo": "Presidencia de la Nación",
+  "resumen": "Compartir enredes sociales",
+  "contenido": "Compartir enredes sociales\n\nEl Programa procura mejorar el acceso a quienes tienen indicación médica basada en la evidencia científica disponible, a un producto como especialidad medicinal; con formulación magistral; o que se origine en un cultivo controlado de la planta de cannabis realizado por los pacientes para sí, por terceros, o por una red de pacientes asistidos por Organizaciones No Gubernamentales (ONG) autorizadas por el Programa a través del Registro del Programa de Cannabis (REPROCANN).\n\nLas personas que no posean cobertura de salud y sean atendidas exclusivamente en el Sistema Público de Salud y que cuenten con indicación médica tienen derecho a acceder en forma gratuita a los derivados de la planta de cannabis por parte del Estado Nacional.\n\nPara las personas que tienen obra social o prepaga la cobertura la deberán brindar las Obras Sociales y Agentes del Seguro de Salud del Sistema Nacional, las demás obras sociales y organismos que hagan sus veces creados o regidos por leyes nacionales, y las empresas o entidades que presten servicios de medicina prepaga.\n\nPacientes con indicación médica de especialidad médica o formulación magistral, cuyo expendio se realizará en las farmacias autorizadas.\n\nPacientes con indicación médica que deban inscribirse en el REPROCANN, para obtener autorización para cultivo controlado.",
+  "categoria": "Legislación",
+  "tags": [
+    "REPROCANN",
+    "Cannabis Medicinal",
+    "Argentina",
+    "Registro"
+  ],
+  "fechaExtraccion": "2025-09-29T14:09:58.685Z",
+  "fechaPublicacion": "2025-09-29",
+  "fuente": {
+    "nombre": "Argentina.gob.ar",
+    "url": "https://www.argentina.gob.ar/salud/cannabis-medicinal/reprocann",
+    "confiable": true
+  },
+  "secciones": [
+    {
+      "titulo": "Elecciones legislativas 2025 | Este 26 de octubre votamos con Boleta Única Papel. Conocé más.",
+      "nivel": "h2"
+    },
+    {
+      "titulo": "¿Cómo acceder?",
+      "nivel": "h3"
+    },
+    {
+      "titulo": "¿Quiénes pueden acceder?",
+      "nivel": "h3"
+    },
+    {
+      "titulo": "En esta sección",
+      "nivel": "h2"
+    },
+    {
+      "titulo": "Consejo Consultivo Honorario",
+      "nivel": "h3"
+    },
+    {
+      "titulo": "¿Cómo acceder a medicamentos de especialidades medicinales a base de cannabis?",
+      "nivel": "h3"
+    },
+    {
+      "titulo": "Preguntas frecuentes REPROCANN",
+      "nivel": "h3"
+    },
+    {
+      "titulo": "Consultas y contacto",
+      "nivel": "h3"
+    },
+    {
+      "titulo": "Trámites",
+      "nivel": "h2"
+    },
+    {
+      "titulo": "Acerca de la República Argentina",
+      "nivel": "h2"
+    },
+    {
+      "titulo": "Acerca de Argentina.gob.ar",
+      "nivel": "h2"
+    }
+  ],
+  "enlacesRelacionados": [
+    {
+      "texto": "Pasar al contenido principal",
+      "url": "https://www.argentina.gob.ar/salud/cannabis-medicinal/reprocann#main-content",
+      "esInterno": true
+    },
+    {
+      "texto": "Ir a Mi Argentina",
+      "url": "https://mi.argentina.gob.ar/",
+      "esInterno": true
+    },
+    {
+      "texto": "Mi Argentina",
+      "url": "https://mi.argentina.gob.ar/",
+      "esInterno": true
+    },
+    {
+      "texto": "Inicio",
+      "url": "https://www.argentina.gob.ar/",
+      "esInterno": true
+    },
+    {
+      "texto": "Ministerio de Salud",
+      "url": "https://www.argentina.gob.ar/salud",
+      "esInterno": true
+    }
+  ],
+  "requisitos": [],
+  "imagen": "/images/reprocann-default.jpg",
+  "estado": "publicado",
+  "destacado": false,
+  "metadatos": {
+    "totalParrafos": 6,
+    "totalEncabezados": 11,
+    "totalEnlaces": 15,
+    "totalRequisitos": 0
+  }
+}

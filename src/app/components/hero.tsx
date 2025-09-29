@@ -1,172 +1,171 @@
-import Image from "next/image";
+'use client';
+
 import { Button } from "@/components/ui/button";
-import { ChevronRight, Star, Award, Leaf, Zap, TrendingUp } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import Link from "next/link";
 
 export function Hero() {
+  const heroRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const subtitleRef = useRef<HTMLParagraphElement>(null);
+  const descriptionRef = useRef<HTMLParagraphElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+  const particlesRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Hero entrance animation
+    const tl = gsap.timeline();
+
+    tl.fromTo(titleRef.current,
+      { opacity: 0, y: 100, scale: 0.8 },
+      { opacity: 1, y: 0, scale: 1, duration: 1.2, ease: "power3.out" }
+    )
+    .fromTo(subtitleRef.current,
+      { opacity: 0, y: 50 },
+      { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" },
+      "-=0.6"
+    )
+    .fromTo(descriptionRef.current,
+      { opacity: 0, y: 30 },
+      { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" },
+      "-=0.4"
+    )
+    .fromTo(ctaRef.current,
+      { opacity: 0, y: 30 },
+      { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" },
+      "-=0.4"
+    );
+
+    // Floating particles animation
+    if (particlesRef.current) {
+      const particles = particlesRef.current.querySelectorAll('.particle');
+      particles.forEach((particle, i) => {
+        gsap.to(particle, {
+          y: -30,
+          duration: 2 + i * 0.5,
+          repeat: -1,
+          yoyo: true,
+          ease: "power1.inOut",
+          delay: i * 0.3
+        });
+      });
+    }
+
+    // Continuous title glow animation
+    if (titleRef.current) {
+      gsap.to(titleRef.current, {
+        textShadow: "0 0 20px rgba(16, 185, 129, 0.3), 0 0 40px rgba(16, 185, 129, 0.2), 0 0 60px rgba(16, 185, 129, 0.1)",
+        duration: 2,
+        repeat: -1,
+        yoyo: true,
+        ease: "power1.inOut"
+      });
+    }
+  }, []);
+
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Floating geometric shapes */}
-      <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-r from-emerald-400/20 to-lime-400/20 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-20 right-16 w-48 h-48 bg-gradient-to-l from-green-400/15 to-yellow-400/15 rounded-full blur-3xl animate-pulse delay-1000" />
-      <div className="absolute top-1/3 right-1/4 w-20 h-20 bg-emerald-300/30 rounded-lg rotate-45 blur-xl animate-bounce" />
+    <section
+      ref={heroRef}
+      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+    >
+      {/* Sophisticated background */}
+      <div className="absolute inset-0 bg-black">
+        {/* Subtle gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-emerald-950/20 via-black to-lime-950/20" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 py-20">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          
-          {/* Left Section - Content */}
-          <div className="space-y-10">
-            {/* Brand Badge */}
-            <div className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-500 to-lime-500 text-black px-6 py-3 rounded-full text-sm font-bold uppercase tracking-wider shadow-lg backdrop-blur-sm">
-              <div className="w-2 h-2 bg-black rounded-full animate-pulse" />
-              <span>CHEX SEEDS</span>
-              <div className="w-2 h-2 bg-black rounded-full animate-pulse delay-500" />
-            </div>
-            
-            {/* Main Title */}
-            <div className="space-y-6">
-              <h1 className="text-6xl md:text-7xl lg:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-emerald-300 to-lime-300 leading-none tracking-tight">
-                CANNABIS
-                <br />
-                <span className="text-4xl md:text-5xl lg:text-6xl text-emerald-400 font-light tracking-wide">
-                  del futuro
-                </span>
-              </h1>
-              
-              <div className="flex items-center gap-4 text-emerald-400 font-mono text-lg">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-emerald-400 rounded-full animate-ping" />
-                  <span>LIVE</span>
-                </div>
-                <span className="text-gray-500">|</span>
-                <span className="text-gray-300">Genética Premium de Argentina</span>
-              </div>
+        {/* Geometric pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-20 left-20 w-64 h-64 border border-emerald-500 rounded-full" />
+          <div className="absolute bottom-32 right-32 w-48 h-48 border border-lime-500 rounded-lg rotate-45" />
+          <div className="absolute top-1/2 left-1/4 w-32 h-32 border border-emerald-300 rounded-full" />
+          <div className="absolute top-1/3 right-1/4 w-24 h-24 border border-lime-300 rounded-lg rotate-12" />
+        </div>
 
-              <p className="text-xl text-gray-300 leading-relaxed max-w-xl font-light">
-                Revolucionamos el cultivo casero con tecnología de vanguardia, 
-                genética superior y soporte integral para cultivadores de toda América.
-              </p>
-            </div>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-6">
-              <Button 
-                size="lg" 
-                className="group bg-gradient-to-r from-emerald-500 to-lime-500 hover:from-emerald-600 hover:to-lime-600 text-black font-bold px-10 py-6 text-lg rounded-2xl shadow-2xl hover:shadow-emerald-500/25 transition-all duration-300 hover:scale-105 transform"
-              >
-                <Zap className="h-6 w-6 mr-2 group-hover:rotate-12 transition-transform" />
-                Explorar Colección
-                <ChevronRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                size="lg"
-                className="group border-2 border-emerald-400 text-emerald-400 hover:bg-emerald-400/10 font-bold px-10 py-6 text-lg rounded-2xl backdrop-blur-sm hover:border-lime-400 hover:text-lime-400 transition-all duration-300"
-              >
-                <TrendingUp className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
-                Guía Avanzada
-              </Button>
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-8 pt-12">
-              <div className="group text-center cursor-pointer">
-                <div className="flex items-center justify-center mb-3">
-                  <div className="relative">
-                    <Star className="w-8 h-8 text-yellow-400 fill-current group-hover:scale-125 transition-transform" />
-                    <div className="absolute -inset-2 bg-yellow-400/20 rounded-full blur-md group-hover:blur-lg transition-all" />
-                  </div>
-                </div>
-                <p className="text-2xl font-bold text-white group-hover:text-yellow-400 transition-colors">98%</p>
-                <p className="text-sm text-gray-400 font-mono">GERMINACIÓN</p>
-              </div>
-              
-              <div className="group text-center cursor-pointer">
-                <div className="flex items-center justify-center mb-3">
-                  <div className="relative">
-                    <Award className="w-8 h-8 text-emerald-400 group-hover:scale-125 transition-transform" />
-                    <div className="absolute -inset-2 bg-emerald-400/20 rounded-full blur-md group-hover:blur-lg transition-all" />
-                  </div>
-                </div>
-                <p className="text-2xl font-bold text-white group-hover:text-emerald-400 transition-colors">50+</p>
-                <p className="text-sm text-gray-400 font-mono">VARIEDADES</p>
-              </div>
-              
-              <div className="group text-center cursor-pointer">
-                <div className="flex items-center justify-center mb-3">
-                  <div className="relative">
-                    <Leaf className="w-8 h-8 text-lime-400 group-hover:scale-125 transition-transform" />
-                    <div className="absolute -inset-2 bg-lime-400/20 rounded-full blur-md group-hover:blur-lg transition-all" />
-                  </div>
-                </div>
-                <p className="text-2xl font-bold text-white group-hover:text-lime-400 transition-colors">24/7</p>
-                <p className="text-sm text-gray-400 font-mono">SOPORTE</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Section - Image with Holographic Effect */}
-          <div className="relative lg:ml-10">
-            {/* Main Image Container */}
-            <div className="relative group">
-              {/* Holographic border effect */}
-              <div className="absolute -inset-4 bg-gradient-to-r from-emerald-500 via-lime-500 to-emerald-500 rounded-3xl blur-2xl opacity-30 group-hover:opacity-50 transition-opacity duration-1000 animate-pulse" />
-              
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-emerald-500/25 backdrop-blur-sm border border-emerald-500/30">
-                <Image
-                  alt="Cannabis premium de alta tecnología - Epilepsia Strain"
-                  className="w-full h-[700px] object-cover group-hover:scale-105 transition-transform duration-700"
-                  height="700"
-                  src="/epilepsia.jpg"
-                  width="600"
-                  priority
-                />
-                
-                {/* Gradient overlays */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-emerald-500/10" />
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-500/5 to-transparent" />
-                
-                {/* Floating Tech Card */}
-                <div className="absolute top-8 right-8 bg-black/80 backdrop-blur-md rounded-2xl p-4 border border-emerald-500/50 shadow-xl">
-                  <div className="flex items-center gap-3">
-                    <div className="w-3 h-3 bg-emerald-400 rounded-full animate-pulse" />
-                    <span className="text-emerald-400 font-mono text-sm font-bold">TECH ENABLED</span>
-                  </div>
-                </div>
-
-                {/* Bottom Floating Card */}
-                <div className="absolute bottom-8 left-8 right-8 bg-black/90 backdrop-blur-md rounded-2xl p-6 border border-lime-500/30 shadow-2xl">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-lime-500 rounded-xl flex items-center justify-center">
-                        <Zap className="w-6 h-6 text-black" />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-white">Asesoría AI-Powered</h3>
-                        <p className="text-sm text-gray-400">Soporte inteligente 24/7</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-emerald-400 font-mono text-xl font-bold">100%</p>
-                      <p className="text-gray-400 text-xs">ÉXITO</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Floating geometric decorations */}
-            <div className="absolute -top-8 -left-8 w-16 h-16 bg-emerald-400/20 rounded-lg rotate-45 animate-spin-slow blur-sm" />
-            <div className="absolute -bottom-12 -right-12 w-24 h-24 bg-lime-400/20 rounded-full animate-pulse blur-md" />
-          </div>
+        {/* Animated mesh gradient */}
+        <div className="absolute inset-0">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-emerald-500/10 to-lime-500/10 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-l from-lime-500/8 to-emerald-500/8 rounded-full blur-3xl animate-pulse delay-1000" />
         </div>
       </div>
 
-      {/* Animated particles overlay */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-1 h-1 bg-emerald-400 rounded-full animate-ping" />
-        <div className="absolute top-3/4 left-3/4 w-1 h-1 bg-lime-400 rounded-full animate-ping delay-1000" />
-        <div className="absolute top-1/2 right-1/4 w-1 h-1 bg-yellow-400 rounded-full animate-ping delay-500" />
+      {/* Floating particles */}
+      <div ref={particlesRef} className="absolute inset-0 pointer-events-none">
+        <div className="particle absolute top-1/4 left-1/3 w-2 h-2 bg-emerald-400 rounded-full opacity-60" />
+        <div className="particle absolute top-1/3 right-1/3 w-1 h-1 bg-lime-400 rounded-full opacity-40" />
+        <div className="particle absolute bottom-1/3 left-1/4 w-3 h-3 bg-emerald-300 rounded-full opacity-30" />
+        <div className="particle absolute bottom-1/4 right-1/4 w-1 h-1 bg-lime-300 rounded-full opacity-50" />
+        <div className="particle absolute top-1/2 left-1/5 w-2 h-2 bg-emerald-400 rounded-full opacity-40" />
+        <div className="particle absolute top-2/3 right-1/5 w-1 h-1 bg-lime-400 rounded-full opacity-60" />
+      </div>
+
+      {/* Main content */}
+      <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
+
+        {/* Main title */}
+        <h1
+          ref={titleRef}
+          className="text-7xl md:text-8xl lg:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-lime-400 to-emerald-400 leading-none tracking-tight mb-6"
+        >
+          CHEX SEEDS
+        </h1>
+
+        {/* Subtitle */}
+        <p
+          ref={subtitleRef}
+          className="text-xl md:text-2xl text-gray-300 font-light tracking-widest mb-8 opacity-80"
+        >
+          by Chex Company
+        </p>
+
+        {/* Elegant separator */}
+        <div className="flex items-center justify-center gap-4 mb-12">
+          <div className="h-px w-20 bg-gradient-to-r from-transparent to-emerald-500" />
+          <Sparkles className="w-6 h-6 text-emerald-400" />
+          <div className="h-px w-20 bg-gradient-to-l from-transparent to-lime-500" />
+        </div>
+
+        {/* Description */}
+        <p
+          ref={descriptionRef}
+          className="text-lg md:text-xl text-gray-400 leading-relaxed max-w-2xl mx-auto mb-12 font-light"
+        >
+          Genéticas premium argentinas que redefinen los estándares de calidad.
+          <br />
+          <span className="text-emerald-400">Cultivando el futuro, semilla por semilla.</span>
+        </p>
+
+        {/* CTA Section */}
+        <div ref={ctaRef} className="space-y-6">
+          <Link href="/genetics">
+            <Button
+              size="lg"
+              className="group bg-gradient-to-r from-emerald-500 to-lime-500 hover:from-emerald-400 hover:to-lime-400 text-black font-bold px-12 py-6 text-lg rounded-2xl shadow-2xl hover:shadow-emerald-500/25 transition-all duration-500 hover:scale-105 border-none"
+            >
+              <span className="flex items-center gap-3">
+                Explorar Genéticas
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </span>
+            </Button>
+          </Link>
+
+          <p className="text-sm text-gray-500 font-mono">
+            • Premium Quality • Argentine Genetics • Est. 2014 •
+          </p>
+        </div>
+
+        {/* Scroll indicator */}
+        <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2">
+          <div className="w-px h-16 bg-gradient-to-b from-emerald-500/50 to-transparent" />
+          <div className="w-2 h-2 bg-emerald-400 rounded-full mx-auto animate-bounce" />
+        </div>
+      </div>
+
+      {/* Ambient light effects */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-80 h-80 bg-lime-500/5 rounded-full blur-3xl" />
       </div>
     </section>
   );

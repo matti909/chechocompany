@@ -1,0 +1,193 @@
+{
+  "id": "normativa_1759157901385",
+  "titulo": "Presidencia de la Nación",
+  "resumen": "PODER EJECUTIVO NACIONAL (P.E.N.)",
+  "contenido": "PODER EJECUTIVO NACIONAL (P.E.N.)",
+  "categoria": "Normativa",
+  "tags": [
+    "Decreto 883/2020",
+    "Cannabis Medicinal",
+    "Argentina",
+    "Regulación"
+  ],
+  "fechaExtraccion": "2025-09-29T14:58:21.385Z",
+  "fechaPublicacion": "2025-09-29",
+  "fuente": {
+    "nombre": "Argentina.gob.ar",
+    "url": "https://www.argentina.gob.ar/normativa/nacional/decreto-883-2020-344131/texto",
+    "confiable": true
+  },
+  "secciones": [
+    {
+      "titulo": "Elecciones legislativas 2025 | Este 26 de octubre votamos con Boleta Única Papel. Conocé más.",
+      "nivel": "h2"
+    },
+    {
+      "titulo": "Trámites",
+      "nivel": "h2"
+    },
+    {
+      "titulo": "Acerca de la República Argentina",
+      "nivel": "h2"
+    },
+    {
+      "titulo": "Acerca de Argentina.gob.ar",
+      "nivel": "h2"
+    }
+  ],
+  "enlacesRelacionados": [
+    {
+      "texto": "Pasar al contenido principal",
+      "url": "https://www.argentina.gob.ar/normativa/nacional/decreto-883-2020-344131/texto#main-content",
+      "esInterno": true
+    },
+    {
+      "texto": "Ir a Mi Argentina",
+      "url": "https://mi.argentina.gob.ar/",
+      "esInterno": true
+    },
+    {
+      "texto": "Mi Argentina",
+      "url": "https://mi.argentina.gob.ar/",
+      "esInterno": true
+    },
+    {
+      "texto": "Inicio",
+      "url": "https://www.argentina.gob.ar/",
+      "esInterno": true
+    },
+    {
+      "texto": "Normativa",
+      "url": "https://www.argentina.gob.ar/normativa",
+      "esInterno": true
+    }
+  ],
+  "requisitos": [],
+  "imagen": "/images/reprocann-default.jpg",
+  "estado": "publicado",
+  "destacado": false,
+  "metadatos": {
+    "totalParrafos": 1,
+    "totalEncabezados": 4,
+    "totalEnlaces": 15,
+    "totalRequisitos": 0
+  },
+  "datosOriginales": {
+    "titulo": "Presidencia de la Nación",
+    "resumen": "PODER EJECUTIVO NACIONAL (P.E.N.)",
+    "parrafos": [
+      "PODER EJECUTIVO NACIONAL (P.E.N.)"
+    ],
+    "encabezados": [
+      {
+        "nivel": "h2",
+        "texto": "Elecciones legislativas 2025 | Este 26 de octubre votamos con Boleta Única Papel. Conocé más.",
+        "id": "campaign02"
+      },
+      {
+        "nivel": "h2",
+        "texto": "Trámites",
+        "id": null
+      },
+      {
+        "nivel": "h2",
+        "texto": "Acerca de la República Argentina",
+        "id": null
+      },
+      {
+        "nivel": "h2",
+        "texto": "Acerca de Argentina.gob.ar",
+        "id": null
+      }
+    ],
+    "enlaces": [
+      {
+        "texto": "Pasar al contenido principal",
+        "url": "https://www.argentina.gob.ar/normativa/nacional/decreto-883-2020-344131/texto#main-content",
+        "esInterno": true
+      },
+      {
+        "texto": "Ir a Mi Argentina",
+        "url": "https://mi.argentina.gob.ar/",
+        "esInterno": true
+      },
+      {
+        "texto": "Mi Argentina",
+        "url": "https://mi.argentina.gob.ar/",
+        "esInterno": true
+      },
+      {
+        "texto": "Inicio",
+        "url": "https://www.argentina.gob.ar/",
+        "esInterno": true
+      },
+      {
+        "texto": "Normativa",
+        "url": "https://www.argentina.gob.ar/normativa",
+        "esInterno": true
+      },
+      {
+        "texto": "Decreto Reglamentario 883/2020",
+        "url": "https://www.argentina.gob.ar/normativa/nacional/decreto-883-2020-344131",
+        "esInterno": true
+      },
+      {
+        "texto": "Volver",
+        "url": "https://www.argentina.gob.ar/normativa/nacional/decreto-883-2020-344131",
+        "esInterno": true
+      },
+      {
+        "texto": "Turnos",
+        "url": "https://www.argentina.gob.ar/turnos",
+        "esInterno": true
+      },
+      {
+        "texto": "Trámites a distancia",
+        "url": "https://www.argentina.gob.ar/innovacion/tramites-distancia-tad",
+        "esInterno": true
+      },
+      {
+        "texto": "Atención a la ciudadanía",
+        "url": "https://www.argentina.gob.ar/miargentina/mesadeayuda",
+        "esInterno": true
+      },
+      {
+        "texto": "Nuestro país",
+        "url": "https://www.argentina.gob.ar/pais",
+        "esInterno": true
+      },
+      {
+        "texto": "Leyes argentinas",
+        "url": "https://www.argentina.gob.ar/normativa",
+        "esInterno": true
+      },
+      {
+        "texto": "Organismos",
+        "url": "https://www.argentina.gob.ar/organismos",
+        "esInterno": true
+      },
+      {
+        "texto": "Mapa del Estado",
+        "url": "https://www.argentina.gob.ar/desregulacion/mapa-del-estado",
+        "esInterno": true
+      },
+      {
+        "texto": "Acerca de este sitio",
+        "url": "https://www.argentina.gob.ar/acerca",
+        "esInterno": true
+      }
+    ],
+    "requisitos": [],
+    "metadatos": {
+      "totalParrafos": 1,
+      "totalEncabezados": 4,
+      "totalEnlaces": 15,
+      "totalRequisitos": 0
+    }
+  },
+  "configuracion": {
+    "scrapeadoEn": "2025-09-29T14:58:21.403Z",
+    "version": "2.0",
+    "headless": true
+  }
+}

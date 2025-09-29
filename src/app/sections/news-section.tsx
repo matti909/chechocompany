@@ -2,8 +2,30 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Calendar, ArrowRight, Newspaper, Zap, Award, Leaf } from "lucide-react";
+import { Calendar, ArrowRight, Newspaper, Zap, Award, Leaf, ExternalLink, Scale, FileText } from "lucide-react";
 import Link from "next/link";
+
+// Import scraped data
+let scrapedNews = null;
+let scrapedInase = null;
+let scrapedNormativa = null;
+try {
+  scrapedNews = require('../../data/noticias-reprocann.json');
+} catch (error) {
+  console.log('No se encontraron datos scrapeados de REPROCANN');
+}
+
+try {
+  scrapedInase = require('../../data/noticias-inase.json');
+} catch (error) {
+  console.log('No se encontraron datos scrapeados de INASE');
+}
+
+try {
+  scrapedNormativa = require('../../data/noticias-normativa.json');
+} catch (error) {
+  console.log('No se encontraron datos scrapeados de Normativa');
+}
 
 export function NewsSection() {
   const [isVisible, setIsVisible] = useState(false);
@@ -26,41 +48,57 @@ export function NewsSection() {
     return () => observer.disconnect();
   }, []);
 
-  const news = [
-    {
-      id: 1,
-      title: "Nueva Genética: Marmalate Early Version Disponible",
-      excerpt: "Lanzamos nuestra última creación: una variedad Early Version con 21% THC, perfecta para cultivos rápidos con sabor dulce afrutado.",
-      date: "15 Enero 2025",
-      category: "Genéticas",
-      image: "/news-genetics.jpg",
-      icon: Leaf,
-      color: "emerald"
-    },
-    {
-      id: 2,
-      title: "Expansión a Nuevos Mercados Argentinos",
-      excerpt: "ChexSeeds amplía su presencia en Argentina con nuevos puntos de distribución y stock garantizado para cultivadores locales.",
-      date: "08 Enero 2025", 
-      category: "Empresa",
-      image: "/news-expansion.jpg",
-      icon: Zap,
-      color: "blue"
-    },
-    {
-      id: 3,
-      title: "Guía Completa de Cultivo Indoor 2025",
-      excerpt: "Descubre nuestros mejores consejos para maximizar tu cultivo interior con las técnicas más actuales y equipamiento recomendado.",
-      date: "02 Enero 2025",
-      category: "Cultivo",
-      image: "/news-guide.jpg", 
-      icon: Award,
-      color: "purple"
-    }
-  ];
+  // Only use scraped data - no static news
+
+  // Create scraped news items if available
+  const scrapedNewsItem = scrapedNews ? {
+    id: 'scraped-reprocann',
+    title: 'Registro REPROCANN',
+    excerpt: 'El Programa procura mejorar el acceso a quienes tienen indicación médica basada en la evidencia científica disponible, a un producto como especialidad medicinal o cultivo controlado de cannabis.',
+    date: '29 enero 2025',
+    category: 'Regulación',
+    icon: Scale,
+    color: "purple",
+    isExternal: true,
+    sourceUrl: 'https://www.argentina.gob.ar/salud/cannabis-medicinal/reprocann',
+    tags: ['REPROCANN', 'Cannabis Medicinal', 'Argentina', 'Regulación', 'Salud Pública'],
+    content: scrapedNews.contenido
+  } : null;
+
+  const scrapedInaseItem = scrapedInase ? {
+    id: 'scraped-inase',
+    title: 'Certificación de Semillas - INASE',
+    excerpt: 'El Instituto Nacional de Semillas regula la fiscalización para asegurar la pureza varietal y calidad de las semillas utilizadas en la agricultura argentina.',
+    date: '29 enero 2025',
+    category: 'Certificación',
+    icon: Leaf,
+    color: "emerald",
+    isExternal: true,
+    sourceUrl: 'https://www.argentina.gob.ar/inase/certificacionsemillas',
+    tags: ['INASE', 'Certificación Semillas', 'Argentina', 'Agricultura'],
+    content: scrapedInase.contenido
+  } : null;
+
+  const scrapedNormativaItem = scrapedNormativa ? {
+    id: 'scraped-normativa',
+    title: 'Decreto 883/2020 - Cannabis Medicinal',
+    excerpt: 'El Decreto 883/2020 establece el marco normativo para la regulación del cannabis medicinal en Argentina, definiendo los procedimientos, requisitos y autoridades competentes.',
+    date: '01 diciembre 2020',
+    category: 'Normativa',
+    icon: FileText,
+    color: "blue",
+    isExternal: true,
+    sourceUrl: 'https://www.argentina.gob.ar/normativa/nacional/decreto-883-2020-344131/texto',
+    tags: ['Decreto 883/2020', 'Cannabis Medicinal', 'Argentina', 'Normativa'],
+    content: scrapedNormativa.contenido
+  } : null;
+
+  // Only show scraped items
+  const news = [scrapedNewsItem, scrapedInaseItem, scrapedNormativaItem].filter(Boolean);
 
   return (
-    <section 
+    <section
+      id="noticias"
       ref={sectionRef}
       className="relative py-32 overflow-hidden"
     >
@@ -155,13 +193,54 @@ export function NewsSection() {
                     </h3>
                     
                     {/* Excerpt */}
-                    <p className="text-gray-300 text-sm leading-relaxed mb-6">
+                    <p className="text-gray-300 text-sm leading-relaxed mb-4">
                       {article.excerpt}
                     </p>
-                    
+
+                    {/* Tags for external articles */}
+                    {article.isExternal && article.tags && (
+                      <div className="flex flex-wrap gap-2 mb-6">
+                        {article.tags.slice(0, 3).map((tag, index) => (
+                          <span
+                            key={index}
+                            className={`px-2 py-1 text-xs font-mono uppercase tracking-wider rounded-full ${badgeColors[article.color as keyof typeof badgeColors]}`}
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
                     {/* Read more link */}
-                    <div className="flex items-center justify-between">
-                      {article.id === 3 ? (
+                    <div className={`flex items-center justify-between ${article.isExternal && article.tags ? '' : 'mt-2'}`}>
+                      {article.isExternal ? (
+                        <div className="flex gap-3">
+                          <Link href={`/noticias/${article.id}`}>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className={`text-${article.color}-400 hover:text-${article.color}-300 hover:bg-${article.color}-500/10 p-0 h-auto font-medium`}
+                            >
+                              Leer artículo completo
+                              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+                            </Button>
+                          </Link>
+                          <a
+                            href={article.sourceUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex"
+                          >
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className={`text-${article.color}-400 hover:text-${article.color}-300 hover:bg-${article.color}-500/10 p-0 h-auto font-medium opacity-60 hover:opacity-100`}
+                            >
+                              <ExternalLink className="w-4 h-4" />
+                            </Button>
+                          </a>
+                        </div>
+                      ) : article.id === 3 ? (
                         <Link href="/cultivation-guide">
                           <Button
                             variant="ghost"
