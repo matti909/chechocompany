@@ -108,10 +108,43 @@ export default function CheckoutPage() {
   const handleFinalSubmit = async () => {
     setSubmitting(true);
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    try {
+      // Generate order number
+      const orderNumber = `CHX-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
 
-    completeOrder();
+      // Prepare order data for email
+      const orderData = {
+        customerInfo: checkout.customerInfo,
+        items: items,
+        subtotal: subtotal,
+        shipping: shipping,
+        total: finalTotal,
+        orderNumber: orderNumber
+      };
+
+      // Send confirmation email
+      const response = await fetch('/api/order-confirmation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      if (!response.ok) {
+        console.error('Error sending confirmation email:', await response.text());
+        // Continue with order completion even if email fails
+      } else {
+        console.log('Confirmation email sent successfully');
+      }
+
+      // Complete the order
+      completeOrder();
+    } catch (error) {
+      console.error('Error processing order:', error);
+      // Complete order anyway, email is not critical
+      completeOrder();
+    }
   };
 
   // Calculate totals
