@@ -219,11 +219,11 @@ export default function NewsArticlePage({ params }: { params: { id: string } }) 
           <div className="p-8 md:p-12">
             {/* Content based on article type */}
             {article.isReprocann ? (
-              <ReprocannContent colors={colors} />
+              <ReprocannContent />
             ) : article.isInase ? (
-              <InaseContent colors={colors} />
+              <InaseContent />
             ) : (
-              <NormativaContent colors={colors} />
+              <NormativaContent />
             )}
           </div>
         </div>
@@ -275,7 +275,7 @@ export default function NewsArticlePage({ params }: { params: { id: string } }) 
 }
 
 // REPROCANN Content Component
-function ReprocannContent({ colors }: { colors: any }) {
+function ReprocannContent() {
   return (
     <div className="prose prose-invert prose-lg max-w-none">
       <p className="text-xl text-gray-200 leading-relaxed mb-8">
@@ -363,7 +363,7 @@ function ReprocannContent({ colors }: { colors: any }) {
 }
 
 // INASE Content Component
-function InaseContent({ colors }: { colors: any }) {
+function InaseContent() {
   return (
     <div className="prose prose-invert prose-lg max-w-none">
       <p className="text-xl text-gray-200 leading-relaxed mb-8">
@@ -396,7 +396,7 @@ function InaseContent({ colors }: { colors: any }) {
               Definición de Semilla Fiscalizada
             </h3>
             <p className="text-gray-300 leading-relaxed">
-              <em>"La clase de semilla 'fiscalizada'. Es aquella que, además de cumplir los requisitos exigidos para la simiente "Identificada" y demostrando un buen comportamiento en ensayos aprobados oficialmente, está sometida a control oficial durante las etapas de su ciclo de producción."</em>
+              <em>&ldquo;La clase de semilla &lsquo;fiscalizada&rsquo;. Es aquella que, además de cumplir los requisitos exigidos para la simiente &ldquo;Identificada&rdquo; y demostrando un buen comportamiento en ensayos aprobados oficialmente, está sometida a control oficial durante las etapas de su ciclo de producción.&rdquo;</em>
             </p>
             <p className="text-gray-400 text-sm mt-2">— Decreto Reglamentario Nº 2.183/91, Artículo 11</p>
           </div>
@@ -494,7 +494,7 @@ function InaseContent({ colors }: { colors: any }) {
 }
 
 // Normativa Content Component (Decreto 883/2020)
-function NormativaContent({ colors }: { colors: any }) {
+function NormativaContent() {
   return (
     <div className="prose prose-invert prose-lg max-w-none">
       <p className="text-xl text-gray-200 leading-relaxed mb-8">

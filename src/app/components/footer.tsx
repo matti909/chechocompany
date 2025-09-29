@@ -1,7 +1,7 @@
 'use client';
 
 import Link from "next/link";
-import { Instagram, Mail } from "lucide-react";
+import { Instagram, Mail, ArrowUp } from "lucide-react";
 
 function MountainIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -23,8 +23,15 @@ function MountainIcon(props: React.SVGProps<SVGSVGElement>) {
 }
 
 export function Footer() {
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
   return (
-    <footer className="bg-black text-white py-16">
+    <footer className="bg-black text-white py-16 relative">
       <div className="max-w-7xl mx-auto px-6">
         {/* Main content */}
         <div className="grid md:grid-cols-3 gap-12 mb-12">
@@ -120,6 +127,15 @@ export function Footer() {
           </div>
         </div>
       </div>
+
+      {/* Back to top button */}
+      <button
+        onClick={scrollToTop}
+        className="absolute bottom-8 right-8 bg-gradient-to-r from-emerald-500 to-lime-500 hover:from-emerald-400 hover:to-lime-400 text-black p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110 group"
+        aria-label="Volver arriba"
+      >
+        <ArrowUp className="w-5 h-5 group-hover:-translate-y-0.5 transition-transform" />
+      </button>
     </footer>
   );
 }

@@ -7,7 +7,6 @@ import {
   User,
   ChevronDown,
   Zap,
-  Sparkles,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { gsap } from "gsap";

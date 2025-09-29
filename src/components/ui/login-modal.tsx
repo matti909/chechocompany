@@ -39,14 +39,14 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 mt-10"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 min-h-screen"
       onClick={handleOverlayClick}
     >
       {/* Overlay */}
-      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200" />
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-md animate-in fade-in duration-300" />
 
       {/* Modal */}
-      <div className="relative w-full max-w-md animate-in zoom-in-95 fade-in duration-200">
+      <div className="relative w-full max-w-md animate-in zoom-in-95 fade-in duration-300 my-auto">
         {/* Gradient border effect */}
         <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500/50 via-lime-500/50 to-emerald-500/50 rounded-3xl blur-xl opacity-60" />
 
@@ -147,4 +147,3 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
     </div>
   );
 }
-

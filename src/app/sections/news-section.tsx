@@ -2,33 +2,19 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Calendar, ArrowRight, Newspaper, Zap, Award, Leaf, ExternalLink, Scale, FileText } from "lucide-react";
+import { Calendar, ArrowRight, Newspaper, Leaf, ExternalLink, Scale, FileText } from "lucide-react";
 import Link from "next/link";
 
-// Import scraped data
-let scrapedNews = null;
-let scrapedInase = null;
-let scrapedNormativa = null;
-try {
-  scrapedNews = require('../../data/noticias-reprocann.json');
-} catch (error) {
-  console.log('No se encontraron datos scrapeados de REPROCANN');
-}
-
-try {
-  scrapedInase = require('../../data/noticias-inase.json');
-} catch (error) {
-  console.log('No se encontraron datos scrapeados de INASE');
-}
-
-try {
-  scrapedNormativa = require('../../data/noticias-normativa.json');
-} catch (error) {
-  console.log('No se encontraron datos scrapeados de Normativa');
+interface ScrapedContent {
+  contenido?: string;
+  [key: string]: unknown;
 }
 
 export function NewsSection() {
   const [isVisible, setIsVisible] = useState(false);
+  const [scrapedNews, setScrapedNews] = useState<ScrapedContent | null>(null);
+  const [scrapedInase, setScrapedInase] = useState<ScrapedContent | null>(null);
+  const [scrapedNormativa, setScrapedNormativa] = useState<ScrapedContent | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -48,6 +34,33 @@ export function NewsSection() {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    const loadScrapedData = async () => {
+      try {
+        const response1 = await import('../../data/noticias-reprocann.json');
+        setScrapedNews(response1.default);
+      } catch {
+        console.log('No se encontraron datos scrapeados de REPROCANN');
+      }
+
+      try {
+        const response2 = await import('../../data/noticias-inase.json');
+        setScrapedInase(response2.default);
+      } catch {
+        console.log('No se encontraron datos scrapeados de INASE');
+      }
+
+      try {
+        const response3 = await import('../../data/noticias-normativa.json');
+        setScrapedNormativa(response3.default);
+      } catch {
+        console.log('No se encontraron datos scrapeados de Normativa');
+      }
+    };
+
+    loadScrapedData();
+  }, []);
+
   // Only use scraped data - no static news
 
   // Create scraped news items if available
@@ -62,7 +75,7 @@ export function NewsSection() {
     isExternal: true,
     sourceUrl: 'https://www.argentina.gob.ar/salud/cannabis-medicinal/reprocann',
     tags: ['REPROCANN', 'Cannabis Medicinal', 'Argentina', 'Regulación', 'Salud Pública'],
-    content: scrapedNews.contenido
+    content: scrapedNews?.contenido
   } : null;
 
   const scrapedInaseItem = scrapedInase ? {
@@ -76,7 +89,7 @@ export function NewsSection() {
     isExternal: true,
     sourceUrl: 'https://www.argentina.gob.ar/inase/certificacionsemillas',
     tags: ['INASE', 'Certificación Semillas', 'Argentina', 'Agricultura'],
-    content: scrapedInase.contenido
+    content: scrapedInase?.contenido
   } : null;
 
   const scrapedNormativaItem = scrapedNormativa ? {
@@ -90,11 +103,11 @@ export function NewsSection() {
     isExternal: true,
     sourceUrl: 'https://www.argentina.gob.ar/normativa/nacional/decreto-883-2020-344131/texto',
     tags: ['Decreto 883/2020', 'Cannabis Medicinal', 'Argentina', 'Normativa'],
-    content: scrapedNormativa.contenido
+    content: scrapedNormativa?.contenido
   } : null;
 
   // Only show scraped items
-  const news = [scrapedNewsItem, scrapedInaseItem, scrapedNormativaItem].filter(Boolean);
+  const news = [scrapedNewsItem, scrapedInaseItem, scrapedNormativaItem].filter((item): item is NonNullable<typeof item> => item !== null);
 
   return (
     <section
@@ -240,7 +253,7 @@ export function NewsSection() {
                             </Button>
                           </a>
                         </div>
-                      ) : article.id === 3 ? (
+                      ) : article.id === "3" ? (
                         <Link href="/cultivation-guide">
                           <Button
                             variant="ghost"

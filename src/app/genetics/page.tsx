@@ -7,15 +7,11 @@ import { Button } from '@/components/ui/button';
 import {
   Database,
   Sparkles,
-  Clock,
-  Award,
   Star,
   Zap,
   ShoppingBag,
-  Filter,
   Search,
   SortDesc,
-  Leaf,
   ChevronDown,
   MapPin,
   TrendingUp
@@ -381,7 +377,7 @@ export default function GeneticsPage() {
           <div className={`grid md:grid-cols-2 lg:grid-cols-3 gap-8 transition-all duration-1000 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}>
-            {filteredGenetics.map((genetic, index) => {
+            {filteredGenetics.map((genetic) => {
               const colors = colorSchemes[genetic.color as keyof typeof colorSchemes];
 
               return (

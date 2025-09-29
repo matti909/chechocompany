@@ -206,7 +206,7 @@ const useCartStore = create<CartStore>()(
       },
 
       resetCheckout: () => {
-        set((state) => ({
+        set(() => ({
           checkout: {
             step: 1,
             customerInfo: {

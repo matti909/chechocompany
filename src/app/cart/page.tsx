@@ -15,13 +15,11 @@ import {
   Truck,
   Shield,
   Gift,
-  AlertCircle,
   CheckCircle,
   Sparkles,
   Zap
 } from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image';
 
 const colorSchemes = {
   pink: 'from-pink-500 to-purple-500',

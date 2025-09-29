@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Calendar, ArrowRight, Scale, Leaf, Zap, ArrowLeft, FileText } from "lucide-react";
+import { Calendar, ArrowRight, Scale, Leaf, ArrowLeft, FileText } from "lucide-react";
 import Link from "next/link";
 
 interface NewsItem {
@@ -11,7 +11,7 @@ interface NewsItem {
   excerpt: string;
   date: string;
   category: string;
-  icon: any;
+  icon: React.ElementType;
   color: string;
   isExternal?: boolean;
   sourceUrl?: string;
@@ -32,20 +32,23 @@ export default function NoticiasPage() {
         let scrapedInase = null;
         let scrapedNormativa = null;
         try {
-          scrapedNews = require('../../data/noticias-reprocann.json');
-        } catch (error) {
+          const response1 = await import('../../data/noticias-reprocann.json');
+          scrapedNews = response1.default;
+        } catch {
           console.log('No se encontraron datos scrapeados de REPROCANN');
         }
 
         try {
-          scrapedInase = require('../../data/noticias-inase.json');
-        } catch (error) {
+          const response2 = await import('../../data/noticias-inase.json');
+          scrapedInase = response2.default;
+        } catch {
           console.log('No se encontraron datos scrapeados de INASE');
         }
 
         try {
-          scrapedNormativa = require('../../data/noticias-normativa.json');
-        } catch (error) {
+          const response3 = await import('../../data/noticias-normativa.json');
+          scrapedNormativa = response3.default;
+        } catch {
           console.log('No se encontraron datos scrapeados de Normativa');
         }
 
@@ -90,7 +93,7 @@ export default function NoticiasPage() {
         } : null;
 
         // Only show scraped items
-        const allNews = [scrapedNewsItem, scrapedInaseItem, scrapedNormativaItem].filter(Boolean);
+        const allNews = [scrapedNewsItem, scrapedInaseItem, scrapedNormativaItem].filter(Boolean) as NewsItem[];
         setNews(allNews);
       } catch (error) {
         console.error('Error loading news:', error);

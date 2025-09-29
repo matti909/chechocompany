@@ -45,3 +45,5 @@ bun.lock
 
 .claude/
 CLAUDE.md
+
+package-lock.json
