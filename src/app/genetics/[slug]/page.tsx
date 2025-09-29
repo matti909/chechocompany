@@ -176,13 +176,14 @@ const geneticsData = {
 };
 
 interface PageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
-export default function GeneticsDetailPage({ params }: PageProps) {
-  const genetics = geneticsData[params.slug as keyof typeof geneticsData];
+export default async function GeneticsDetailPage({ params }: PageProps) {
+  const { slug } = await params;
+  const genetics = geneticsData[slug as keyof typeof geneticsData];
 
   if (!genetics) {
     notFound();
