@@ -7,6 +7,8 @@ import {
   User,
   ChevronDown,
   Zap,
+  Menu,
+  X,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { gsap } from "gsap";
@@ -16,10 +18,12 @@ import useCartStore from "@/store/cart-store";
 export function Navbar() {
   const [, setIsScrolled] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navbarRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
   const linksRef = useRef<HTMLDivElement>(null);
   const cartRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   const { totalItems } = useCartStore();
 
@@ -163,8 +167,20 @@ export function Navbar() {
             ))}
           </div>
 
+          {/* Mobile Menu Button */}
+          <button
+            className="lg:hidden relative p-2 rounded-full bg-black/40 border border-emerald-500/30 hover:border-emerald-400/60 transition-colors"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? (
+              <X className="w-6 h-6 text-emerald-400" />
+            ) : (
+              <Menu className="w-6 h-6 text-emerald-400" />
+            )}
+          </button>
+
           {/* Cart & User con glow */}
-          <div ref={cartRef} className="flex items-center space-x-6">
+          <div ref={cartRef} className="hidden lg:flex items-center space-x-6">
             
             {/* User Icon */}
             <div
@@ -265,6 +281,64 @@ export function Navbar() {
           </div>
         </div>
       </div>
+
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div
+          ref={mobileMenuRef}
+          className="lg:hidden absolute top-20 left-0 right-0 bg-black/95 backdrop-blur-xl border-b border-emerald-500/30"
+        >
+          <div className="max-w-7xl mx-auto px-6 py-6 space-y-4">
+            {/* Mobile Navigation Links */}
+            <div className="space-y-2">
+              {[
+                { name: "TIENDA", href: "/" },
+                { name: "SEMILLAS", href: "/genetics" },
+                { name: "GUÍA", href: "/growing-guide" },
+                { name: "CONTACTO", href: "/contacto" },
+                { name: "BLOG", href: "/cultivation-guide" },
+              ].map((item) => (
+                <Link key={item.name} href={item.href}>
+                  <div
+                    className="block px-4 py-3 text-white hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition-all font-bold"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {item.name}
+                  </div>
+                </Link>
+              ))}
+            </div>
+
+            {/* Mobile Actions */}
+            <div className="flex items-center gap-3 pt-4 border-t border-emerald-500/20">
+              <button
+                onClick={() => {
+                  setIsLoginModalOpen(true);
+                  setIsMobileMenuOpen(false);
+                }}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-black/40 border border-emerald-500/30 rounded-lg text-emerald-400 font-bold hover:border-emerald-400/60 transition-colors"
+              >
+                <User className="w-5 h-5" />
+                CUENTA
+              </button>
+              <Link href="/cart" className="flex-1">
+                <div
+                  className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-emerald-500 to-lime-500 rounded-lg text-black font-bold relative"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <ShoppingCart className="w-5 h-5" />
+                  CARRITO
+                  {totalItems > 0 && (
+                    <span className="absolute -top-2 -right-2 w-6 h-6 bg-black text-emerald-400 rounded-full flex items-center justify-center text-xs font-bold border-2 border-emerald-400">
+                      {totalItems}
+                    </span>
+                  )}
+                </div>
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Login Modal */}
       <LoginModal

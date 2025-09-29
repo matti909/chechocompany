@@ -106,7 +106,7 @@ export function Hero() {
         {/* Main title */}
         <h1
           ref={titleRef}
-          className="text-7xl md:text-8xl lg:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-lime-400 to-emerald-400 leading-none tracking-tight mb-6"
+          className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-lime-400 to-emerald-400 leading-none tracking-tight mb-6"
         >
           CHEX SEEDS
         </h1>
@@ -114,7 +114,7 @@ export function Hero() {
         {/* Subtitle */}
         <p
           ref={subtitleRef}
-          className="text-xl md:text-2xl text-gray-300 font-light tracking-widest mb-8 opacity-80"
+          className="text-lg sm:text-xl md:text-2xl text-gray-300 font-light tracking-widest mb-8 opacity-80"
         >
           by Chex Company
         </p>
@@ -129,7 +129,7 @@ export function Hero() {
         {/* Description */}
         <p
           ref={descriptionRef}
-          className="text-lg md:text-xl text-gray-400 leading-relaxed max-w-2xl mx-auto mb-12 font-light"
+          className="text-base sm:text-lg md:text-xl text-gray-400 leading-relaxed max-w-2xl mx-auto mb-12 font-light px-4"
         >
           Genéticas premium argentinas que redefinen los estándares de calidad.
           <br />

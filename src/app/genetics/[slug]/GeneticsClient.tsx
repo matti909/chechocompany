@@ -99,19 +99,19 @@ export function GeneticsClient({ genetics }: GeneticsClientProps) {
           </Link>
 
           {/* Title Section */}
-          <div className="flex items-start gap-8 mb-12">
-            <div className={`w-24 h-24 ${colors.bg} rounded-3xl flex items-center justify-center border ${colors.border}`}>
-              <IconComponent className={`w-12 h-12 ${colors.accent}`} />
+          <div className="flex flex-col md:flex-row items-start gap-6 md:gap-8 mb-12">
+            <div className={`w-20 h-20 md:w-24 md:h-24 ${colors.bg} rounded-3xl flex items-center justify-center border ${colors.border} shrink-0`}>
+              <IconComponent className={`w-10 h-10 md:w-12 md:h-12 ${colors.accent}`} />
             </div>
 
-            <div className="flex-1">
-              <h1 className="text-5xl md:text-7xl font-black text-white mb-4">
+            <div className="flex-1 w-full">
+              <h1 className="text-4xl md:text-5xl lg:text-7xl font-black text-white mb-4">
                 {genetics.name}
               </h1>
-              <p className={`text-2xl ${colors.accent} font-light mb-6`}>
+              <p className={`text-xl md:text-2xl ${colors.accent} font-light mb-4 md:mb-6`}>
                 {genetics.subtitle}
               </p>
-              <p className="text-lg text-gray-300 max-w-3xl leading-relaxed">
+              <p className="text-base md:text-lg text-gray-300 max-w-3xl leading-relaxed">
                 {genetics.description}
               </p>
             </div>
@@ -133,7 +133,7 @@ export function GeneticsClient({ genetics }: GeneticsClientProps) {
                 Especificaciones Técnicas
               </h2>
 
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <div>
                     <span className="text-gray-400 text-sm block">Genética</span>

@@ -131,7 +131,7 @@ export function Footer() {
       {/* Back to top button */}
       <button
         onClick={scrollToTop}
-        className="absolute bottom-8 right-8 bg-gradient-to-r from-emerald-500 to-lime-500 hover:from-emerald-400 hover:to-lime-400 text-black p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110 group"
+        className="absolute bottom-4 right-4 md:bottom-8 md:right-8 bg-gradient-to-r from-emerald-500 to-lime-500 hover:from-emerald-400 hover:to-lime-400 text-black p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110 group z-10"
         aria-label="Volver arriba"
       >
         <ArrowUp className="w-5 h-5 group-hover:-translate-y-0.5 transition-transform" />
