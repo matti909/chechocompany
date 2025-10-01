@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Leaf } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import Link from "next/link";
@@ -122,7 +122,7 @@ export function Hero() {
         {/* Elegant separator */}
         <div className="flex items-center justify-center gap-4 mb-12">
           <div className="h-px w-20 bg-gradient-to-r from-transparent to-emerald-500" />
-          <Sparkles className="w-6 h-6 text-emerald-400" />
+          <Leaf className="w-6 h-6 text-emerald-400" />
           <div className="h-px w-20 bg-gradient-to-l from-transparent to-lime-500" />
         </div>
 
