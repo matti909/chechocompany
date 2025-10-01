@@ -39,7 +39,7 @@ export interface GeneticsData {
   };
   color: string;
   icon: React.ComponentType<{ className?: string }> | null;
-  [key: string]: unknown;
+  image?: string;
   awards?: string[];
   features?: string[];
 }
