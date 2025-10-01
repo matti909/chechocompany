@@ -40,10 +40,10 @@ export async function POST(request: NextRequest) {
 
     console.log('✅ Validation passed, preparing emails...');
 
-    // Send email to company (using your personal email for testing)
+    // Send email to company
     const companyEmailData = {
-      from: 'onboarding@resend.dev', // Using Resend's verified domain for testing
-      to: 'matias.saantiago@gmail.com', // Using your verified email for testing
+      from: 'contacto@chexseeds.com',
+      to: 'matias.saantiago@gmail.com',
       subject: `[CONTACTO WEB] ${subject}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #000000, #1a1a1a); color: white; border-radius: 20px; overflow: hidden;">
@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
 
     // Send auto-reply to customer
     const customerEmailData = {
-      from: 'onboarding@resend.dev', // Using Resend's verified domain for testing
+      from: 'contacto@chexseeds.com',
       to: email,
       subject: '✅ Hemos recibido tu mensaje - CHEX SEEDS',
       html: `
@@ -175,18 +175,13 @@ export async function POST(request: NextRequest) {
     console.log('📧 Sending emails...');
 
     try {
-      // Always send to company (your email)
+      // Send to company
       const companyResult = await resend.emails.send(companyEmailData);
       console.log('✅ Company email result:', companyResult);
 
-      // Only send auto-reply if customer email is your verified email
-      let customerResult = null;
-      if (email === 'matias.saantiago@gmail.com') {
-        customerResult = await resend.emails.send(customerEmailData);
-        console.log('✅ Customer email result:', customerResult);
-      } else {
-        console.log('ℹ️ Skipping customer auto-reply (email not verified in Resend free tier)');
-      }
+      // Send auto-reply to customer
+      const customerResult = await resend.emails.send(customerEmailData);
+      console.log('✅ Customer email result:', customerResult);
 
       return NextResponse.json(
         { message: 'Mensaje enviado exitosamente' },

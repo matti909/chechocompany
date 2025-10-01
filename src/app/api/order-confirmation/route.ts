@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
 
     // Customer confirmation email
     const customerEmailData = {
-      from: 'onboarding@resend.dev',
+      from: 'pedidos@chexseeds.com',
       to: orderData.customerInfo.email,
       subject: `✅ Pedido Confirmado #${orderData.orderNumber} - CHEX SEEDS`,
       html: `
@@ -243,7 +243,7 @@ export async function POST(request: NextRequest) {
 
     // Company notification email
     const companyEmailData = {
-      from: 'onboarding@resend.dev',
+      from: 'pedidos@chexseeds.com',
       to: 'matias.saantiago@gmail.com',
       subject: `🎉 NUEVO PEDIDO #${orderData.orderNumber} - $${orderData.total.toLocaleString()}`,
       html: `
@@ -302,24 +302,19 @@ export async function POST(request: NextRequest) {
     console.log('📧 Sending confirmation emails...');
 
     try {
-      // Always send to company
+      // Send to company
       const companyResult = await resend.emails.send(companyEmailData);
       console.log('✅ Company notification sent:', companyResult);
 
       // Send customer confirmation
-      let customerResult = null;
-      if (orderData.customerInfo.email === 'matias.saantiago@gmail.com') {
-        customerResult = await resend.emails.send(customerEmailData);
-        console.log('✅ Customer confirmation sent:', customerResult);
-      } else {
-        console.log('ℹ️ Skipping customer email (not verified in Resend free tier)');
-      }
+      const customerResult = await resend.emails.send(customerEmailData);
+      console.log('✅ Customer confirmation sent:', customerResult);
 
       return NextResponse.json(
         {
           message: 'Emails de confirmación enviados exitosamente',
           companyEmailSent: true,
-          customerEmailSent: customerResult !== null
+          customerEmailSent: true
         },
         { status: 200 }
       );
