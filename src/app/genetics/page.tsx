@@ -6,7 +6,6 @@ import { Footer } from '../components/footer';
 import { Button } from '@/components/ui/button';
 import {
   Database,
-  Sparkles,
   Star,
   Zap,
   ShoppingBag,
