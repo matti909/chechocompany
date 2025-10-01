@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft, ShoppingBag, Award, Sparkles, Star, Leaf, FlaskConical } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { GeneticsProfileChart } from "@/components/charts";
 
 export interface GeneticsData {
@@ -98,20 +99,37 @@ export function GeneticsClient({ genetics }: GeneticsClientProps) {
             Volver a Genéticas
           </Link>
 
-          {/* Title Section */}
-          <div className="flex flex-col md:flex-row items-start gap-6 md:gap-8 mb-12">
-            <div className={`w-20 h-20 md:w-24 md:h-24 ${colors.bg} rounded-3xl flex items-center justify-center border ${colors.border} shrink-0`}>
-              <IconComponent className={`w-10 h-10 md:w-12 md:h-12 ${colors.accent}`} />
-            </div>
+          {/* Product Image and Title Section */}
+          <div className="grid lg:grid-cols-2 gap-8 md:gap-12 mb-12">
+            {/* Product Image */}
+            {genetics.image && (
+              <div className="relative w-full h-96 lg:h-[500px] rounded-3xl overflow-hidden group">
+                <Image
+                  src={genetics.image}
+                  alt={genetics.name}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+              </div>
+            )}
 
-            <div className="flex-1 w-full">
-              <h1 className="text-4xl md:text-5xl lg:text-7xl font-black text-white mb-4">
+            {/* Title and Description */}
+            <div className="flex flex-col justify-center">
+              <div className="flex items-center gap-4 mb-6">
+                <div className={`w-16 h-16 md:w-20 md:h-20 ${colors.bg} rounded-2xl flex items-center justify-center border ${colors.border} shrink-0`}>
+                  <IconComponent className={`w-8 h-8 md:w-10 md:h-10 ${colors.accent}`} />
+                </div>
+              </div>
+
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4">
                 {genetics.name}
               </h1>
               <p className={`text-xl md:text-2xl ${colors.accent} font-light mb-4 md:mb-6`}>
                 {genetics.subtitle}
               </p>
-              <p className="text-base md:text-lg text-gray-300 max-w-3xl leading-relaxed">
+              <p className="text-base md:text-lg text-gray-300 leading-relaxed">
                 {genetics.description}
               </p>
             </div>

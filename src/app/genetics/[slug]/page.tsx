@@ -53,8 +53,7 @@ const geneticsData = {
       spicy: 30,
       floral: 95
     },
-    image: "/epilepsiadorso.jpg",
-    frontImage: "/Epilepsiafrente.jpg",
+    image: "/sems/indu.jpeg",
     color: "pink",
     icon: Sparkles
   },
@@ -114,7 +113,7 @@ const geneticsData = {
       "La más rápida que existe",
       "Potente y resistente"
     ],
-    image: "/Frente esq..jpg",
+    image: "/sems/cali.jpeg",
     color: "emerald",
     icon: Clock
   },
@@ -170,6 +169,7 @@ const geneticsData = {
       "Ultra rápida floración",
       "Genética estable y confiable"
     ],
+    image: "/sems/sati.jpeg",
     color: "blue",
     icon: Award
   }

@@ -17,6 +17,7 @@ import {
   TrendingUp
 } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import useCartStore from '@/store/cart-store';
 
 // Mock data for genetics - you can replace this with real data later
@@ -35,7 +36,8 @@ const geneticsData = [
     color: 'pink',
     price: '$45.000',
     difficulty: 'Intermedio',
-    environment: 'Interior/Exterior'
+    environment: 'Interior/Exterior',
+    image: '/sems/indu.jpeg'
   },
   {
     id: 'esquizofrenia',
@@ -51,7 +53,8 @@ const geneticsData = [
     color: 'emerald',
     price: '$52.000',
     difficulty: 'Fácil',
-    environment: 'Interior'
+    environment: 'Interior',
+    image: '/sems/cali.jpeg'
   },
   {
     id: 'marmalate',
@@ -67,7 +70,8 @@ const geneticsData = [
     color: 'blue',
     price: '$48.000',
     difficulty: 'Fácil',
-    environment: 'Interior/Exterior'
+    environment: 'Interior/Exterior',
+    image: '/sems/sati.jpeg'
   },
   {
     id: 'amnesia-haze',
@@ -83,7 +87,8 @@ const geneticsData = [
     color: 'orange',
     price: '$50.000',
     difficulty: 'Avanzado',
-    environment: 'Interior/Exterior'
+    environment: 'Interior/Exterior',
+    image: '/sems/algo.jpeg'
   },
   {
     id: 'northern-lights',
@@ -99,7 +104,8 @@ const geneticsData = [
     color: 'purple',
     price: '$42.000',
     difficulty: 'Fácil',
-    environment: 'Interior/Exterior'
+    environment: 'Interior/Exterior',
+    image: '/sems/cana.png'
   },
   {
     id: 'white-widow',
@@ -115,7 +121,8 @@ const geneticsData = [
     color: 'cyan',
     price: '$55.000',
     difficulty: 'Intermedio',
-    environment: 'Interior/Exterior'
+    environment: 'Interior/Exterior',
+    image: '/sems/indu.jpeg'
   }
 ];
 
@@ -384,24 +391,32 @@ export default function GeneticsPage() {
                 <div key={genetic.id} className="group relative">
                   <div className={`absolute -inset-1 bg-gradient-to-r ${colors.gradient} rounded-3xl blur-xl opacity-60 group-hover:opacity-80 transition-opacity duration-500`} />
 
-                  <div className={`relative bg-black/80 backdrop-blur-xl border ${colors.border} rounded-3xl p-8 transition-all duration-500 h-full`}>
-                    {/* Header */}
-                    <div className="flex items-start justify-between mb-6">
-                      <div className={`w-16 h-16 bg-gradient-to-r ${colors.bg} rounded-2xl flex items-center justify-center ${colors.borderColor} border`}>
-                        <Sparkles className={`w-8 h-8 ${colors.text}`} />
+                  <div className={`relative bg-black/80 backdrop-blur-xl border ${colors.border} rounded-3xl overflow-hidden transition-all duration-500 h-full flex flex-col`}>
+                    {/* Product Image */}
+                    {genetic.image && (
+                      <div className="relative w-full h-64 overflow-hidden">
+                        <Image
+                          src={genetic.image}
+                          alt={genetic.name}
+                          fill
+                          className="object-cover group-hover:scale-110 transition-transform duration-500"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+                        {/* Price Badge */}
+                        <div className="absolute top-4 right-4 bg-black/80 backdrop-blur-sm border border-emerald-500/30 rounded-2xl px-4 py-2">
+                          <div className={`text-2xl font-bold ${colors.text}`}>{genetic.price}</div>
+                          <div className="text-xs text-gray-400">por 3 semillas</div>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <div className={`text-2xl font-bold ${colors.text}`}>{genetic.price}</div>
-                        <div className="text-xs text-gray-400">por 3 semillas</div>
-                      </div>
-                    </div>
+                    )}
 
-                    <h3 className="text-2xl font-bold text-white mb-2">
-                      {genetic.name}
-                    </h3>
-                    <h4 className={`text-lg font-medium ${colors.text} mb-6`}>
-                      {genetic.subtitle}
-                    </h4>
+                    <div className="p-8 flex-1 flex flex-col">
+                      <h3 className="text-2xl font-bold text-white mb-2">
+                        {genetic.name}
+                      </h3>
+                      <h4 className={`text-lg font-medium ${colors.text} mb-6`}>
+                        {genetic.subtitle}
+                      </h4>
 
                     {/* Specs */}
                     <div className="space-y-2 mb-6 text-sm">
@@ -493,6 +508,7 @@ export default function GeneticsPage() {
                           </>
                         )}
                       </Button>
+                    </div>
                     </div>
                   </div>
                 </div>
