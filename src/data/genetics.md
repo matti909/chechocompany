@@ -32,6 +32,44 @@
 
 ---
 
+## BIPOLARIDAD MANÍACA 🔥
+
+**Genética:** GG#4 x Santabilbo
+**Composición:** 60% Sativa - 40% Indica
+**THC:** 25% (Alto) | **CBD:** Medio
+
+### Características
+- **Floración:** 8-10 semanas
+- **Dificultad:** Fácil
+- **Tipo:** Feminizada
+- **Olor:** Alto - Dulce frutal
+- **Sabor:** Dulce con notas frutales y terrosas
+
+### Producción
+- **Interior:** 550-650g/m² | Altura: Mediana
+- **Exterior:** 800-1000g/planta | Altura: Grande
+- **Cosecha exterior:** Mediados de octubre
+
+### Efectos
+- **Tipo de efecto:** Cerebral eufórico intenso
+- Estimulación cerebral potente y duradera
+- Ideal para estabilizar el ánimo y combatir el estrés
+- Perfecto para creatividad y estado mental positivo
+
+### Uso Medicinal
+- Estabilizador de ánimo
+- Anti-estrés
+- Estimula creatividad
+- Efecto cerebral eufórico
+
+### Perfil de Sabores
+- Dulce base
+- Notas frutales
+- Toques terrosos
+- Cítrico sutil
+
+---
+
 ## ESQUIZOFRENIA 🧠
 
 **Composición:** 70% Indica - 30% Sativa
@@ -70,37 +108,11 @@
 
 ---
 
-## MARMALATE EARLY VERSION 🍊
-
-**Composición:** 30% Sativa - 70% Indica
-**THC:** 21%
-
-### Características
-- **Floración:** 45 días interior
-- **Dificultad:** Fácil
-- **Tipo:** Fotoperiódica feminizada
-- **Sabor:** Dulce afrutado
-
-### Producción
-- **Interior:** 500g/m²
-- **Exterior:** 900g/planta
-
-### Premios y Reconocimientos
-- 1° Premio Outdoor Copa MF 2013
-- 2° Indoor Copa Txapelketa 2013
-
-### Efectos
-- Potente y equilibrado
-- Rápida y resistente
-- Genética estable y confiable
-
----
-
 ## CARACTERÍSTICAS GENERALES DE NUESTRAS GENÉTICAS
 
 ### Ventajas Competitivas
-- **Velocidad:** Las más rápidas del mercado (45 días indoor)
-- **Potencia:** Alto contenido de THC (18-21%)
+- **Velocidad:** Desde 6-7 semanas (Esquizofrenia) hasta 10 semanas máximo
+- **Potencia:** Alto contenido de THC (18-25%)
 - **Resistencia:** Adaptadas para clima argentino
 - **Facilidad:** Cultivo fácil para principiantes y expertos
 - **Trazabilidad:** Origen y evolución completamente documentados
@@ -115,4 +127,5 @@
 - Mejor precio del mercado
 - Genéticas feminizadas 100%
 - Respaldo técnico completo
-- Envíos gratis en stock limitado
+- Envíos discretos y seguros
+- 98% de germinación garantizada

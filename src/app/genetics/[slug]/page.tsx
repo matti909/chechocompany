@@ -117,61 +117,65 @@ const geneticsData = {
     color: "emerald",
     icon: Clock
   },
-  marmalate: {
-    name: "MARMALATE",
-    subtitle: "Early Version",
-    description: "Genética premiada con floración ultra rápida de tan solo 45 días en interior. Especial para clonar, potente, resistente y la más rápida que existe en el mercado. Con un dulce sabor afrutado y efectos equilibrados.",
-    genetics: "Genética exclusiva Early Version",
-    composition: "30% Sativa - 70% Indica",
-    thc: "21%",
-    cbd: "N/A",
-    flowering: "6-7 semanas",
-    floweringIndoor: "45 días",
+  "bipolaridad-maniaca": {
+    name: "BIPOLARIDAD MANÍACA",
+    subtitle: "GG#4 x Santabilbo",
+    description: "Genética Sativa dominante con alto contenido de THC (25%). Produce un efecto cerebral intenso y eufórico, ideal para estabilizar el ánimo y combatir el estrés. Su sabor dulce con notas frutales y terrosas la hace única. Perfecta para estimular la creatividad y mantener un estado mental positivo.",
+    genetics: "GG#4 x Santabilbo",
+    composition: "60% Sativa - 40% Indica",
+    thc: "25%",
+    cbd: "Medio",
+    flowering: "8-10 semanas",
+    floweringIndoor: "8-10 semanas",
     difficulty: "Fácil",
-    smell: "Medio",
-    flavor: "Dulce afrutado",
-    effect: "Equilibrado y potente",
-    productionIndoor: "500g/m²",
-    productionOutdoor: "900g/planta",
-    heightIndoor: "Medio",
-    heightOutdoor: "Medio",
-    harvestTime: "Principios de septiembre",
-    awards: [
-      "1° Premio Outdoor Copa MF 2013",
-      "2° Indoor Copa Txapelketa 2013"
+    smell: "Alto - Dulce frutal",
+    flavor: "Dulce con notas frutales y terrosas",
+    effect: "Cerebral eufórico",
+    productionIndoor: "550-650g/m²",
+    productionOutdoor: "800-1000g/planta",
+    heightIndoor: "Mediana",
+    heightOutdoor: "Grande",
+    harvestTime: "Mediados de octubre",
+    medicalUse: [
+      "Estabilizador de ánimo",
+      "Anti-estrés",
+      "Estimula creatividad",
+      "Efecto cerebral eufórico"
     ],
     effects: [
       "Cerebral",
-      "Equilibrado",
-      "Relajante",
-      "Potente"
+      "Eufórico",
+      "Energizante",
+      "Creativo"
     ],
     effectsData: {
-      cerebral: 80,
-      body: 85,
-      euphoric: 75,
-      relaxing: 90,
-      creative: 70
+      cerebral: 95,
+      body: 60,
+      euphoric: 95,
+      relaxing: 55,
+      creative: 90
     },
     flavorProfile: [
       "Dulce",
-      "Afrutado"
+      "Frutal",
+      "Terroso",
+      "Cítrico"
     ],
     flavorsData: {
-      sweet: 90,
-      fruity: 95,
-      earthy: 40,
-      spicy: 25,
-      floral: 60
+      sweet: 85,
+      fruity: 90,
+      earthy: 75,
+      spicy: 40,
+      floral: 50
     },
     features: [
-      "Especial para clonar",
-      "Ultra rápida floración",
-      "Genética estable y confiable"
+      "Alto contenido de THC (25%)",
+      "Producción abundante",
+      "Efecto duradero y potente"
     ],
-    image: "/sems/sati.jpeg",
-    color: "blue",
-    icon: Award
+    image: "/sems/bipolaridad.jpg",
+    color: "orange",
+    icon: Sparkles
   }
 };
 
@@ -201,7 +205,7 @@ export default async function GeneticsDetailPage({ params }: PageProps) {
 export async function generateStaticParams() {
   return [
     { slug: 'epilepsia' },
+    { slug: 'bipolaridad-maniaca' },
     { slug: 'esquizofrenia' },
-    { slug: 'marmalate' },
   ];
 }
