@@ -77,7 +77,6 @@ export function GeneticsClient({ genetics }: GeneticsClientProps) {
       thc: genetics.thc,
       flowering: genetics.floweringIndoor,
       genotype: genetics.composition,
-      quantity: selectedQuantity.quantity,
       image: genetics.image,
     });
   };
