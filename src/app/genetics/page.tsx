@@ -381,8 +381,15 @@ export default function GeneticsPage() {
                       </div>
                     </div>
 
+                    {/* Seed Type Notice */}
+                    <div className="p-2 bg-blue-500/10 border border-blue-500/30 rounded-lg mb-3">
+                      <p className="text-xs text-blue-200 text-center">
+                        <span className="font-semibold">Regulares</span> - 90% femeninas
+                      </p>
+                    </div>
+
                     {/* Actions */}
-                    <div className="space-y-2 mt-auto">
+                    <div className="space-y-2">
                       <Link href={`/genetics/${genetic.id}`} className="block">
                         <Button className={`w-full bg-gradient-to-r ${colors.button} text-white font-bold transition-all duration-300 hover:scale-105`}>
                           Ver detalles

@@ -283,7 +283,7 @@ export function GeneticsClient({ genetics }: GeneticsClientProps) {
               </div>
 
               {/* Key Info Box */}
-              <Card className={`bg-black/60 border ${colors.border} p-6`}>
+              <Card className={`bg-black/60 border ${colors.border} p-6 mb-4`}>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <div className="text-sm text-gray-300 mb-1">Variedad</div>
@@ -306,6 +306,13 @@ export function GeneticsClient({ genetics }: GeneticsClientProps) {
                   </div>
                 </div>
               </Card>
+
+              {/* Seed Type Notice */}
+              <div className="p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl mb-6">
+                <p className="text-sm text-blue-200 text-center">
+                  <span className="font-bold">Semillas Regulares</span> - 90% de probabilidad de ser femeninas
+                </p>
+              </div>
             </div>
           </div>
         </div>

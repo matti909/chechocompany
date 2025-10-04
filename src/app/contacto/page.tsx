@@ -7,14 +7,14 @@ import { Button } from '@/components/ui/button';
 import {
   Send,
   Mail,
-  Phone,
   MapPin,
   Clock,
   MessageSquare,
   CheckCircle,
   AlertCircle,
   Leaf,
-  Zap
+  Zap,
+  Instagram
 } from 'lucide-react';
 
 export default function ContactPage() {
@@ -237,18 +237,25 @@ export default function ContactPage() {
                   </div>
                 </div>
 
-                {/* Phone Card */}
+                {/* Instagram Card */}
                 <div className="relative group">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-lime-500/30 to-emerald-500/30 rounded-2xl blur-lg opacity-60 group-hover:opacity-80 transition-opacity" />
-                  <div className="relative bg-black/90 backdrop-blur-xl border border-lime-500/30 rounded-2xl p-6">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-pink-500/30 to-purple-500/30 rounded-2xl blur-lg opacity-60 group-hover:opacity-80 transition-opacity" />
+                  <div className="relative bg-black/90 backdrop-blur-xl border border-pink-500/30 rounded-2xl p-6">
                     <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 bg-gradient-to-r from-lime-500 to-emerald-500 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <Phone className="w-6 h-6 text-black" />
+                      <div className="w-12 h-12 bg-gradient-to-r from-pink-500 to-purple-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <Instagram className="w-6 h-6 text-black" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-bold text-white mb-2">Soporte Directo</h3>
-                        <p className="text-lime-400 font-mono text-lg font-semibold">+54 11 XXXX-XXXX</p>
-                        <p className="text-gray-400 text-sm mt-2">Lunes a Viernes de 9:00 a 18:00 ART</p>
+                        <h3 className="text-lg font-bold text-white mb-2">Síguenos en Instagram</h3>
+                        <a
+                          href="https://www.instagram.com/chexseeds.grow/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-pink-400 font-mono text-lg font-semibold hover:text-pink-300 transition-colors"
+                        >
+                          @chexseeds.grow
+                        </a>
+                        <p className="text-gray-400 text-sm mt-2">Consejos, novedades y comunidad</p>
                       </div>
                     </div>
                   </div>
@@ -264,8 +271,8 @@ export default function ContactPage() {
                       </div>
                       <div>
                         <h3 className="text-lg font-bold text-white mb-2">Ubicación</h3>
-                        <p className="text-emerald-400 font-semibold">Buenos Aires, Argentina</p>
-                        <p className="text-gray-400 text-sm mt-2">Enviamos a toda América Latina</p>
+                        <p className="text-emerald-400 font-semibold">Ciudad de Córdoba</p>
+                        <p className="text-gray-400 text-sm mt-2">Enviamos a toda Argentina</p>
                       </div>
                     </div>
                   </div>
