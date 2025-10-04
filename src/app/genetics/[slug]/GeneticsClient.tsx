@@ -1,12 +1,15 @@
 'use client';
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, ShoppingBag, Award, Star, Leaf, FlaskConical, Package, Clock, TrendingUp, Sparkles, ShoppingCart } from "lucide-react";
+import { ArrowLeft, ShoppingBag, Award, Star, Leaf, FlaskConical, Package, Clock, TrendingUp, Sparkles, ShoppingCart, Check, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { GeneticsProfileChart } from "@/components/charts";
+import useCartStore from "@/store/cart-store";
 
 export interface GeneticsData {
   name: string;
@@ -48,7 +51,42 @@ interface GeneticsClientProps {
   genetics: GeneticsData;
 }
 
+// Bulk pricing options
+const bulkPricing = [
+  { quantity: 6, price: 21000, label: '6x $21.000' },
+  { quantity: 12, price: 41000, label: '12x $41.000' },
+  { quantity: 25, price: 80000, label: '25x $80.000' },
+  { quantity: 50, price: 150000, label: '50x $150.000' },
+  { quantity: 100, price: 250000, label: '100x $250.000' },
+];
+
 export function GeneticsClient({ genetics }: GeneticsClientProps) {
+  const [selectedQuantity, setSelectedQuantity] = useState(bulkPricing[0]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const router = useRouter();
+  const { addItem } = useCartStore();
+
+  const handleAddToCart = () => {
+    addItem({
+      id: genetics.name.toLowerCase().replace(/\s+/g, '-'),
+      name: genetics.name,
+      subtitle: genetics.subtitle,
+      price: selectedQuantity.price,
+      originalPrice: `$${selectedQuantity.price.toLocaleString('es-AR')}`,
+      color: genetics.color,
+      thc: genetics.thc,
+      flowering: genetics.floweringIndoor,
+      genotype: genetics.composition,
+      quantity: selectedQuantity.quantity,
+      image: genetics.image,
+    });
+  };
+
+  const handleBuyNow = () => {
+    handleAddToCart();
+    router.push('/cart');
+  };
+
   // Use default icon based on genetics name or color
   const getDefaultIcon = () => {
     if (genetics.name === 'EPILEPSIA') return Sparkles;
@@ -96,10 +134,13 @@ export function GeneticsClient({ genetics }: GeneticsClientProps) {
 
             <div className="flex items-center gap-4">
               <div className="text-right">
-                <div className="text-sm text-gray-400">Desde</div>
-                <div className={`text-2xl font-bold ${colors.accent}`}>$35.000</div>
+                <div className="text-sm text-gray-400">{selectedQuantity.quantity} semillas</div>
+                <div className={`text-2xl font-bold ${colors.accent}`}>${selectedQuantity.price.toLocaleString('es-AR')}</div>
               </div>
-              <Button className={`bg-gradient-to-r ${colors.button} text-black font-bold hover:scale-105 transition-all`}>
+              <Button
+                onClick={handleBuyNow}
+                className={`bg-gradient-to-r ${colors.button} text-black font-bold hover:scale-105 transition-all`}
+              >
                 <ShoppingCart className="w-5 h-5 mr-2" />
                 Comprar
               </Button>
@@ -157,8 +198,86 @@ export function GeneticsClient({ genetics }: GeneticsClientProps) {
                 </Badge>
               </div>
 
-              {/* Key Info Box */}
+              {/* Pack Selector - Dropdown */}
               <Card className={`bg-gradient-to-r ${colors.gradient} border-2 ${colors.border} p-6 mb-6`}>
+                <h3 className="text-lg font-bold text-white mb-4">Selecciona tu pack</h3>
+
+                {/* Dropdown */}
+                <div className="relative mb-4">
+                  <button
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="w-full bg-black/40 border-2 border-white/30 rounded-xl p-4 flex items-center justify-between hover:border-white/50 transition-all"
+                  >
+                    <div className="text-left">
+                      <div className="text-sm text-gray-300">Pack seleccionado</div>
+                      <div className="flex items-center gap-3 mt-1">
+                        <span className="font-bold text-white">{selectedQuantity.quantity} semillas</span>
+                        <span className={`text-2xl font-black ${colors.accent}`}>
+                          ${selectedQuantity.price.toLocaleString('es-AR')}
+                        </span>
+                      </div>
+                    </div>
+                    <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  {/* Dropdown Options */}
+                  {isDropdownOpen && (
+                    <div className="absolute z-50 w-full mt-2 bg-black border-2 border-white/30 rounded-xl overflow-hidden shadow-2xl">
+                      {bulkPricing.map((option) => (
+                        <button
+                          key={option.quantity}
+                          onClick={() => {
+                            setSelectedQuantity(option);
+                            setIsDropdownOpen(false);
+                          }}
+                          className={`w-full p-4 flex items-center justify-between hover:bg-white/10 transition-all border-b border-white/10 last:border-b-0 ${
+                            selectedQuantity.quantity === option.quantity ? 'bg-white/10' : ''
+                          }`}
+                        >
+                          <div className="text-left">
+                            <div className="font-bold text-white">{option.quantity} semillas</div>
+                            <div className={`text-xl font-black ${colors.accent}`}>
+                              ${option.price.toLocaleString('es-AR')}
+                            </div>
+                          </div>
+                          {selectedQuantity.quantity === option.quantity && (
+                            <Check className="w-5 h-5 text-emerald-400" />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Buy Now Button - inline with selection */}
+                <Button
+                  onClick={handleBuyNow}
+                  className={`w-full bg-gradient-to-r ${colors.button} text-black font-bold py-4 text-lg hover:scale-105 transition-all mb-3`}
+                >
+                  <ShoppingBag className="w-5 h-5 mr-2" />
+                  Comprar Ahora
+                </Button>
+
+                {/* Shipping Notice */}
+                <div className="p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+                  <p className="text-xs text-yellow-200 text-center">
+                    + Envío a cargo del cliente
+                  </p>
+                </div>
+              </Card>
+
+              {/* Description */}
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-white mb-3">
+                  Pensando en una {genetics.name}?
+                </h2>
+                <p className="text-gray-300 leading-relaxed">
+                  {genetics.description}
+                </p>
+              </div>
+
+              {/* Key Info Box */}
+              <Card className={`bg-black/60 border ${colors.border} p-6`}>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <div className="text-sm text-gray-300 mb-1">Variedad</div>
@@ -176,32 +295,11 @@ export function GeneticsClient({ genetics }: GeneticsClientProps) {
                     <div className="text-emerald-400 font-bold">ALTA</div>
                   </div>
                   <div>
-                    <div className="text-sm text-gray-300 mb-1">Pack</div>
-                    <div className="text-white font-bold">x3 + 1 Gratis!</div>
+                    <div className="text-sm text-gray-300 mb-1">THC</div>
+                    <div className="text-white font-bold">{genetics.thc}</div>
                   </div>
                 </div>
               </Card>
-
-              {/* Description */}
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold text-white mb-3">
-                  Pensando en una {genetics.name}?
-                </h2>
-                <p className="text-gray-300 leading-relaxed">
-                  {genetics.description}
-                </p>
-              </div>
-
-              {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button className={`bg-gradient-to-r ${colors.button} text-black font-bold px-8 py-6 text-lg hover:scale-105 transition-all flex-1`}>
-                  <ShoppingBag className="w-5 h-5 mr-2" />
-                  Comprar Ahora
-                </Button>
-                <Button variant="outline" className="border-2 border-emerald-500 text-emerald-400 hover:bg-emerald-500/10 px-8 py-6 text-lg flex-1">
-                  Agregar al Carrito
-                </Button>
-              </div>
             </div>
           </div>
         </div>
@@ -317,30 +415,23 @@ export function GeneticsClient({ genetics }: GeneticsClientProps) {
           {/* Right Column - Sidebar */}
           <div className="space-y-6">
 
-            {/* Price Card */}
+            {/* Info Card */}
             <Card className={`bg-gradient-to-br ${colors.gradient} border-2 ${colors.border} p-6 sticky top-24`}>
-              <div className="text-center mb-6">
-                <div className="text-sm text-gray-300 mb-2">Precio Especial</div>
-                <div className={`text-4xl font-black ${colors.accent} mb-2`}>$35.000</div>
-                <div className="text-sm text-gray-400 line-through">$140.000</div>
-              </div>
+              <div className="mb-6">
+                <h3 className="text-lg font-bold text-white mb-4">Pack seleccionado</h3>
 
-              <div className="space-y-4">
-                <Button className={`w-full bg-gradient-to-r ${colors.button} text-black font-bold py-4 text-lg hover:scale-105 transition-all`}>
-                  <ShoppingCart className="w-5 h-5 mr-2" />
-                  Comprar Ahora
-                </Button>
-
-                <Button variant="outline" className="w-full border-2 border-white/30 text-white hover:bg-white/10 py-4">
-                  Agregar al Carrito
-                </Button>
-              </div>
-
-              <div className="mt-6 pt-6 border-t border-white/20 space-y-3">
-                <div className="flex items-center gap-2 text-sm text-gray-300">
-                  <Package className="w-4 h-4 text-emerald-400" />
-                  <span>Envío gratis en compras +$100K</span>
+                <div className={`p-4 rounded-xl border-2 ${colors.border} bg-white/10 mb-4`}>
+                  <div className="text-center">
+                    <div className="font-bold text-white text-lg">{selectedQuantity.quantity} semillas</div>
+                    <div className={`text-3xl font-black ${colors.accent} my-2`}>
+                      ${selectedQuantity.price.toLocaleString('es-AR')}
+                    </div>
+                    <div className="text-xs text-gray-300">+ Envío a cargo del cliente</div>
+                  </div>
                 </div>
+              </div>
+
+              <div className="space-y-3">
                 <div className="flex items-center gap-2 text-sm text-gray-300">
                   <TrendingUp className="w-4 h-4 text-emerald-400" />
                   <span>98% de germinación garantizada</span>
@@ -348,6 +439,10 @@ export function GeneticsClient({ genetics }: GeneticsClientProps) {
                 <div className="flex items-center gap-2 text-sm text-gray-300">
                   <Star className="w-4 h-4 text-yellow-400" />
                   <span>Genética premiada</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-300">
+                  <Package className="w-4 h-4 text-emerald-400" />
+                  <span>Envío discreto y seguro</span>
                 </div>
               </div>
             </Card>

@@ -393,7 +393,7 @@ export default function GeneticsPage() {
                   <div className={`relative bg-black/80 backdrop-blur-xl border ${colors.border} rounded-3xl overflow-hidden transition-all duration-500 h-full flex flex-col`}>
                     {/* Product Image */}
                     {genetic.image && (
-                      <div className="relative w-full h-64 overflow-hidden">
+                      <div className="relative w-full h-48 overflow-hidden">
                         <Image
                           src={genetic.image}
                           alt={genetic.name}
@@ -402,111 +402,43 @@ export default function GeneticsPage() {
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
                         {/* Price Badge */}
-                        <div className="absolute top-4 right-4 bg-black/80 backdrop-blur-sm border border-emerald-500/30 rounded-2xl px-4 py-2">
-                          <div className={`text-2xl font-bold ${colors.text}`}>{genetic.price}</div>
-                          <div className="text-xs text-gray-400">por 3 semillas</div>
+                        <div className="absolute top-3 right-3 bg-black/80 backdrop-blur-sm border border-emerald-500/30 rounded-xl px-3 py-1.5">
+                          <div className={`text-xl font-bold ${colors.text}`}>{genetic.price}</div>
                         </div>
                       </div>
                     )}
 
-                    <div className="p-8 flex-1 flex flex-col">
-                      <h3 className="text-2xl font-bold text-white mb-2">
+                    <div className="p-5 flex-1 flex flex-col">
+                      <h3 className="text-xl font-bold text-white mb-1">
                         {genetic.name}
                       </h3>
-                      <h4 className={`text-lg font-medium ${colors.text} mb-6`}>
+                      <h4 className={`text-sm font-medium ${colors.text} mb-4`}>
                         {genetic.subtitle}
                       </h4>
 
-                    {/* Specs */}
-                    <div className="space-y-2 mb-6 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">Genotipo:</span>
-                        <span className="text-white">{genetic.genotype}</span>
-                      </div>
+                    {/* Minimal Specs */}
+                    <div className="space-y-1.5 mb-4 text-xs">
                       <div className="flex justify-between">
                         <span className="text-gray-400">THC:</span>
-                        <span className="text-white">{genetic.thc}</span>
+                        <span className="text-white font-medium">{genetic.thc}</span>
                       </div>
-                      {genetic.cbd && (
-                        <div className="flex justify-between">
-                          <span className="text-gray-400">CBD:</span>
-                          <span className="text-white">{genetic.cbd}</span>
-                        </div>
-                      )}
                       <div className="flex justify-between">
                         <span className="text-gray-400">Floración:</span>
-                        <span className="text-white">{genetic.flowering}</span>
+                        <span className="text-white font-medium">{genetic.flowering}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-400">Dificultad:</span>
-                        <span className="text-white">{genetic.difficulty}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">Ambiente:</span>
-                        <span className="text-white">{genetic.environment}</span>
+                        <span className="text-gray-400">Tipo:</span>
+                        <span className="text-white font-medium">{genetic.genotype.split('-')[0].trim()}</span>
                       </div>
                     </div>
 
-                    {/* Medical Use or Awards */}
-                    {genetic.medicalUse && (
-                      <div className="mb-6">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Zap className={`w-4 h-4 ${colors.text}`} />
-                          <span className="text-xs text-gray-300">Uso Medicinal</span>
-                        </div>
-                        <div className="text-xs text-gray-400 space-y-1">
-                          {genetic.medicalUse.slice(0, 2).map((use, i) => (
-                            <div key={i}>• {use}</div>
-                          ))}
-                          {genetic.medicalUse.length > 2 && (
-                            <div className={`${colors.text} font-medium`}>+{genetic.medicalUse.length - 2} más</div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-
-                    {genetic.awards && (
-                      <div className="mb-6">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Star className="w-4 h-4 text-yellow-400" />
-                          <span className="text-xs text-gray-300">Premios</span>
-                        </div>
-                        <div className="text-xs text-gray-400 space-y-1">
-                          {genetic.awards.slice(0, 2).map((award, i) => (
-                            <div key={i}>• {award}</div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
                     {/* Actions */}
-                    <div className="space-y-3">
+                    <div className="space-y-2 mt-auto">
                       <Link href={`/genetics/${genetic.id}`} className="block">
                         <Button className={`w-full bg-gradient-to-r ${colors.button} text-white font-bold transition-all duration-300 hover:scale-105`}>
-                          <ShoppingBag className="w-4 h-4 mr-2" />
                           Ver detalles
                         </Button>
                       </Link>
-
-                      <Button
-                        variant="outline"
-                        onClick={() => handleAddToCart(genetic)}
-                        className={`w-full border-2 ${colors.borderColor} ${colors.text} hover:bg-white/10 font-bold transition-all duration-300 ${
-                          isItemInCart(genetic.id) ? 'bg-white/10' : ''
-                        }`}
-                      >
-                        {isItemInCart(genetic.id) ? (
-                          <>
-                            <ShoppingBag className="w-4 h-4 mr-2" />
-                            En carrito ({getItemQuantity(genetic.id)})
-                          </>
-                        ) : (
-                          <>
-                            <MapPin className="w-4 h-4 mr-2" />
-                            Añadir al carrito
-                          </>
-                        )}
-                      </Button>
                     </div>
                     </div>
                   </div>

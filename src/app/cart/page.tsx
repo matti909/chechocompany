@@ -16,10 +16,10 @@ import {
   Shield,
   Gift,
   CheckCircle,
-  Sparkles,
   Zap
 } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const colorSchemes = {
   pink: 'from-pink-500 to-purple-500',
@@ -162,8 +162,20 @@ export default function CartPage() {
                       <div className="grid md:grid-cols-4 gap-6 items-center">
                         {/* Product Image */}
                         <div className="relative">
-                          <div className={`w-24 h-24 bg-gradient-to-r ${colorSchemes[item.color as keyof typeof colorSchemes]}/20 rounded-xl flex items-center justify-center border border-emerald-500/30`}>
-                            <Sparkles className="w-8 h-8 text-emerald-400" />
+                          <div className={`w-24 h-24 rounded-xl overflow-hidden border-2 border-emerald-500/30`}>
+                            {item.image ? (
+                              <Image
+                                src={item.image}
+                                alt={item.name}
+                                width={96}
+                                height={96}
+                                className="object-cover w-full h-full"
+                              />
+                            ) : (
+                              <div className={`w-full h-full bg-gradient-to-r ${colorSchemes[item.color as keyof typeof colorSchemes]}/20 flex items-center justify-center`}>
+                                <ShoppingBag className="w-8 h-8 text-emerald-400" />
+                              </div>
+                            )}
                           </div>
                         </div>
 

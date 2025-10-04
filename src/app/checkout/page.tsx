@@ -19,11 +19,12 @@ import {
   Shield,
   Truck,
   Package,
-  Sparkles,
+  ShoppingBag,
   AlertCircle,
   Clock
 } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const colorSchemes = {
   pink: 'from-pink-500 to-purple-500',
@@ -487,8 +488,20 @@ export default function CheckoutPage() {
                     <div className="space-y-4 mb-6">
                       {items.slice(0, 3).map((item) => (
                         <div key={item.id} className="flex items-center gap-3">
-                          <div className={`w-12 h-12 bg-gradient-to-r ${colorSchemes[item.color as keyof typeof colorSchemes]}/20 rounded-lg flex items-center justify-center border border-emerald-500/30`}>
-                            <Sparkles className="w-6 h-6 text-emerald-400" />
+                          <div className="w-12 h-12 rounded-lg overflow-hidden border-2 border-emerald-500/30">
+                            {item.image ? (
+                              <Image
+                                src={item.image}
+                                alt={item.name}
+                                width={48}
+                                height={48}
+                                className="object-cover w-full h-full"
+                              />
+                            ) : (
+                              <div className={`w-full h-full bg-gradient-to-r ${colorSchemes[item.color as keyof typeof colorSchemes]}/20 flex items-center justify-center`}>
+                                <ShoppingBag className="w-6 h-6 text-emerald-400" />
+                              </div>
+                            )}
                           </div>
                           <div className="flex-1">
                             <div className="text-white font-medium text-sm">{item.name}</div>
@@ -594,8 +607,20 @@ export default function CheckoutPage() {
                     <div className="space-y-6">
                       {items.map((item) => (
                         <div key={item.id} className="flex items-center gap-6 p-4 bg-black/40 rounded-2xl border border-emerald-500/20">
-                          <div className={`w-16 h-16 bg-gradient-to-r ${colorSchemes[item.color as keyof typeof colorSchemes]}/20 rounded-xl flex items-center justify-center border border-emerald-500/30`}>
-                            <Sparkles className="w-8 h-8 text-emerald-400" />
+                          <div className="w-16 h-16 rounded-xl overflow-hidden border-2 border-emerald-500/30">
+                            {item.image ? (
+                              <Image
+                                src={item.image}
+                                alt={item.name}
+                                width={64}
+                                height={64}
+                                className="object-cover w-full h-full"
+                              />
+                            ) : (
+                              <div className={`w-full h-full bg-gradient-to-r ${colorSchemes[item.color as keyof typeof colorSchemes]}/20 flex items-center justify-center`}>
+                                <ShoppingBag className="w-8 h-8 text-emerald-400" />
+                              </div>
+                            )}
                           </div>
                           <div className="flex-1">
                             <h4 className="text-lg font-bold text-white">{item.name}</h4>
