@@ -21,7 +21,8 @@ import {
   Package,
   ShoppingBag,
   AlertCircle,
-  Clock
+  Clock,
+  Sparkles
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
