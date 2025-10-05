@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "./button";
 import { X, Mail } from "lucide-react";
 import { ButtonLoginIg } from "./button-login-ig";
+import { signIn, signUp } from "@/lib/auth-client";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -11,6 +12,29 @@ interface LoginModalProps {
 }
 
 export function LoginModal({ isOpen, onClose }: LoginModalProps) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleEmailSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+
+    try {
+      await signIn.email({
+        email,
+        password,
+      });
+      onClose();
+    } catch (err) {
+      setError("Error al iniciar sesión. Verifica tus credenciales.");
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -100,13 +124,16 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
             </div>
 
             {/* Email Form */}
-            <div className="space-y-4">
+            <form onSubmit={handleEmailSignIn} className="space-y-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium text-emerald-400 font-mono uppercase tracking-wider">
                   Email
                 </label>
                 <input
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
                   placeholder="tu@email.com"
                   className="w-full px-4 py-3 bg-black/60 border border-emerald-500/30 rounded-xl text-white placeholder-gray-400 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
                 />
@@ -118,16 +145,31 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 </label>
                 <input
                   type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
                   placeholder="••••••••"
                   className="w-full px-4 py-3 bg-black/60 border border-emerald-500/30 rounded-xl text-white placeholder-gray-400 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
                 />
               </div>
 
-              <Button className="w-full bg-gradient-to-r from-emerald-500 to-lime-500 hover:from-emerald-600 hover:to-lime-600 text-black font-bold py-4 px-6 rounded-xl transition-all duration-300 hover:scale-[1.02] group relative overflow-hidden">
+              {error && (
+                <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+                  <p className="text-sm text-red-400 text-center">{error}</p>
+                </div>
+              )}
+
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-gradient-to-r from-emerald-500 to-lime-500 hover:from-emerald-600 hover:to-lime-600 text-black font-bold py-4 px-6 rounded-xl transition-all duration-300 hover:scale-[1.02] group relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
+              >
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-                <span className="relative z-10">Iniciar Sesión</span>
+                <span className="relative z-10">
+                  {isLoading ? "Iniciando sesión..." : "Iniciar Sesión"}
+                </span>
               </Button>
-            </div>
+            </form>
 
             {/* Footer links */}
             <div className="flex justify-between items-center mt-6 text-sm">
