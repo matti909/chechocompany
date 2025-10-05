@@ -140,7 +140,7 @@ export function GeneticsClient({ genetics }: GeneticsClientProps) {
 
             <div className="flex items-center gap-4">
               <div className="text-right">
-                <div className="text-sm text-gray-400">{selectedQuantity.quantity} semillas</div>
+                <div className="text-sm text-gray-400">Pack x{selectedQuantity.quantity}</div>
                 <div className={`text-2xl font-bold ${colors.accent}`}>${selectedQuantity.price.toLocaleString('es-AR')}</div>
               </div>
               <Button
@@ -217,7 +217,7 @@ export function GeneticsClient({ genetics }: GeneticsClientProps) {
                     <div className="text-left">
                       <div className="text-sm text-gray-300">Pack seleccionado</div>
                       <div className="flex items-center gap-3 mt-1">
-                        <span className="font-bold text-white">{selectedQuantity.quantity} semillas</span>
+                        <span className="font-bold text-white">Pack x{selectedQuantity.quantity}</span>
                         <span className={`text-2xl font-black ${colors.accent}`}>
                           ${selectedQuantity.price.toLocaleString('es-AR')}
                         </span>
@@ -241,7 +241,7 @@ export function GeneticsClient({ genetics }: GeneticsClientProps) {
                           }`}
                         >
                           <div className="text-left">
-                            <div className="font-bold text-white">{option.quantity} semillas</div>
+                            <div className="font-bold text-white">Pack x{option.quantity}</div>
                             <div className={`text-xl font-black ${colors.accent}`}>
                               ${option.price.toLocaleString('es-AR')}
                             </div>
@@ -435,7 +435,7 @@ export function GeneticsClient({ genetics }: GeneticsClientProps) {
 
                 <div className={`p-4 rounded-xl border-2 ${colors.border} bg-white/10 mb-4`}>
                   <div className="text-center">
-                    <div className="font-bold text-white text-lg">{selectedQuantity.quantity} semillas</div>
+                    <div className="font-bold text-white text-lg">Pack x{selectedQuantity.quantity}</div>
                     <div className={`text-3xl font-black ${colors.accent} my-2`}>
                       ${selectedQuantity.price.toLocaleString('es-AR')}
                     </div>
