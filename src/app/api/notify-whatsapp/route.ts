@@ -1,5 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+interface OrderItem {
+  name: string;
+  subtitle: string;
+  quantity: number;
+  price: number;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const orderData = await request.json();
@@ -28,7 +35,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Format items list
-    const itemsList = items.map((item: any, index: number) =>
+    const itemsList = items.map((item: OrderItem, index: number) =>
       `${index + 1}. *${item.name}*\n   ${item.subtitle}\n   Cantidad: ${item.quantity}\n   Precio: $${item.price.toLocaleString('es-AR')}`
     ).join('\n\n');
 
