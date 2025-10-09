@@ -18,8 +18,8 @@ interface Session {
     userId: string;
     expiresAt: Date;
     token: string;
-    ipAddress?: string;
-    userAgent?: string;
+    ipAddress?: string | null;
+    userAgent?: string | null;
   };
 }
 
