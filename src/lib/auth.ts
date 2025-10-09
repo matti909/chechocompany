@@ -4,6 +4,8 @@ import { nextCookies } from 'better-auth/next-js';
 import { db } from '@/db/drizzle';
 
 export const auth = betterAuth({
+  baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:3000',
+  trustedOrigins: ['https://chexseeds.com', 'https://www.chexseeds.com'],
   database: drizzleAdapter(db, {
     provider: 'pg',
   }),

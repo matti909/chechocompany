@@ -277,7 +277,7 @@ export default function CartPage() {
                       </div>
                     </div>
 
-                    <Link href="/checkout">
+                    <Link href="/cart/checkout">
                       <Button className="w-full bg-gradient-to-r from-emerald-500 to-lime-500 hover:from-emerald-600 hover:to-lime-600 text-black font-bold py-4 text-lg transition-all duration-300 hover:scale-105 mb-4">
                         <CreditCard className="w-5 h-5 mr-2" />
                         Proceder al Pago
