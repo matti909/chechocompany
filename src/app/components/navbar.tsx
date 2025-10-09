@@ -17,7 +17,8 @@ import { useState, useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import Link from "next/link";
 import useCartStore from "@/store/cart-store";
-import { useSession, signOut } from "@/lib/auth-client";
+import { useAuthStore } from "@/store/auth-store";
+import { signOut } from "@/lib/auth-client";
 
 export function Navbar() {
   const [, setIsScrolled] = useState(false);
@@ -32,7 +33,7 @@ export function Navbar() {
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   const { totalItems } = useCartStore();
-  const { data: session } = useSession();
+  const { session } = useAuthStore();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -74,9 +75,12 @@ export function Navbar() {
     };
   }, [isUserMenuOpen]);
 
+  const { clearSession } = useAuthStore();
+
   const handleLogout = async () => {
     try {
       await signOut();
+      clearSession();
       setIsUserMenuOpen(false);
     } catch (error) {
       console.error("Error logging out:", error);

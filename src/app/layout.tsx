@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { MouseGraviton } from "./components/mouse-graviton";
 import { AgeVerificationModal } from "@/components/ui/age-verification-modal";
+import { AuthProvider } from "@/components/providers/auth-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,9 +30,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AgeVerificationModal />
-        <MouseGraviton />
-        {children}
+        <AuthProvider>
+          <AgeVerificationModal />
+          <MouseGraviton />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

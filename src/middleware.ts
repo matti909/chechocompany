@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from './lib/auth';
+import { getSessionCookie } from 'better-auth/cookies';
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
@@ -11,18 +11,11 @@ export async function middleware(request: NextRequest) {
   const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
 
   if (isProtectedRoute) {
-    try {
-      const session = await auth.api.getSession({
-        headers: request.headers,
-      });
+    // Check for session cookie (optimistic check, not secure alone)
+    const sessionCookie = getSessionCookie(request);
 
-      // If no session, redirect to home page
-      if (!session) {
-        const url = new URL('/', request.url);
-        return NextResponse.redirect(url);
-      }
-    } catch (error) {
-      console.error('Session check error:', error);
+    // If no session cookie, redirect to home page
+    if (!sessionCookie) {
       const url = new URL('/', request.url);
       return NextResponse.redirect(url);
     }
@@ -32,16 +25,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  runtime: 'nodejs', // Required for Better Auth with database adapters
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public files (images, etc.)
-     */
-    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
-  ],
+  matcher: ['/cart/:path*'], // Apply to cart routes
 };
