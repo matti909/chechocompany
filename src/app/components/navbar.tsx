@@ -9,23 +9,30 @@ import {
   Zap,
   Menu,
   X,
+  LogOut,
+  Settings,
+  UserCircle,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import Link from "next/link";
 import useCartStore from "@/store/cart-store";
+import { useSession, signOut } from "@/lib/auth-client";
 
 export function Navbar() {
   const [, setIsScrolled] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const navbarRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
   const linksRef = useRef<HTMLDivElement>(null);
   const cartRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
   const { totalItems } = useCartStore();
+  const { data: session } = useSession();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -38,8 +45,8 @@ export function Navbar() {
           backgroundColor: scrolled ? "rgba(0, 0, 0, 0.95)" : "rgba(0, 0, 0, 0.1)",
           backdropFilter: scrolled ? "blur(20px)" : "blur(0px)",
           borderColor: scrolled ? "rgba(16, 185, 129, 0.3)" : "transparent",
-          boxShadow: scrolled 
-            ? "0 0 40px rgba(16, 185, 129, 0.15), 0 0 80px rgba(16, 185, 129, 0.08)" 
+          boxShadow: scrolled
+            ? "0 0 40px rgba(16, 185, 129, 0.15), 0 0 80px rgba(16, 185, 129, 0.08)"
             : "none",
           ease: "power2.out",
         });
@@ -49,6 +56,32 @@ export function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Close user menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setIsUserMenuOpen(false);
+      }
+    };
+
+    if (isUserMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isUserMenuOpen]);
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      setIsUserMenuOpen(false);
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
 
   useEffect(() => {
     // Initial animations
@@ -181,31 +214,105 @@ export function Navbar() {
 
           {/* Cart & User con glow */}
           <div ref={cartRef} className="hidden lg:flex items-center space-x-6">
-            
-            {/* User Icon */}
-            <div
-              className="relative group cursor-pointer"
-              onClick={() => setIsLoginModalOpen(true)}
-              onMouseEnter={(e) => {
-                gsap.to(e.currentTarget, {
-                  scale: 1.1,
-                  duration: 0.3,
-                  ease: "power2.out"
-                });
-              }}
-              onMouseLeave={(e) => {
-                gsap.to(e.currentTarget, {
-                  scale: 1,
-                  duration: 0.3,
-                  ease: "power2.out"
-                });
-              }}
-            >
-              <div className="absolute inset-0 bg-emerald-500/20 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <div className="relative p-2 rounded-full bg-black/40 border border-emerald-500/30 group-hover:border-emerald-400/60 transition-colors duration-300">
-                <User className="w-5 h-5 text-emerald-400" />
+
+            {/* User Icon / Menu */}
+            {session ? (
+              <div ref={userMenuRef} className="relative">
+                <div
+                  className="relative group cursor-pointer"
+                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                  onMouseEnter={(e) => {
+                    gsap.to(e.currentTarget, {
+                      scale: 1.1,
+                      duration: 0.3,
+                      ease: "power2.out"
+                    });
+                  }}
+                  onMouseLeave={(e) => {
+                    gsap.to(e.currentTarget, {
+                      scale: 1,
+                      duration: 0.3,
+                      ease: "power2.out"
+                    });
+                  }}
+                >
+                  <div className="absolute inset-0 bg-emerald-500/20 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="relative p-2 rounded-full bg-gradient-to-r from-emerald-500/20 to-lime-500/20 border-2 border-emerald-400/60 group-hover:border-emerald-400 transition-colors duration-300">
+                    <UserCircle className="w-5 h-5 text-emerald-400" />
+                  </div>
+                </div>
+
+                {/* User Dropdown Menu */}
+                {isUserMenuOpen && (
+                  <div className="absolute right-0 mt-3 w-64 bg-black/95 backdrop-blur-xl border border-emerald-500/30 rounded-2xl shadow-2xl shadow-emerald-500/20 overflow-hidden">
+                    {/* User Info */}
+                    <div className="px-4 py-4 border-b border-emerald-500/20 bg-gradient-to-r from-emerald-500/10 to-lime-500/10">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-r from-emerald-500 to-lime-500 flex items-center justify-center">
+                          <span className="text-black font-bold text-lg">
+                            {session.user.email?.charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-white font-semibold truncate">
+                            {session.user.name || session.user.email?.split('@')[0]}
+                          </p>
+                          <p className="text-gray-400 text-sm truncate">
+                            {session.user.email}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Menu Items */}
+                    <div className="py-2">
+                      <button
+                        className="w-full flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-emerald-500/10 transition-colors"
+                        onClick={() => {
+                          setIsUserMenuOpen(false);
+                          // TODO: Navigate to settings
+                        }}
+                      >
+                        <Settings className="w-5 h-5 text-emerald-400" />
+                        <span className="font-medium">Configuración</span>
+                      </button>
+
+                      <button
+                        className="w-full flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                        onClick={handleLogout}
+                      >
+                        <LogOut className="w-5 h-5 text-red-400" />
+                        <span className="font-medium">Cerrar Sesión</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
+            ) : (
+              <div
+                className="relative group cursor-pointer"
+                onClick={() => setIsLoginModalOpen(true)}
+                onMouseEnter={(e) => {
+                  gsap.to(e.currentTarget, {
+                    scale: 1.1,
+                    duration: 0.3,
+                    ease: "power2.out"
+                  });
+                }}
+                onMouseLeave={(e) => {
+                  gsap.to(e.currentTarget, {
+                    scale: 1,
+                    duration: 0.3,
+                    ease: "power2.out"
+                  });
+                }}
+              >
+                <div className="absolute inset-0 bg-emerald-500/20 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="relative p-2 rounded-full bg-black/40 border border-emerald-500/30 group-hover:border-emerald-400/60 transition-colors duration-300">
+                  <User className="w-5 h-5 text-emerald-400" />
+                </div>
+              </div>
+            )}
 
             {/* Cart con glow y badge animado */}
             <Link href="/cart">
@@ -310,18 +417,66 @@ export function Navbar() {
             </div>
 
             {/* Mobile Actions */}
-            <div className="flex items-center gap-3 pt-4 border-t border-emerald-500/20">
-              <button
-                onClick={() => {
-                  setIsLoginModalOpen(true);
-                  setIsMobileMenuOpen(false);
-                }}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-black/40 border border-emerald-500/30 rounded-lg text-emerald-400 font-bold hover:border-emerald-400/60 transition-colors"
-              >
-                <User className="w-5 h-5" />
-                CUENTA
-              </button>
-              <Link href="/cart" className="flex-1">
+            <div className="pt-4 border-t border-emerald-500/20 space-y-3">
+              {session ? (
+                <>
+                  {/* User Info Card */}
+                  <div className="px-4 py-3 bg-gradient-to-r from-emerald-500/10 to-lime-500/10 border border-emerald-500/30 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-r from-emerald-500 to-lime-500 flex items-center justify-center">
+                        <span className="text-black font-bold text-lg">
+                          {session.user.email?.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-white font-semibold truncate">
+                          {session.user.name || session.user.email?.split('@')[0]}
+                        </p>
+                        <p className="text-gray-400 text-sm truncate">
+                          {session.user.email}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        // TODO: Navigate to settings
+                      }}
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-black/40 border border-emerald-500/30 rounded-lg text-emerald-400 font-bold hover:border-emerald-400/60 transition-colors"
+                    >
+                      <Settings className="w-5 h-5" />
+                      AJUSTES
+                    </button>
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-black/40 border border-red-500/30 rounded-lg text-red-400 font-bold hover:border-red-400/60 transition-colors"
+                    >
+                      <LogOut className="w-5 h-5" />
+                      SALIR
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <button
+                  onClick={() => {
+                    setIsLoginModalOpen(true);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-black/40 border border-emerald-500/30 rounded-lg text-emerald-400 font-bold hover:border-emerald-400/60 transition-colors"
+                >
+                  <User className="w-5 h-5" />
+                  INICIAR SESIÓN
+                </button>
+              )}
+
+              <Link href="/cart" className="block">
                 <div
                   className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-emerald-500 to-lime-500 rounded-lg text-black font-bold relative"
                   onClick={() => setIsMobileMenuOpen(false)}
