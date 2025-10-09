@@ -12,7 +12,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setLoading(isPending);
 
     if (!isPending) {
-      setSession(session as any);
+      setSession(session ? session : null);
     }
   }, [session, isPending, setSession, setLoading]);
 
