@@ -145,7 +145,7 @@ export default function CheckoutPage() {
         throw new Error(errorData.error || 'Error al guardar el pedido');
       }
 
-      const orderResult = await orderResponse.json();
+      await orderResponse.json();
       toast.success('Pedido guardado exitosamente!', { id: 'order-processing' });
 
       // 2. Send confirmation email

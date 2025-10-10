@@ -3,9 +3,41 @@ import { db } from '@/db';
 import { orders, orderItems } from '@/db/schema';
 import { nanoid } from 'nanoid';
 
+interface CartItem {
+  id: string;
+  name: string;
+  subtitle?: string;
+  image?: string;
+  quantity: number;
+  price: number;
+  thc?: string;
+  genotype?: string;
+  color?: string;
+}
+
+interface CustomerInfo {
+  fullName: string;
+  email: string;
+  phone: string;
+  address: string;
+  city: string;
+  postalCode: string;
+  notes?: string;
+}
+
+interface OrderRequest {
+  customerInfo: CustomerInfo;
+  items: CartItem[];
+  subtotal: number;
+  shipping: number;
+  total: number;
+  orderNumber: string;
+  userId?: string;
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const body = await request.json() as OrderRequest;
     const { customerInfo, items, subtotal, shipping, total, orderNumber, userId } = body;
 
     // Validate required fields
@@ -37,7 +69,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Create order items
-    const orderItemsData = items.map((item: any) => ({
+    const orderItemsData = items.map((item: CartItem) => ({
       id: nanoid(),
       orderId,
       productId: item.id,
