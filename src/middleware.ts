@@ -1,14 +1,16 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getSessionCookie } from 'better-auth/cookies';
+import { NextRequest, NextResponse } from "next/server";
+import { getSessionCookie } from "better-auth/cookies";
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   // Protected routes that require authentication
-  const protectedRoutes = ['/cart'];
+  const protectedRoutes = ["/cart"];
 
   // Check if the current path is a protected route
-  const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
+  const isProtectedRoute = protectedRoutes.some((route) =>
+    pathname.startsWith(route),
+  );
 
   if (isProtectedRoute) {
     // Check for session cookie (optimistic check, not secure alone)
@@ -16,7 +18,7 @@ export async function middleware(request: NextRequest) {
 
     // If no session cookie, redirect to home page
     if (!sessionCookie) {
-      const url = new URL('/', request.url);
+      const url = new URL("/", request.url);
       return NextResponse.redirect(url);
     }
   }
@@ -25,5 +27,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/cart/:path*'], // Apply to cart routes
+  matcher: ["/cart/*"], // Apply to cart routes
 };
