@@ -6,6 +6,8 @@ import { Navbar } from '../../components/navbar';
 import { Footer } from '../../components/footer';
 import { Button } from '@/components/ui/button';
 import useCartStore from '@/store/cart-store';
+import { useAuthStore } from '@/store/auth-store';
+import { toast } from 'sonner';
 import {
   CreditCard,
   ArrowLeft,
@@ -50,6 +52,7 @@ export default function CheckoutPage() {
     resetCheckout
   } = useCartStore();
 
+  const { session } = useAuthStore();
   const [isClient, setIsClient] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
@@ -121,10 +124,32 @@ export default function CheckoutPage() {
         subtotal: subtotal,
         shipping: shipping,
         total: finalTotal,
-        orderNumber: orderNumber
+        orderNumber: orderNumber,
+        userId: session?.user?.id || null
       };
 
-      // Send confirmation email
+      // Show loading toast
+      toast.loading('Procesando tu pedido...', { id: 'order-processing' });
+
+      // 1. Save order to database
+      const orderResponse = await fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      if (!orderResponse.ok) {
+        const errorData = await orderResponse.json();
+        throw new Error(errorData.error || 'Error al guardar el pedido');
+      }
+
+      const orderResult = await orderResponse.json();
+      toast.success('Pedido guardado exitosamente!', { id: 'order-processing' });
+
+      // 2. Send confirmation email
+      toast.loading('Enviando email de confirmación...', { id: 'email-sending' });
       const emailResponse = await fetch('/api/order-confirmation', {
         method: 'POST',
         headers: {
@@ -135,11 +160,13 @@ export default function CheckoutPage() {
 
       if (!emailResponse.ok) {
         console.error('Error sending confirmation email:', await emailResponse.text());
+        toast.error('No se pudo enviar el email de confirmación', { id: 'email-sending' });
       } else {
-        console.log('Confirmation email sent successfully');
+        toast.success('Email de confirmación enviado!', { id: 'email-sending' });
       }
 
-      // Send WhatsApp notification to client
+      // 3. Send WhatsApp notification
+      toast.loading('Enviando notificación de WhatsApp...', { id: 'whatsapp-sending' });
       const whatsappResponse = await fetch('/api/notify-whatsapp', {
         method: 'POST',
         headers: {
@@ -150,16 +177,25 @@ export default function CheckoutPage() {
 
       if (!whatsappResponse.ok) {
         console.error('Error sending WhatsApp notification:', await whatsappResponse.text());
+        toast.error('No se pudo enviar la notificación de WhatsApp', { id: 'whatsapp-sending' });
       } else {
-        console.log('WhatsApp notification sent successfully');
+        toast.success('Notificación de WhatsApp enviada!', { id: 'whatsapp-sending' });
       }
+
+      // 4. Show final success message
+      toast.success(`¡Pedido completado! Número: ${orderNumber}`, {
+        duration: 5000,
+        description: 'Recibirás un email con los detalles del envío'
+      });
 
       // Complete the order
       completeOrder();
     } catch (error) {
       console.error('Error processing order:', error);
-      // Complete order anyway, notifications are not critical
-      completeOrder();
+      toast.error(error instanceof Error ? error.message : 'Error al procesar el pedido', {
+        id: 'order-processing'
+      });
+      setSubmitting(false);
     }
   };
 

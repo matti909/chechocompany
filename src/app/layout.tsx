@@ -4,6 +4,7 @@ import "./globals.css";
 import { MouseGraviton } from "./components/mouse-graviton";
 import { AgeVerificationModal } from "@/components/ui/age-verification-modal";
 import { AuthProvider } from "@/components/providers/auth-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,6 +35,7 @@ export default function RootLayout({
           <AgeVerificationModal />
           <MouseGraviton />
           {children}
+          <Toaster />
         </AuthProvider>
       </body>
     </html>
