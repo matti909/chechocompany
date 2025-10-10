@@ -27,5 +27,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/cart/*"], // Apply to cart routes
+  matcher: ["/cart", "/cart/checkout"], // Apply to cart routes
 };
