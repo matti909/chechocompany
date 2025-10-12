@@ -22,11 +22,12 @@ export async function POST(request: NextRequest) {
 
     // Twilio credentials from environment variables
     const accountSid = process.env.TWILIO_ACCOUNT_SID;
-    const authToken = process.env.TWILIO_AUTH_TOKEN;
+    const apiKeySid = process.env.TWILIO_API_KEY_SID;
+    const apiKeySecret = process.env.TWILIO_API_KEY_SECRET;
     const twilioWhatsAppNumber = process.env.TWILIO_WHATSAPP_NUMBER; // Format: whatsapp:+14155238886
     const clientWhatsAppNumber = process.env.CLIENT_WHATSAPP_NUMBER; // Format: whatsapp:+5493515123456
 
-    if (!accountSid || !authToken || !twilioWhatsAppNumber || !clientWhatsAppNumber) {
+    if (!accountSid || !apiKeySid || !apiKeySecret || !twilioWhatsAppNumber || !clientWhatsAppNumber) {
       console.error('Missing Twilio configuration');
       return NextResponse.json(
         { error: 'WhatsApp notification configuration incomplete' },
@@ -68,14 +69,14 @@ ${customerInfo.notes || 'Sin notas adicionales'}
 ---
 ⏰ ${new Date().toLocaleString('es-AR', { timeZone: 'America/Argentina/Cordoba' })}`;
 
-    // Send WhatsApp message via Twilio
+    // Send WhatsApp message via Twilio using API Keys
     const response = await fetch(
       `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': 'Basic ' + Buffer.from(`${accountSid}:${authToken}`).toString('base64')
+          'Authorization': 'Basic ' + Buffer.from(`${apiKeySid}:${apiKeySecret}`).toString('base64')
         },
         body: new URLSearchParams({
           From: twilioWhatsAppNumber,
