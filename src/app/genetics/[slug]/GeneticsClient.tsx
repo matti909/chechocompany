@@ -122,6 +122,13 @@ export function GeneticsClient({ genetics }: GeneticsClientProps) {
       bg: "bg-gradient-to-r from-orange-500/20 to-yellow-500/20",
       accent: "text-orange-400",
       button: "from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600"
+    },
+    purple: {
+      gradient: "from-purple-500/20 via-violet-500/20 to-purple-500/20",
+      border: "border-purple-500/30",
+      bg: "bg-gradient-to-r from-purple-500/20 to-violet-500/20",
+      accent: "text-purple-400",
+      button: "from-purple-500 to-violet-500 hover:from-purple-600 hover:to-violet-600"
     }
   };
 
