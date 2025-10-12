@@ -1,8 +1,16 @@
-'use client';
+"use client";
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Award, Clock, Database, Sparkles, Star, Zap, ShoppingBag } from "lucide-react";
+import {
+  Award,
+  Clock,
+  Database,
+  Sparkles,
+  Star,
+  Zap,
+  ShoppingBag,
+} from "lucide-react";
 import Link from "next/link";
 
 export function GeneticsSection() {
@@ -16,7 +24,7 @@ export function GeneticsSection() {
           setIsVisible(true);
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
 
     if (sectionRef.current) {
@@ -41,22 +49,27 @@ export function GeneticsSection() {
 
       {/* Grid pattern overlay */}
       <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `radial-gradient(circle at 2px 2px, rgba(255,255,255,0.3) 1px, transparent 0)`,
-          backgroundSize: '50px 50px'
-        }} />
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `radial-gradient(circle at 2px 2px, rgba(255,255,255,0.3) 1px, transparent 0)`,
+            backgroundSize: "50px 50px",
+          }}
+        />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6">
-        <div className={`text-center mb-16 transition-all duration-1000 ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}>
+        <div
+          className={`text-center mb-16 transition-all duration-1000 ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+          }`}
+        >
           <div className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-500/20 to-lime-500/20 backdrop-blur-sm border border-emerald-500/30 text-emerald-400 px-6 py-3 rounded-xl text-sm font-mono uppercase tracking-wider mb-8">
             <Database className="w-5 h-5" />
             <span>Nuestras Genéticas</span>
             <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
           </div>
-          
+
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6">
             GENÉTICAS
             <br />
@@ -64,17 +77,19 @@ export function GeneticsSection() {
               PREMIUM
             </span>
           </h2>
-          
+
           <p className="text-xl text-gray-300 leading-relaxed max-w-3xl mx-auto">
-            Desarrollamos y producimos semillas fotoperiódicas feminizadas, 
-            diseñadas para entregar las más fuertes y rápidas del mercado con trazabilidad real.
+            Desarrollamos y producimos semillas Regulares, diseñadas para
+            entregar las más fuertes y rápidas del mercado con trazabilidad
+            real.
           </p>
         </div>
 
-        <div className={`grid md:grid-cols-3 gap-8 mb-16 transition-all duration-1000 delay-300 ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}>
-          
+        <div
+          className={`grid md:grid-cols-3 gap-8 mb-16 transition-all duration-1000 delay-300 ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+          }`}
+        >
           {/* Epilepsia Card */}
           <div className="group relative">
             <div className="absolute -inset-1 bg-gradient-to-r from-pink-500/20 via-purple-500/20 to-pink-500/20 rounded-3xl blur-xl opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
@@ -114,7 +129,9 @@ export function GeneticsSection() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Producción:</span>
-                  <span className="text-white">500-600g/m² - 600-1000g/planta</span>
+                  <span className="text-white">
+                    500-600g/m² - 600-1000g/planta
+                  </span>
                 </div>
               </div>
 
@@ -269,16 +286,18 @@ export function GeneticsSection() {
         </div>
 
         {/* Call to action */}
-        <div className={`text-center transition-all duration-1000 delay-500 ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}>
+        <div
+          className={`text-center transition-all duration-1000 delay-500 ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+          }`}
+        >
           <Button className="bg-gradient-to-r from-emerald-500 to-lime-500 hover:from-emerald-600 hover:to-lime-600 text-black font-bold px-8 py-3 text-lg transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-emerald-500/25">
             <Database className="w-5 h-5 mr-2" />
             Ver Catálogo Completo
           </Button>
         </div>
-
       </div>
     </section>
   );
 }
+

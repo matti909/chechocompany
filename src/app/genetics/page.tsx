@@ -33,7 +33,7 @@ const geneticsData = [
     production: '500-600g/m² - 600-1000g/planta',
     medicalUse: ['Anti-insomnio', 'Analgésico para dolores de cabeza', 'Ayuda con problemas digestivos'],
     color: 'pink',
-    price: '$45.000',
+    price: '$21.000',
     difficulty: 'Fácil',
     environment: 'Interior/Exterior',
     image: '/sems/indu.jpeg'
@@ -50,7 +50,7 @@ const geneticsData = [
     production: '550-650g/m² - 800-1000g/planta',
     medicalUse: ['Estabilizador de ánimo', 'Anti-estrés', 'Estimula creatividad', 'Efecto cerebral eufórico'],
     color: 'orange',
-    price: '$58.000',
+    price: '$21.000',
     difficulty: 'Fácil',
     environment: 'Interior/Exterior',
     image: '/sems/bipolaridad.jpg'
@@ -67,7 +67,7 @@ const geneticsData = [
     production: '500g/m² - 600g/planta',
     medicalUse: ['Anti-ansiedad potente', 'Reduce nerviosismo', 'Efecto analgésico'],
     color: 'emerald',
-    price: '$52.000',
+    price: '$21.000',
     difficulty: 'Fácil',
     environment: 'Interior',
     image: '/sems/cali.jpeg'
@@ -370,6 +370,7 @@ export default function GeneticsPage() {
                         {/* Price Badge */}
                         <div className="absolute top-3 right-3 bg-black/80 backdrop-blur-sm border border-emerald-500/30 rounded-xl px-3 py-1.5">
                           <div className={`text-xl font-bold ${colors.text}`}>{genetic.price}</div>
+                          <div className="text-[10px] text-gray-400 text-center">Pack x6</div>
                         </div>
                       </div>
                     )}
