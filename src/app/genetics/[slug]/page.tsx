@@ -176,6 +176,68 @@ const geneticsData = {
     image: "/sems/bipolaridad.jpg",
     color: "orange",
     icon: Sparkles
+  },
+  "pack-mix": {
+    name: "PACK MIX",
+    subtitle: "Las 3 Genéticas Premium",
+    description: "Nuestro Pack Mix te ofrece la experiencia completa de ChexSeeds con las 3 genéticas premium en un solo pack. Perfecto para cultivadores que quieren probar toda nuestra línea o experimentar con diferentes perfiles de efectos y sabores. Obtén lo mejor de cada variedad: la potencia relajante de Epilepsia, la velocidad extrema de Esquizofrenia, y el efecto eufórico de Bipolaridad Maníaca.",
+    genetics: "Big Bud x Skunk #1 + GG#4 x Santabilbo + Exclusiva Chex Seeds",
+    composition: "Mix: Indica/Sativa",
+    thc: "18-25%",
+    cbd: "Variado",
+    flowering: "6-10 semanas",
+    floweringIndoor: "6-10 semanas",
+    difficulty: "Fácil",
+    smell: "Variado - Todos los perfiles",
+    flavor: "Mix completo: Floral dulce, Uva vainilla, Frutal terroso",
+    effect: "Variedad completa de efectos",
+    productionIndoor: "500-650g/m²",
+    productionOutdoor: "600-1000g/planta",
+    heightIndoor: "Media",
+    heightOutdoor: "Media-Grande",
+    harvestTime: "Septiembre - Octubre",
+    medicalUse: [
+      "Combina todos los beneficios terapéuticos",
+      "Anti-insomnio y relajación muscular",
+      "Anti-ansiedad potente",
+      "Estabilizador de ánimo y anti-estrés"
+    ],
+    effects: [
+      "Variedad completa",
+      "Cerebral & Corporal",
+      "Relajante & Energizante",
+      "Versátil"
+    ],
+    effectsData: {
+      cerebral: 90,
+      body: 75,
+      euphoric: 85,
+      relaxing: 80,
+      creative: 75
+    },
+    flavorProfile: [
+      "Dulce",
+      "Floral",
+      "Frutal",
+      "Terroso",
+      "Vainilla"
+    ],
+    flavorsData: {
+      sweet: 90,
+      fruity: 80,
+      earthy: 60,
+      spicy: 30,
+      floral: 70
+    },
+    features: [
+      "3 genéticas premium en 1 pack",
+      "Máxima variedad de efectos y sabores",
+      "Perfecto para cultivadores experimentales",
+      "Mejor precio por semilla"
+    ],
+    image: "/sems/cana.png",
+    color: "purple",
+    icon: Sparkles
   }
 };
 
@@ -207,5 +269,6 @@ export async function generateStaticParams() {
     { slug: 'epilepsia' },
     { slug: 'bipolaridad-maniaca' },
     { slug: 'esquizofrenia' },
+    { slug: 'pack-mix' },
   ];
 }

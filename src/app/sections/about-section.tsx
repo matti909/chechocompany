@@ -93,13 +93,14 @@ export function AboutSection() {
           
           <div className="max-w-4xl mx-auto">
             <p className="text-xl text-gray-300 leading-relaxed mb-8">
-              En <strong className="text-emerald-400">ChexSeeds</strong> desarrollamos y producimos semillas fotoperiódicas feminizadas, 
-              diseñadas para entregar las más fuertes y las más rápidas del mercado. Cada genética cuenta con 
-              trazabilidad real, lo que asegura transparencia en su origen y evolución.
+              En <strong className="text-emerald-400">ChexSeeds</strong> desarrollamos y producimos semillas fotoperiódicas regulares
+              con <strong className="text-emerald-400">90% de probabilidad de feminización</strong>, diseñadas para entregar las más
+              fuertes y las más rápidas del mercado. Cada genética cuenta con trazabilidad real, lo que asegura
+              transparencia en su origen y evolución.
             </p>
-            
+
             <p className="text-lg text-gray-400 leading-relaxed">
-              Nuestras semillas están adaptadas para rendir en indoor (tierra e hidroponía) y en exterior, 
+              Nuestras semillas están adaptadas para rendir en indoor (tierra e hidroponía) y en exterior,
               resistiendo plagas y respondiendo al clima con estabilidad y potencia.
             </p>
           </div>

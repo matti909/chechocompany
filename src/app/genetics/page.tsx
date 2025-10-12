@@ -71,6 +71,23 @@ const geneticsData = [
     difficulty: 'Fácil',
     environment: 'Interior',
     image: '/sems/cali.jpeg'
+  },
+  {
+    id: 'pack-mix',
+    name: 'PACK MIX',
+    subtitle: 'Las 3 Genéticas',
+    genotype: 'Variedad Completa',
+    thc: '18-25%',
+    cbd: 'Variado',
+    flowering: '6-10 semanas',
+    flavor: 'Mix de sabores',
+    production: 'Alta producción garantizada',
+    medicalUse: ['Variedad de efectos terapéuticos', 'Para todos los usos medicinales', 'Opciones completas'],
+    color: 'purple',
+    price: '$21.000',
+    difficulty: 'Fácil',
+    environment: 'Interior/Exterior',
+    image: '/sems/cana.png'
   }
 ];
 
