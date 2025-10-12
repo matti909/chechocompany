@@ -45,13 +45,13 @@ export async function POST(request: NextRequest) {
 📋 *Pedido:* #${orderNumber}
 
 👤 *Cliente:*
-Nombre: ${customerInfo.name}
+Nombre: ${customerInfo.fullName}
 Email: ${customerInfo.email}
 Teléfono: ${customerInfo.phone}
 
 📍 *Envío:*
 ${customerInfo.address}
-${customerInfo.city}, ${customerInfo.province}
+${customerInfo.city}
 CP: ${customerInfo.postalCode}
 
 🛍️ *Productos:*
