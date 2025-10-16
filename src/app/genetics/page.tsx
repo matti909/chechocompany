@@ -6,13 +6,10 @@ import { Footer } from '../components/footer';
 import { Button } from '@/components/ui/button';
 import {
   Database,
-  Star,
   Zap,
-  ShoppingBag,
   Search,
   SortDesc,
   ChevronDown,
-  MapPin,
   TrendingUp
 } from 'lucide-react';
 import Link from 'next/link';
@@ -149,22 +146,6 @@ export default function GeneticsPage() {
   const [sortBy, setSortBy] = useState('name');
   const [filterBy, setFilterBy] = useState('all');
   const sectionRef = useRef<HTMLElement>(null);
-
-  const { addItem, isItemInCart, getItemQuantity } = useCartStore();
-
-  const handleAddToCart = (genetic: typeof geneticsData[0]) => {
-    addItem({
-      id: genetic.id,
-      name: genetic.name,
-      subtitle: genetic.subtitle,
-      price: parseInt(genetic.price.replace(/[^0-9]/g, '')),
-      originalPrice: genetic.price,
-      color: genetic.color,
-      thc: genetic.thc,
-      flowering: genetic.flowering,
-      genotype: genetic.genotype,
-    });
-  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(

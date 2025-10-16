@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { Award, Clock, Sparkles } from "lucide-react";
+import { Clock, Sparkles } from "lucide-react";
 import { GeneticsClient, type GeneticsData } from './GeneticsClient';
 
 const geneticsData = {

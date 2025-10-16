@@ -86,14 +86,6 @@ export function GeneticsClient({ genetics }: GeneticsClientProps) {
     router.push('/cart');
   };
 
-  // Use default icon based on genetics name or color
-  const getDefaultIcon = () => {
-    if (genetics.name === 'EPILEPSIA') return Sparkles;
-    if (genetics.name === 'ESQUIZOFRENIA') return FlaskConical;
-    return Award;
-  };
-
-  const IconComponent = genetics.icon || getDefaultIcon();
   const colorClasses = {
     pink: {
       gradient: "from-pink-500/20 via-purple-500/20 to-pink-500/20",
