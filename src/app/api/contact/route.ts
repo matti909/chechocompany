@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
 
     const companyEmailData = {
       from: "contacto@chexseeds.com",
-      to: "matias.saantiago@gmail.com",
+      to: "chexseed@gmail.com",
       subject: `[CONTACTO WEB] ${subject}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #000000, #1a1a1a); color: white; border-radius: 20px; overflow: hidden;">
