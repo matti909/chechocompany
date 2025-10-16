@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Button } from "./button";
 import { X, Mail } from "lucide-react";
 import { ButtonLoginIg } from "./button-login-ig";
-import { signIn, signUp } from "@/lib/auth-client";
+import { signIn } from "@/lib/auth-client";
 
 interface LoginModalProps {
   isOpen: boolean;
