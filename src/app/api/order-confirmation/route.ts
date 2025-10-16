@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { Resend } from 'resend';
+import { NextRequest, NextResponse } from "next/server";
+import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -35,37 +35,24 @@ interface OrderData {
 
 export async function POST(request: NextRequest) {
   try {
-    console.log('🔍 Starting order confirmation email...');
-
     const orderData: OrderData = await request.json();
-    console.log('📝 Order data received:', {
-      orderNumber: orderData.orderNumber,
-      email: orderData.customerInfo.email,
-      total: orderData.total
-    });
-
-    // Validate required fields
     if (!orderData.customerInfo.email || !orderData.items.length) {
-      console.log('❌ Validation failed: missing required fields');
       return NextResponse.json(
-        { error: 'Datos de pedido incompletos' },
-        { status: 400 }
+        { error: "Datos de pedido incompletos" },
+        { status: 400 },
       );
     }
 
-    // Check if API key is configured
     if (!process.env.RESEND_API_KEY) {
-      console.log('❌ RESEND_API_KEY not configured');
       return NextResponse.json(
-        { error: 'Error de configuración del servidor' },
-        { status: 500 }
+        { error: "Error de configuración del servidor" },
+        { status: 500 },
       );
     }
 
-    console.log('✅ Validation passed, preparing confirmation email...');
-
-    // Generate order items HTML
-    const orderItemsHtml = orderData.items.map(item => `
+    const orderItemsHtml = orderData.items
+      .map(
+        (item) => `
       <div style="background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 15px; padding: 20px; margin-bottom: 15px;">
         <div style="display: flex; justify-content: space-between; align-items: start; gap: 20px;">
           <div style="flex: 1;">
@@ -95,11 +82,12 @@ export async function POST(request: NextRequest) {
           </div>
         </div>
       </div>
-    `).join('');
+    `,
+      )
+      .join("");
 
-    // Customer confirmation email
     const customerEmailData = {
-      from: 'pedidos@chexseeds.com',
+      from: "pedidos@chexseeds.com",
       to: orderData.customerInfo.email,
       subject: `✅ Pedido Confirmado #${orderData.orderNumber} - CHEX SEEDS`,
       html: `
@@ -148,12 +136,16 @@ export async function POST(request: NextRequest) {
                     <span style="color: #666;">Dirección:</span>
                     <span style="color: white;">${orderData.customerInfo.address}, ${orderData.customerInfo.city} (CP: ${orderData.customerInfo.postalCode})</span>
                   </div>
-                  ${orderData.customerInfo.notes ? `
+                  ${
+                    orderData.customerInfo.notes
+                      ? `
                   <div>
                     <span style="color: #666;">Notas:</span>
                     <span style="color: white;">${orderData.customerInfo.notes}</span>
                   </div>
-                  ` : ''}
+                  `
+                      : ""
+                  }
                 </div>
               </div>
             </div>
@@ -174,8 +166,8 @@ export async function POST(request: NextRequest) {
                 </div>
                 <div style="display: flex; justify-content: space-between;">
                   <span style="color: #666;">Envío:</span>
-                  <span style="color: ${orderData.shipping === 0 ? '#10b981' : 'white'}; font-weight: 600;">
-                    ${orderData.shipping === 0 ? 'GRATIS' : '$' + orderData.shipping.toLocaleString()}
+                  <span style="color: ${orderData.shipping === 0 ? "#10b981" : "white"}; font-weight: 600;">
+                    ${orderData.shipping === 0 ? "GRATIS" : "$" + orderData.shipping.toLocaleString()}
                   </span>
                 </div>
                 <div style="border-top: 2px solid rgba(16, 185, 129, 0.3); padding-top: 12px; margin-top: 12px;">
@@ -243,8 +235,8 @@ export async function POST(request: NextRequest) {
 
     // Company notification email
     const companyEmailData = {
-      from: 'pedidos@chexseeds.com',
-      to: 'matias.saantiago@gmail.com',
+      from: "pedidos@chexseeds.com",
+      to: "matias.saantiago@gmail.com",
       subject: `🎉 NUEVO PEDIDO #${orderData.orderNumber} - $${orderData.total.toLocaleString()}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 700px; margin: 0 auto; background: linear-gradient(135deg, #000000, #1a1a1a); color: white; border-radius: 20px; overflow: hidden;">
@@ -265,7 +257,7 @@ export async function POST(request: NextRequest) {
                 <div><span style="color: #666;">Email:</span> <span style="color: #10b981;">${orderData.customerInfo.email}</span></div>
                 <div><span style="color: #666;">Teléfono:</span> <span style="color: white;">${orderData.customerInfo.phone}</span></div>
                 <div><span style="color: #666;">Dirección:</span> <span style="color: white;">${orderData.customerInfo.address}, ${orderData.customerInfo.city} (CP: ${orderData.customerInfo.postalCode})</span></div>
-                ${orderData.customerInfo.notes ? `<div><span style="color: #666;">Notas:</span> <span style="color: #84cc16;">${orderData.customerInfo.notes}</span></div>` : ''}
+                ${orderData.customerInfo.notes ? `<div><span style="color: #666;">Notas:</span> <span style="color: #84cc16;">${orderData.customerInfo.notes}</span></div>` : ""}
               </div>
             </div>
 
@@ -283,7 +275,7 @@ export async function POST(request: NextRequest) {
                 </div>
                 <div style="display: flex; justify-content: space-between;">
                   <span style="color: #666;">Envío:</span>
-                  <span style="color: white;">${orderData.shipping === 0 ? 'GRATIS' : '$' + orderData.shipping.toLocaleString()}</span>
+                  <span style="color: white;">${orderData.shipping === 0 ? "GRATIS" : "$" + orderData.shipping.toLocaleString()}</span>
                 </div>
                 <div style="border-top: 2px solid rgba(16, 185, 129, 0.3); padding-top: 12px; margin-top: 12px;">
                   <div style="display: flex; justify-content: space-between; font-size: 28px;">
@@ -298,40 +290,33 @@ export async function POST(request: NextRequest) {
       `,
     };
 
-    // Send emails
-    console.log('📧 Sending confirmation emails...');
-
     try {
-      // Send to company
       const companyResult = await resend.emails.send(companyEmailData);
-      console.log('✅ Company notification sent:', companyResult);
-
-      // Send customer confirmation
       const customerResult = await resend.emails.send(customerEmailData);
-      console.log('✅ Customer confirmation sent:', customerResult);
 
       return NextResponse.json(
         {
-          message: 'Emails de confirmación enviados exitosamente',
+          message: "Emails de confirmación enviados exitosamente",
           companyEmailSent: true,
-          customerEmailSent: true
+          customerEmailSent: true,
         },
-        { status: 200 }
+        { status: 200 },
       );
-
     } catch (emailError) {
-      console.error('❌ Error sending confirmation emails:', emailError);
       return NextResponse.json(
-        { error: 'Error al enviar emails de confirmación: ' + (emailError as Error).message },
-        { status: 500 }
+        {
+          error:
+            "Error al enviar emails de confirmación: " +
+            (emailError as Error).message,
+        },
+        { status: 500 },
       );
     }
-
   } catch (error) {
-    console.error('❌ General error:', error);
     return NextResponse.json(
-      { error: 'Error interno del servidor' },
-      { status: 500 }
+      { error: "Error interno del servidor" },
+      { status: 500 },
     );
   }
 }
+

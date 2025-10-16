@@ -1,49 +1,38 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { Resend } from 'resend';
+import { NextRequest, NextResponse } from "next/server";
+import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: NextRequest) {
   try {
-    console.log('🔍 Starting contact form submission...');
-
     const { name, email, subject, message } = await request.json();
-    console.log('📝 Form data received:', { name, email, subject, message: message.substring(0, 50) + '...' });
 
     // Validate required fields
     if (!name || !email || !subject || !message) {
-      console.log('❌ Validation failed: missing fields');
       return NextResponse.json(
-        { error: 'Todos los campos son requeridos' },
-        { status: 400 }
+        { error: "Todos los campos son requeridos" },
+        { status: 400 },
       );
     }
 
-    // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      console.log('❌ Validation failed: invalid email format');
       return NextResponse.json(
-        { error: 'Formato de email inválido' },
-        { status: 400 }
+        { error: "Formato de email inválido" },
+        { status: 400 },
       );
     }
 
-    // Check if API key is configured
     if (!process.env.RESEND_API_KEY) {
-      console.log('❌ RESEND_API_KEY not configured');
       return NextResponse.json(
-        { error: 'Error de configuración del servidor' },
-        { status: 500 }
+        { error: "Error de configuración del servidor" },
+        { status: 500 },
       );
     }
 
-    console.log('✅ Validation passed, preparing emails...');
-
-    // Send email to company
     const companyEmailData = {
-      from: 'contacto@chexseeds.com',
-      to: 'matias.saantiago@gmail.com',
+      from: "contacto@chexseeds.com",
+      to: "matias.saantiago@gmail.com",
       subject: `[CONTACTO WEB] ${subject}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #000000, #1a1a1a); color: white; border-radius: 20px; overflow: hidden;">
@@ -100,9 +89,9 @@ export async function POST(request: NextRequest) {
 
     // Send auto-reply to customer
     const customerEmailData = {
-      from: 'contacto@chexseeds.com',
+      from: "contacto@chexseeds.com",
       to: email,
-      subject: '✅ Hemos recibido tu mensaje - CHEX SEEDS',
+      subject: "✅ Hemos recibido tu mensaje - CHEX SEEDS",
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #000000, #1a1a1a); color: white; border-radius: 20px; overflow: hidden;">
           <!-- Header -->
@@ -171,36 +160,25 @@ export async function POST(request: NextRequest) {
       `,
     };
 
-    // Send emails
-    console.log('📧 Sending emails...');
-
     try {
-      // Send to company
       const companyResult = await resend.emails.send(companyEmailData);
-      console.log('✅ Company email result:', companyResult);
-
-      // Send auto-reply to customer
       const customerResult = await resend.emails.send(customerEmailData);
-      console.log('✅ Customer email result:', customerResult);
 
       return NextResponse.json(
-        { message: 'Mensaje enviado exitosamente' },
-        { status: 200 }
+        { message: "Mensaje enviado exitosamente" },
+        { status: 200 },
       );
-
     } catch (emailError) {
-      console.error('❌ Error sending emails:', emailError);
       return NextResponse.json(
-        { error: 'Error al enviar el email: ' + (emailError as Error).message },
-        { status: 500 }
+        { error: "Error al enviar el email: " + (emailError as Error).message },
+        { status: 500 },
       );
     }
-
   } catch (error) {
-    console.error('❌ General error:', error);
     return NextResponse.json(
-      { error: 'Error interno del servidor' },
-      { status: 500 }
+      { error: "Error interno del servidor" },
+      { status: 500 },
     );
   }
 }
+

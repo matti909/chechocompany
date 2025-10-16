@@ -47,3 +47,5 @@ bun.lock
 CLAUDE.md
 
 package-lock.json
+
+.mcp.json
