@@ -15,12 +15,13 @@ export function UserMenu({ onLoginClick }: UserMenuProps) {
   const userMenuRef = useRef<HTMLDivElement>(null);
   const { session, clearSession } = useAuthStore();
 
-  console.log("🔍 UserMenu - Session:", session);
-
   // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+      if (
+        userMenuRef.current &&
+        !userMenuRef.current.contains(event.target as Node)
+      ) {
         setIsUserMenuOpen(false);
       }
     };
@@ -55,14 +56,14 @@ export function UserMenu({ onLoginClick }: UserMenuProps) {
             gsap.to(e.currentTarget, {
               scale: 1.1,
               duration: 0.3,
-              ease: "power2.out"
+              ease: "power2.out",
             });
           }}
           onMouseLeave={(e) => {
             gsap.to(e.currentTarget, {
               scale: 1,
               duration: 0.3,
-              ease: "power2.out"
+              ease: "power2.out",
             });
           }}
         >
@@ -85,7 +86,7 @@ export function UserMenu({ onLoginClick }: UserMenuProps) {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-white font-semibold truncate">
-                    {session.user.name || session.user.email?.split('@')[0]}
+                    {session.user.name || session.user.email?.split("@")[0]}
                   </p>
                   <p className="text-gray-400 text-sm truncate">
                     {session.user.email}
@@ -130,14 +131,14 @@ export function UserMenu({ onLoginClick }: UserMenuProps) {
         gsap.to(e.currentTarget, {
           scale: 1.1,
           duration: 0.3,
-          ease: "power2.out"
+          ease: "power2.out",
         });
       }}
       onMouseLeave={(e) => {
         gsap.to(e.currentTarget, {
           scale: 1,
           duration: 0.3,
-          ease: "power2.out"
+          ease: "power2.out",
         });
       }}
     >
