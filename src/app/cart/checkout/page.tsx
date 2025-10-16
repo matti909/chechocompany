@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Navbar } from '../../components/navbar';
-import { Footer } from '../../components/footer';
-import { Button } from '@/components/ui/button';
-import useCartStore from '@/store/cart-store';
-import { useAuthStore } from '@/store/auth-store';
-import { toast } from 'sonner';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Navbar } from "../../components/navbar";
+import { Footer } from "../../components/footer";
+import { Button } from "@/components/ui/button";
+import useCartStore from "@/store/cart-store";
+import { useAuthStore } from "@/store/auth-store";
+import { toast } from "sonner";
 import {
   CreditCard,
   ArrowLeft,
@@ -24,18 +24,18 @@ import {
   ShoppingBag,
   AlertCircle,
   Clock,
-  Sparkles
-} from 'lucide-react';
-import Link from 'next/link';
-import Image from 'next/image';
+  Sparkles,
+} from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
 
 const colorSchemes = {
-  pink: 'from-pink-500 to-purple-500',
-  emerald: 'from-emerald-500 to-lime-500',
-  blue: 'from-blue-500 to-purple-500',
-  orange: 'from-orange-500 to-yellow-500',
-  purple: 'from-purple-500 to-violet-500',
-  cyan: 'from-cyan-500 to-blue-500'
+  pink: "from-pink-500 to-purple-500",
+  emerald: "from-emerald-500 to-lime-500",
+  blue: "from-blue-500 to-purple-500",
+  orange: "from-orange-500 to-yellow-500",
+  purple: "from-purple-500 to-violet-500",
+  cyan: "from-cyan-500 to-blue-500",
 };
 
 export default function CheckoutPage() {
@@ -49,7 +49,7 @@ export default function CheckoutPage() {
     updateCustomerInfo,
     setSubmitting,
     completeOrder,
-    resetCheckout
+    resetCheckout,
   } = useCartStore();
 
   const { session } = useAuthStore();
@@ -65,7 +65,7 @@ export default function CheckoutPage() {
   useEffect(() => {
     // Redirect to cart if no items
     if (isClient && items.length === 0 && !checkout.orderPlaced) {
-      router.push('/cart');
+      router.push("/cart");
     }
   }, [items.length, isClient, router, checkout.orderPlaced]);
 
@@ -74,29 +74,29 @@ export default function CheckoutPage() {
     const { customerInfo } = checkout;
 
     if (!customerInfo.fullName.trim()) {
-      errors.fullName = 'El nombre completo es requerido';
+      errors.fullName = "El nombre completo es requerido";
     }
 
     if (!customerInfo.email.trim()) {
-      errors.email = 'El email es requerido';
+      errors.email = "El email es requerido";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerInfo.email)) {
-      errors.email = 'Formato de email inválido';
+      errors.email = "Formato de email inválido";
     }
 
     if (!customerInfo.phone.trim()) {
-      errors.phone = 'El teléfono es requerido';
+      errors.phone = "El teléfono es requerido";
     }
 
     if (!customerInfo.address.trim()) {
-      errors.address = 'La dirección es requerida';
+      errors.address = "La dirección es requerida";
     }
 
     if (!customerInfo.city.trim()) {
-      errors.city = 'La ciudad es requerida';
+      errors.city = "La ciudad es requerida";
     }
 
     if (!customerInfo.postalCode.trim()) {
-      errors.postalCode = 'El código postal es requerido';
+      errors.postalCode = "El código postal es requerido";
     }
 
     setFormErrors(errors);
@@ -125,91 +125,100 @@ export default function CheckoutPage() {
         shipping: shipping,
         total: finalTotal,
         orderNumber: orderNumber,
-        userId: session?.user?.id || null
+        userId: session?.user?.id || null,
       };
 
       // Show loading toast
-      toast.loading('Procesando tu pedido...', { id: 'order-processing' });
+      toast.loading("Procesando tu pedido...", { id: "order-processing" });
 
       // 1. Save order to database
-      const orderResponse = await fetch('/api/orders', {
-        method: 'POST',
+      const orderResponse = await fetch("/api/orders", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(orderData),
       });
 
       if (!orderResponse.ok) {
         const errorData = await orderResponse.json();
-        throw new Error(errorData.error || 'Error al guardar el pedido');
+        throw new Error(errorData.error || "Error al guardar el pedido");
       }
 
       await orderResponse.json();
-      toast.success('Pedido guardado exitosamente!', { id: 'order-processing' });
+      toast.success("Pedido guardado exitosamente!", {
+        id: "order-processing",
+      });
 
       // 2. Send confirmation email
-      toast.loading('Enviando email de confirmación...', { id: 'email-sending' });
-      const emailResponse = await fetch('/api/order-confirmation', {
-        method: 'POST',
+      toast.loading("Enviando email de confirmación...", {
+        id: "email-sending",
+      });
+      const emailResponse = await fetch("/api/order-confirmation", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(orderData),
       });
 
       if (!emailResponse.ok) {
-        console.error('Error sending confirmation email:', await emailResponse.text());
-        toast.error('No se pudo enviar el email de confirmación', { id: 'email-sending' });
+        toast.error("No se pudo enviar el email de confirmación", {
+          id: "email-sending",
+        });
       } else {
-        toast.success('Email de confirmación enviado!', { id: 'email-sending' });
+        toast.success("Email de confirmación enviado!", {
+          id: "email-sending",
+        });
       }
 
       // 3. Send WhatsApp notification
-      toast.loading('Enviando notificación de WhatsApp...', { id: 'whatsapp-sending' });
-      const whatsappResponse = await fetch('/api/notify-whatsapp', {
-        method: 'POST',
+      toast.loading("Enviando notificación de WhatsApp...", {
+        id: "whatsapp-sending",
+      });
+      const whatsappResponse = await fetch("/api/notify-whatsapp", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(orderData),
       });
 
       if (!whatsappResponse.ok) {
-        console.error('Error sending WhatsApp notification:', await whatsappResponse.text());
-        toast.error('No se pudo enviar la notificación de WhatsApp', { id: 'whatsapp-sending' });
+        toast.error("No se pudo enviar la notificación de WhatsApp", {
+          id: "whatsapp-sending",
+        });
       } else {
-        toast.success('Notificación de WhatsApp enviada!', { id: 'whatsapp-sending' });
+        toast.success("Notificación de WhatsApp enviada!", {
+          id: "whatsapp-sending",
+        });
       }
 
       // 4. Show final success message
       toast.success(`¡Pedido completado! Número: ${orderNumber}`, {
         duration: 5000,
-        description: 'Recibirás un email con los detalles del envío'
+        description: "Recibirás un email con los detalles del envío",
       });
 
-      // Complete the order
       completeOrder();
     } catch (error) {
-      console.error('Error processing order:', error);
-      toast.error(error instanceof Error ? error.message : 'Error al procesar el pedido', {
-        id: 'order-processing'
-      });
+      toast.error(
+        error instanceof Error ? error.message : "Error al procesar el pedido",
+        {
+          id: "order-processing",
+        },
+      );
       setSubmitting(false);
     }
   };
 
-  // Calculate totals
   const subtotal = totalPrice;
   const shipping = subtotal > 100000 ? 0 : 8000;
   const finalTotal = subtotal + shipping;
 
-  // Prevent hydration errors
   if (!isClient) {
     return null;
   }
-
-  // Order success state
   if (checkout.orderPlaced) {
     return (
       <div className="min-h-screen bg-black">
@@ -237,14 +246,16 @@ export default function CheckoutPage() {
             </h1>
 
             <p className="text-xl text-gray-300 leading-relaxed mb-8 max-w-2xl mx-auto">
-              Tu pedido ha sido procesado exitosamente. Recibirás un email de confirmación
-              con todos los detalles y el seguimiento del envío.
+              Tu pedido ha sido procesado exitosamente. Recibirás un email de
+              confirmación con todos los detalles y el seguimiento del envío.
             </p>
 
             <div className="grid md:grid-cols-3 gap-6 mb-12">
               <div className="bg-black/60 border border-emerald-500/30 rounded-2xl p-6">
                 <Package className="w-8 h-8 text-emerald-400 mx-auto mb-4" />
-                <h3 className="text-lg font-bold text-white mb-2">Preparación</h3>
+                <h3 className="text-lg font-bold text-white mb-2">
+                  Preparación
+                </h3>
                 <p className="text-gray-400 text-sm">1-2 días hábiles</p>
               </div>
               <div className="bg-black/60 border border-emerald-500/30 rounded-2xl p-6">
@@ -298,7 +309,10 @@ export default function CheckoutPage() {
         <div className="relative z-10 max-w-7xl mx-auto px-6">
           <div className="flex items-center gap-4 mb-8">
             <Link href="/cart">
-              <Button variant="outline" className="border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10">
+              <Button
+                variant="outline"
+                className="border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10"
+              >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Volver al Carrito
               </Button>
@@ -322,30 +336,46 @@ export default function CheckoutPage() {
 
             {/* Step Indicator */}
             <div className="flex items-center justify-center gap-4 mt-8">
-              <div className={`flex items-center gap-2 px-4 py-2 rounded-full ${
-                checkout.step === 1 ? 'bg-emerald-500/20 border border-emerald-500/40' : 'bg-gray-800/50'
-              }`}>
-                <div className={`w-2 h-2 rounded-full ${
-                  checkout.step === 1 ? 'bg-emerald-400' : 'bg-gray-400'
-                }`} />
-                <span className={`text-sm font-medium ${
-                  checkout.step === 1 ? 'text-emerald-400' : 'text-gray-400'
-                }`}>
+              <div
+                className={`flex items-center gap-2 px-4 py-2 rounded-full ${
+                  checkout.step === 1
+                    ? "bg-emerald-500/20 border border-emerald-500/40"
+                    : "bg-gray-800/50"
+                }`}
+              >
+                <div
+                  className={`w-2 h-2 rounded-full ${
+                    checkout.step === 1 ? "bg-emerald-400" : "bg-gray-400"
+                  }`}
+                />
+                <span
+                  className={`text-sm font-medium ${
+                    checkout.step === 1 ? "text-emerald-400" : "text-gray-400"
+                  }`}
+                >
                   Información Personal
                 </span>
               </div>
 
               <div className="w-8 h-px bg-gray-600" />
 
-              <div className={`flex items-center gap-2 px-4 py-2 rounded-full ${
-                checkout.step === 2 ? 'bg-emerald-500/20 border border-emerald-500/40' : 'bg-gray-800/50'
-              }`}>
-                <div className={`w-2 h-2 rounded-full ${
-                  checkout.step === 2 ? 'bg-emerald-400' : 'bg-gray-400'
-                }`} />
-                <span className={`text-sm font-medium ${
-                  checkout.step === 2 ? 'text-emerald-400' : 'text-gray-400'
-                }`}>
+              <div
+                className={`flex items-center gap-2 px-4 py-2 rounded-full ${
+                  checkout.step === 2
+                    ? "bg-emerald-500/20 border border-emerald-500/40"
+                    : "bg-gray-800/50"
+                }`}
+              >
+                <div
+                  className={`w-2 h-2 rounded-full ${
+                    checkout.step === 2 ? "bg-emerald-400" : "bg-gray-400"
+                  }`}
+                />
+                <span
+                  className={`text-sm font-medium ${
+                    checkout.step === 2 ? "text-emerald-400" : "text-gray-400"
+                  }`}
+                >
                   Confirmar Pedido
                 </span>
               </div>
@@ -370,8 +400,12 @@ export default function CheckoutPage() {
                         <User className="w-6 h-6 text-black" />
                       </div>
                       <div>
-                        <h2 className="text-2xl font-bold text-white">Información Personal</h2>
-                        <p className="text-gray-400">Completa tus datos para el envío</p>
+                        <h2 className="text-2xl font-bold text-white">
+                          Información Personal
+                        </h2>
+                        <p className="text-gray-400">
+                          Completa tus datos para el envío
+                        </p>
                       </div>
                     </div>
 
@@ -385,7 +419,9 @@ export default function CheckoutPage() {
                         <input
                           type="text"
                           value={checkout.customerInfo.fullName}
-                          onChange={(e) => updateCustomerInfo({ fullName: e.target.value })}
+                          onChange={(e) =>
+                            updateCustomerInfo({ fullName: e.target.value })
+                          }
                           placeholder="Juan Pérez"
                           className="w-full px-4 py-3 bg-black/60 border border-emerald-500/30 rounded-xl text-white placeholder-gray-400 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
                         />
@@ -407,7 +443,9 @@ export default function CheckoutPage() {
                           <input
                             type="email"
                             value={checkout.customerInfo.email}
-                            onChange={(e) => updateCustomerInfo({ email: e.target.value })}
+                            onChange={(e) =>
+                              updateCustomerInfo({ email: e.target.value })
+                            }
                             placeholder="juan@email.com"
                             className="w-full px-4 py-3 bg-black/60 border border-emerald-500/30 rounded-xl text-white placeholder-gray-400 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
                           />
@@ -427,7 +465,9 @@ export default function CheckoutPage() {
                           <input
                             type="tel"
                             value={checkout.customerInfo.phone}
-                            onChange={(e) => updateCustomerInfo({ phone: e.target.value })}
+                            onChange={(e) =>
+                              updateCustomerInfo({ phone: e.target.value })
+                            }
                             placeholder="+54 11 1234-5678"
                             className="w-full px-4 py-3 bg-black/60 border border-emerald-500/30 rounded-xl text-white placeholder-gray-400 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
                           />
@@ -449,7 +489,9 @@ export default function CheckoutPage() {
                         <input
                           type="text"
                           value={checkout.customerInfo.address}
-                          onChange={(e) => updateCustomerInfo({ address: e.target.value })}
+                          onChange={(e) =>
+                            updateCustomerInfo({ address: e.target.value })
+                          }
                           placeholder="Av. Corrientes 1234"
                           className="w-full px-4 py-3 bg-black/60 border border-emerald-500/30 rounded-xl text-white placeholder-gray-400 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
                         />
@@ -470,7 +512,9 @@ export default function CheckoutPage() {
                           <input
                             type="text"
                             value={checkout.customerInfo.city}
-                            onChange={(e) => updateCustomerInfo({ city: e.target.value })}
+                            onChange={(e) =>
+                              updateCustomerInfo({ city: e.target.value })
+                            }
                             placeholder="Buenos Aires"
                             className="w-full px-4 py-3 bg-black/60 border border-emerald-500/30 rounded-xl text-white placeholder-gray-400 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
                           />
@@ -489,7 +533,9 @@ export default function CheckoutPage() {
                           <input
                             type="text"
                             value={checkout.customerInfo.postalCode}
-                            onChange={(e) => updateCustomerInfo({ postalCode: e.target.value })}
+                            onChange={(e) =>
+                              updateCustomerInfo({ postalCode: e.target.value })
+                            }
                             placeholder="1000"
                             className="w-full px-4 py-3 bg-black/60 border border-emerald-500/30 rounded-xl text-white placeholder-gray-400 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
                           />
@@ -510,7 +556,9 @@ export default function CheckoutPage() {
                         </label>
                         <textarea
                           value={checkout.customerInfo.notes}
-                          onChange={(e) => updateCustomerInfo({ notes: e.target.value })}
+                          onChange={(e) =>
+                            updateCustomerInfo({ notes: e.target.value })
+                          }
                           placeholder="Instrucciones especiales para el envío..."
                           rows={3}
                           className="w-full px-4 py-3 bg-black/60 border border-emerald-500/30 rounded-xl text-white placeholder-gray-400 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200 resize-none"
@@ -534,7 +582,9 @@ export default function CheckoutPage() {
                 <div className="relative">
                   <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/30 to-purple-500/30 rounded-2xl blur-lg opacity-60" />
                   <div className="relative bg-black/90 backdrop-blur-xl border border-blue-500/30 rounded-2xl p-6">
-                    <h3 className="text-xl font-bold text-white mb-6">Resumen del Pedido</h3>
+                    <h3 className="text-xl font-bold text-white mb-6">
+                      Resumen del Pedido
+                    </h3>
 
                     <div className="space-y-4 mb-6">
                       {items.slice(0, 3).map((item) => (
@@ -549,14 +599,20 @@ export default function CheckoutPage() {
                                 className="object-cover w-full h-full"
                               />
                             ) : (
-                              <div className={`w-full h-full bg-gradient-to-r ${colorSchemes[item.color as keyof typeof colorSchemes]}/20 flex items-center justify-center`}>
+                              <div
+                                className={`w-full h-full bg-gradient-to-r ${colorSchemes[item.color as keyof typeof colorSchemes]}/20 flex items-center justify-center`}
+                              >
                                 <ShoppingBag className="w-6 h-6 text-emerald-400" />
                               </div>
                             )}
                           </div>
                           <div className="flex-1">
-                            <div className="text-white font-medium text-sm">{item.name}</div>
-                            <div className="text-gray-400 text-xs">{item.quantity}x ${item.price.toLocaleString()}</div>
+                            <div className="text-white font-medium text-sm">
+                              {item.name}
+                            </div>
+                            <div className="text-gray-400 text-xs">
+                              {item.quantity}x ${item.price.toLocaleString()}
+                            </div>
                           </div>
                         </div>
                       ))}
@@ -570,17 +626,27 @@ export default function CheckoutPage() {
                     <div className="space-y-2 pt-4 border-t border-emerald-500/30">
                       <div className="flex justify-between text-gray-400">
                         <span>Subtotal ({totalItems} productos)</span>
-                        <span className="text-white">${subtotal.toLocaleString()}</span>
+                        <span className="text-white">
+                          ${subtotal.toLocaleString()}
+                        </span>
                       </div>
                       <div className="flex justify-between text-gray-400">
                         <span>Envío</span>
-                        <span className={shipping === 0 ? 'text-emerald-400' : 'text-white'}>
-                          {shipping === 0 ? 'Gratis' : `$${shipping.toLocaleString()}`}
+                        <span
+                          className={
+                            shipping === 0 ? "text-emerald-400" : "text-white"
+                          }
+                        >
+                          {shipping === 0
+                            ? "Gratis"
+                            : `$${shipping.toLocaleString()}`}
                         </span>
                       </div>
                       <div className="flex justify-between text-xl font-bold pt-2 border-t border-emerald-500/30">
                         <span className="text-white">Total</span>
-                        <span className="text-emerald-400">${finalTotal.toLocaleString()}</span>
+                        <span className="text-emerald-400">
+                          ${finalTotal.toLocaleString()}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -602,7 +668,9 @@ export default function CheckoutPage() {
                           <User className="w-6 h-6 text-black" />
                         </div>
                         <div>
-                          <h3 className="text-xl font-bold text-white">Información de Envío</h3>
+                          <h3 className="text-xl font-bold text-white">
+                            Información de Envío
+                          </h3>
                           <p className="text-gray-400">Revisa tus datos</p>
                         </div>
                       </div>
@@ -619,30 +687,41 @@ export default function CheckoutPage() {
                     <div className="grid md:grid-cols-2 gap-6 text-sm">
                       <div>
                         <div className="text-gray-400 mb-1">Nombre</div>
-                        <div className="text-white font-medium">{checkout.customerInfo.fullName}</div>
+                        <div className="text-white font-medium">
+                          {checkout.customerInfo.fullName}
+                        </div>
                       </div>
                       <div>
                         <div className="text-gray-400 mb-1">Email</div>
-                        <div className="text-white font-medium">{checkout.customerInfo.email}</div>
+                        <div className="text-white font-medium">
+                          {checkout.customerInfo.email}
+                        </div>
                       </div>
                       <div>
                         <div className="text-gray-400 mb-1">Teléfono</div>
-                        <div className="text-white font-medium">{checkout.customerInfo.phone}</div>
+                        <div className="text-white font-medium">
+                          {checkout.customerInfo.phone}
+                        </div>
                       </div>
                       <div>
                         <div className="text-gray-400 mb-1">Ciudad</div>
-                        <div className="text-white font-medium">{checkout.customerInfo.city}</div>
+                        <div className="text-white font-medium">
+                          {checkout.customerInfo.city}
+                        </div>
                       </div>
                       <div className="md:col-span-2">
                         <div className="text-gray-400 mb-1">Dirección</div>
                         <div className="text-white font-medium">
-                          {checkout.customerInfo.address}, CP: {checkout.customerInfo.postalCode}
+                          {checkout.customerInfo.address}, CP:{" "}
+                          {checkout.customerInfo.postalCode}
                         </div>
                       </div>
                       {checkout.customerInfo.notes && (
                         <div className="md:col-span-2">
                           <div className="text-gray-400 mb-1">Notas</div>
-                          <div className="text-white font-medium">{checkout.customerInfo.notes}</div>
+                          <div className="text-white font-medium">
+                            {checkout.customerInfo.notes}
+                          </div>
                         </div>
                       )}
                     </div>
@@ -653,11 +732,16 @@ export default function CheckoutPage() {
                 <div className="relative">
                   <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/30 to-purple-500/30 rounded-3xl blur-xl opacity-60" />
                   <div className="relative bg-black/90 backdrop-blur-xl border border-blue-500/30 rounded-3xl p-8">
-                    <h3 className="text-xl font-bold text-white mb-6">Productos en tu Pedido</h3>
+                    <h3 className="text-xl font-bold text-white mb-6">
+                      Productos en tu Pedido
+                    </h3>
 
                     <div className="space-y-6">
                       {items.map((item) => (
-                        <div key={item.id} className="flex items-center gap-6 p-4 bg-black/40 rounded-2xl border border-emerald-500/20">
+                        <div
+                          key={item.id}
+                          className="flex items-center gap-6 p-4 bg-black/40 rounded-2xl border border-emerald-500/20"
+                        >
                           <div className="w-16 h-16 rounded-xl overflow-hidden border-2 border-emerald-500/30">
                             {item.image ? (
                               <Image
@@ -668,24 +752,43 @@ export default function CheckoutPage() {
                                 className="object-cover w-full h-full"
                               />
                             ) : (
-                              <div className={`w-full h-full bg-gradient-to-r ${colorSchemes[item.color as keyof typeof colorSchemes]}/20 flex items-center justify-center`}>
+                              <div
+                                className={`w-full h-full bg-gradient-to-r ${colorSchemes[item.color as keyof typeof colorSchemes]}/20 flex items-center justify-center`}
+                              >
                                 <ShoppingBag className="w-8 h-8 text-emerald-400" />
                               </div>
                             )}
                           </div>
                           <div className="flex-1">
-                            <h4 className="text-lg font-bold text-white">{item.name}</h4>
-                            <p className="text-emerald-400 mb-2">{item.subtitle}</p>
+                            <h4 className="text-lg font-bold text-white">
+                              {item.name}
+                            </h4>
+                            <p className="text-emerald-400 mb-2">
+                              {item.subtitle}
+                            </p>
                             <div className="grid grid-cols-2 gap-4 text-sm text-gray-400">
-                              <div>THC: <span className="text-white">{item.thc}</span></div>
-                              <div>Genotipo: <span className="text-white">{item.genotype}</span></div>
+                              <div>
+                                THC:{" "}
+                                <span className="text-white">{item.thc}</span>
+                              </div>
+                              <div>
+                                Genotipo:{" "}
+                                <span className="text-white">
+                                  {item.genotype}
+                                </span>
+                              </div>
                             </div>
                           </div>
                           <div className="text-right">
-                            <div className="text-2xl font-bold text-emerald-400">${item.price.toLocaleString()}</div>
-                            <div className="text-sm text-gray-400">Cantidad: {item.quantity}</div>
+                            <div className="text-2xl font-bold text-emerald-400">
+                              ${item.price.toLocaleString()}
+                            </div>
+                            <div className="text-sm text-gray-400">
+                              Cantidad: {item.quantity}
+                            </div>
                             <div className="text-sm text-white font-medium">
-                              Total: ${(item.price * item.quantity).toLocaleString()}
+                              Total: $
+                              {(item.price * item.quantity).toLocaleString()}
                             </div>
                           </div>
                         </div>
@@ -700,25 +803,37 @@ export default function CheckoutPage() {
                 <div className="relative">
                   <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500/50 via-lime-500/50 to-emerald-500/50 rounded-3xl blur-xl opacity-60" />
                   <div className="relative bg-black/90 backdrop-blur-xl border border-emerald-500/30 rounded-3xl p-8">
-                    <h3 className="text-2xl font-bold text-white mb-6">Total del Pedido</h3>
+                    <h3 className="text-2xl font-bold text-white mb-6">
+                      Total del Pedido
+                    </h3>
 
                     <div className="space-y-4 mb-8">
                       <div className="flex justify-between text-gray-400">
                         <span>Subtotal ({totalItems} productos)</span>
-                        <span className="text-white">${subtotal.toLocaleString()}</span>
+                        <span className="text-white">
+                          ${subtotal.toLocaleString()}
+                        </span>
                       </div>
 
                       <div className="flex justify-between text-gray-400">
                         <span>Envío</span>
-                        <span className={shipping === 0 ? 'text-emerald-400' : 'text-white'}>
-                          {shipping === 0 ? 'Gratis' : `$${shipping.toLocaleString()}`}
+                        <span
+                          className={
+                            shipping === 0 ? "text-emerald-400" : "text-white"
+                          }
+                        >
+                          {shipping === 0
+                            ? "Gratis"
+                            : `$${shipping.toLocaleString()}`}
                         </span>
                       </div>
 
                       <div className="border-t border-emerald-500/30 pt-4">
                         <div className="flex justify-between text-2xl font-bold">
                           <span className="text-white">Total Final</span>
-                          <span className="text-emerald-400">${finalTotal.toLocaleString()}</span>
+                          <span className="text-emerald-400">
+                            ${finalTotal.toLocaleString()}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -755,11 +870,15 @@ export default function CheckoutPage() {
                   </div>
                   <div className="flex items-center gap-3 text-emerald-400">
                     <Truck className="w-5 h-5" />
-                    <span className="text-white text-sm">Envío discreto y seguro</span>
+                    <span className="text-white text-sm">
+                      Envío discreto y seguro
+                    </span>
                   </div>
                   <div className="flex items-center gap-3 text-emerald-400">
                     <CheckCircle className="w-5 h-5" />
-                    <span className="text-white text-sm">Garantía de germinación</span>
+                    <span className="text-white text-sm">
+                      Garantía de germinación
+                    </span>
                   </div>
                 </div>
               </div>
@@ -772,3 +891,4 @@ export default function CheckoutPage() {
     </div>
   );
 }
+
