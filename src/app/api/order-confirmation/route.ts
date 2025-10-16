@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
       .join("");
 
     const customerEmailData = {
-      from: "pedidos@chexseeds.com",
+      from: "contacto@chexseeds.com",
       to: orderData.customerInfo.email,
       subject: `✅ Pedido Confirmado #${orderData.orderNumber} - CHEX SEEDS`,
       html: `
@@ -235,8 +235,8 @@ export async function POST(request: NextRequest) {
 
     // Company notification email
     const companyEmailData = {
-      from: "pedidos@chexseeds.com",
-      to: "matias.saantiago@gmail.com",
+      from: "contacto@chexseeds.com",
+      to: "chexseeds@gmail.com",
       subject: `🎉 NUEVO PEDIDO #${orderData.orderNumber} - $${orderData.total.toLocaleString()}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 700px; margin: 0 auto; background: linear-gradient(135deg, #000000, #1a1a1a); color: white; border-radius: 20px; overflow: hidden;">
@@ -319,4 +319,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Navbar } from '../components/navbar';
-import { Footer } from '../components/footer';
-import { Button } from '@/components/ui/button';
+import { useState } from "react";
+import { Navbar } from "../components/navbar";
+import { Footer } from "../components/footer";
+import { Button } from "@/components/ui/button";
 import {
   Send,
   Mail,
@@ -14,49 +14,53 @@ import {
   AlertCircle,
   Leaf,
   Zap,
-  Instagram
-} from 'lucide-react';
+  Instagram,
+} from "lucide-react";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [submitStatus, setSubmitStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setSubmitStatus('idle');
+    setSubmitStatus("idle");
 
     try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
+      const response = await fetch("/api/contact", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
 
       if (response.ok) {
-        setSubmitStatus('success');
-        setFormData({ name: '', email: '', subject: '', message: '' });
+        setSubmitStatus("success");
+        setFormData({ name: "", email: "", subject: "", message: "" });
       } else {
-        setSubmitStatus('error');
+        setSubmitStatus("error");
       }
     } catch {
-      setSubmitStatus('error');
+      setSubmitStatus("error");
     } finally {
       setIsSubmitting(false);
     }
@@ -92,8 +96,9 @@ export default function ContactPage() {
             </h1>
 
             <p className="text-xl text-gray-300 leading-relaxed max-w-3xl mx-auto font-light">
-              ¿Tienes preguntas sobre nuestras genéticas? ¿Necesitas asesoría personalizada?
-              Nuestro equipo de expertos está aquí para ayudarte a alcanzar el máximo potencial en tu cultivo.
+              ¿Tienes preguntas sobre nuestras genéticas? ¿Necesitas asesoría
+              personalizada? Nuestro equipo de expertos está aquí para ayudarte
+              a alcanzar el máximo potencial en tu cultivo.
             </p>
           </div>
 
@@ -109,8 +114,12 @@ export default function ContactPage() {
                     <Send className="w-6 h-6 text-black" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-bold text-white">Envíanos un mensaje</h2>
-                    <p className="text-gray-400">Te respondemos en menos de 24 horas</p>
+                    <h2 className="text-2xl font-bold text-white">
+                      Envíanos un mensaje
+                    </h2>
+                    <p className="text-gray-400">
+                      Te respondemos en menos de 24 horas
+                    </p>
                   </div>
                 </div>
 
@@ -178,17 +187,22 @@ export default function ContactPage() {
                   </div>
 
                   {/* Status Messages */}
-                  {submitStatus === 'success' && (
+                  {submitStatus === "success" && (
                     <div className="flex items-center gap-3 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400">
                       <CheckCircle className="w-5 h-5" />
-                      <span>¡Mensaje enviado exitosamente! Te contactaremos pronto.</span>
+                      <span>
+                        ¡Mensaje enviado exitosamente! Te contactaremos pronto.
+                      </span>
                     </div>
                   )}
 
-                  {submitStatus === 'error' && (
+                  {submitStatus === "error" && (
                     <div className="flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400">
                       <AlertCircle className="w-5 h-5" />
-                      <span>Error al enviar el mensaje. Por favor intenta nuevamente.</span>
+                      <span>
+                        Error al enviar el mensaje. Por favor intenta
+                        nuevamente.
+                      </span>
                     </div>
                   )}
 
@@ -229,9 +243,15 @@ export default function ContactPage() {
                         <Mail className="w-6 h-6 text-black" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-bold text-white mb-2">Email Corporativo</h3>
-                        <p className="text-emerald-400 font-mono text-lg font-semibold">contacto@chexseeds.com</p>
-                        <p className="text-gray-400 text-sm mt-2">Para consultas generales y soporte técnico</p>
+                        <h3 className="text-lg font-bold text-white mb-2">
+                          Email Corporativo
+                        </h3>
+                        <p className="text-emerald-400 font-mono text-lg font-semibold">
+                          contacto@chexseeds.com
+                        </p>
+                        <p className="text-gray-400 text-sm mt-2">
+                          Para consultas generales y soporte técnico
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -246,7 +266,9 @@ export default function ContactPage() {
                         <Instagram className="w-6 h-6 text-black" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-bold text-white mb-2">Síguenos en Instagram</h3>
+                        <h3 className="text-lg font-bold text-white mb-2">
+                          Síguenos en Instagram
+                        </h3>
                         <a
                           href="https://www.instagram.com/chexseeds.grow/"
                           target="_blank"
@@ -255,7 +277,9 @@ export default function ContactPage() {
                         >
                           @chexseeds.grow
                         </a>
-                        <p className="text-gray-400 text-sm mt-2">Consejos, novedades y comunidad</p>
+                        <p className="text-gray-400 text-sm mt-2">
+                          Consejos, novedades y comunidad
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -270,9 +294,15 @@ export default function ContactPage() {
                         <MapPin className="w-6 h-6 text-black" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-bold text-white mb-2">Ubicación</h3>
-                        <p className="text-emerald-400 font-semibold">Ciudad de Córdoba</p>
-                        <p className="text-gray-400 text-sm mt-2">Enviamos a toda Argentina</p>
+                        <h3 className="text-lg font-bold text-white mb-2">
+                          Ubicación
+                        </h3>
+                        <p className="text-emerald-400 font-semibold">
+                          Ciudad de Córdoba
+                        </p>
+                        <p className="text-gray-400 text-sm mt-2">
+                          Enviamos a toda Argentina
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -287,9 +317,15 @@ export default function ContactPage() {
                         <Clock className="w-6 h-6 text-black" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-bold text-white mb-2">Tiempo de Respuesta</h3>
-                        <p className="text-lime-400 font-semibold">Menos de 24 horas</p>
-                        <p className="text-gray-400 text-sm mt-2">Soporte técnico especializado garantizado</p>
+                        <h3 className="text-lg font-bold text-white mb-2">
+                          Tiempo de Respuesta
+                        </h3>
+                        <p className="text-lime-400 font-semibold">
+                          Menos de 24 horas
+                        </p>
+                        <p className="text-gray-400 text-sm mt-2">
+                          Soporte técnico especializado garantizado
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -304,31 +340,45 @@ export default function ContactPage() {
                     <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-lime-500 rounded-xl flex items-center justify-center">
                       <Leaf className="w-6 h-6 text-black" />
                     </div>
-                    <h3 className="text-2xl font-bold text-white">¿Por qué contactarnos?</h3>
+                    <h3 className="text-2xl font-bold text-white">
+                      ¿Por qué contactarnos?
+                    </h3>
                   </div>
 
                   <div className="space-y-4">
                     <div className="flex items-start gap-3">
                       <Zap className="w-5 h-5 text-emerald-400 mt-1 flex-shrink-0" />
                       <div>
-                        <p className="text-white font-semibold">Asesoría Personalizada</p>
-                        <p className="text-gray-400 text-sm">Recomendaciones específicas para tu cultivo</p>
+                        <p className="text-white font-semibold">
+                          Asesoría Personalizada
+                        </p>
+                        <p className="text-gray-400 text-sm">
+                          Recomendaciones específicas para tu cultivo
+                        </p>
                       </div>
                     </div>
 
                     <div className="flex items-start gap-3">
                       <Zap className="w-5 h-5 text-lime-400 mt-1 flex-shrink-0" />
                       <div>
-                        <p className="text-white font-semibold">Soporte Técnico</p>
-                        <p className="text-gray-400 text-sm">Resolvemos dudas sobre germinación y cultivo</p>
+                        <p className="text-white font-semibold">
+                          Soporte Técnico
+                        </p>
+                        <p className="text-gray-400 text-sm">
+                          Resolvemos dudas sobre germinación y cultivo
+                        </p>
                       </div>
                     </div>
 
                     <div className="flex items-start gap-3">
                       <Zap className="w-5 h-5 text-emerald-400 mt-1 flex-shrink-0" />
                       <div>
-                        <p className="text-white font-semibold">Consultas Comerciales</p>
-                        <p className="text-gray-400 text-sm">Mayoristas y distribuidores bienvenidos</p>
+                        <p className="text-white font-semibold">
+                          Consultas Comerciales
+                        </p>
+                        <p className="text-gray-400 text-sm">
+                          Mayoristas y distribuidores bienvenidos
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -350,3 +400,4 @@ export default function ContactPage() {
     </div>
   );
 }
+

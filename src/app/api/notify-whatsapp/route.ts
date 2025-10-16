@@ -14,12 +14,11 @@ export async function POST(request: NextRequest) {
     const { orderNumber, customerInfo, items, subtotal, shipping, total } =
       orderData;
 
-    // Twilio credentials from environment variables
     const accountSid = process.env.TWILIO_ACCOUNT_SID;
     const apiKeySid = process.env.TWILIO_API_KEY_SID;
     const apiKeySecret = process.env.TWILIO_API_KEY_SECRET;
-    const twilioWhatsAppNumber = process.env.TWILIO_WHATSAPP_NUMBER; // Format: whatsapp:+14155238886
-    const clientWhatsAppNumber = process.env.CLIENT_WHATSAPP_NUMBER; // Format: whatsapp:+5493515123456
+    const twilioWhatsAppNumber = process.env.TWILIO_WHATSAPP_NUMBER;
+    const clientWhatsAppNumber = process.env.CLIENT_WHATSAPP_NUMBER;
 
     if (
       !accountSid ||
