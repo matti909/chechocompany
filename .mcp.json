@@ -1,10 +1,17 @@
-{
+u{
   "mcpServers": {
     "shadcn": {
       "command": "npx",
       "args": [
         "shadcn@latest",
         "mcp"
+      ]
+    },
+    "twilio": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@twilio-alpha/mcp",        
       ]
     }
   }

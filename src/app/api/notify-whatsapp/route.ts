@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server';
+import twilio from 'twilio';
 
 interface OrderItem {
   name: string;
@@ -11,36 +12,41 @@ export async function POST(request: NextRequest) {
   try {
     const orderData = await request.json();
 
-    const { orderNumber, customerInfo, items, subtotal, shipping, total } =
-      orderData;
+    const {
+      orderNumber,
+      customerInfo,
+      items,
+      subtotal,
+      shipping,
+      total
+    } = orderData;
 
+    // Twilio credentials from environment variables
     const accountSid = process.env.TWILIO_ACCOUNT_SID;
     const apiKeySid = process.env.TWILIO_API_KEY_SID;
     const apiKeySecret = process.env.TWILIO_API_KEY_SECRET;
-    const twilioWhatsAppNumber = process.env.TWILIO_WHATSAPP_NUMBER;
-    const clientWhatsAppNumber = process.env.CLIENT_WHATSAPP_NUMBER;
+    const twilioWhatsAppNumber = process.env.TWILIO_WHATSAPP_NUMBER; // Format: whatsapp:+14155238886
+    const clientWhatsAppNumber = process.env.CLIENT_WHATSAPP_NUMBER; // Format: whatsapp:+5493515156822
 
-    if (
-      !accountSid ||
-      !apiKeySid ||
-      !apiKeySecret ||
-      !twilioWhatsAppNumber ||
-      !clientWhatsAppNumber
-    ) {
+    if (!accountSid || !apiKeySid || !apiKeySecret || !twilioWhatsAppNumber || !clientWhatsAppNumber) {
+      console.error('Missing Twilio configuration');
       return NextResponse.json(
-        { error: "WhatsApp notification configuration incomplete" },
-        { status: 500 },
+        { error: 'WhatsApp notification configuration incomplete' },
+        { status: 500 }
       );
     }
 
+    // Initialize Twilio client with API Key credentials
+    const client = twilio(apiKeySid, apiKeySecret, { accountSid });
+
     // Format items list
     const itemsList = items
-      .map(
-        (item: OrderItem, index: number) =>
-          `${index + 1}. *${item.name}*\n   ${item.subtitle}\n   Cantidad: ${item.quantity}\n   Precio: $${item.price.toLocaleString("es-AR")}`,
+      .map((item: OrderItem, index: number) =>
+        `${index + 1}. *${item.name}*\n   ${item.subtitle}\n   Cantidad: ${item.quantity}\n   Precio: $${item.price.toLocaleString('es-AR')}`
       )
-      .join("\n\n");
+      .join('\n\n');
 
+    // Create WhatsApp message
     const message = `🌿 *NUEVA COMPRA - CHEX SEEDS* 🌿
 
 📋 *Pedido:* #${orderNumber}
@@ -59,53 +65,40 @@ CP: ${customerInfo.postalCode}
 ${itemsList}
 
 💰 *Resumen:*
-Subtotal: $${subtotal.toLocaleString("es-AR")}
-Envío: $${shipping.toLocaleString("es-AR")}
-*TOTAL: $${total.toLocaleString("es-AR")}*
+Subtotal: $${subtotal.toLocaleString('es-AR')}
+Envío: $${shipping.toLocaleString('es-AR')}
+*TOTAL: $${total.toLocaleString('es-AR')}*
 
 📝 *Notas:*
-${customerInfo.notes || "Sin notas adicionales"}
+${customerInfo.notes || 'Sin notas adicionales'}
 
 ---
-⏰ ${new Date().toLocaleString("es-AR", { timeZone: "America/Argentina/Cordoba" })}`;
+⏰ ${new Date().toLocaleString('es-AR', { timeZone: 'America/Argentina/Cordoba' })}`;
 
-    // Send WhatsApp message via Twilio using API Keys
-    const response = await fetch(
-      `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization:
-            "Basic " +
-            Buffer.from(`${apiKeySid}:${apiKeySecret}`).toString("base64"),
-        },
-        body: new URLSearchParams({
-          From: twilioWhatsAppNumber,
-          To: clientWhatsAppNumber,
-          Body: message,
-        }),
-      },
-    );
+    // Send WhatsApp message using Twilio SDK
+    const messageResponse = await client.messages.create({
+      from: twilioWhatsAppNumber,
+      to: clientWhatsAppNumber,
+      body: message
+    });
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || "Failed to send WhatsApp message");
-    }
+    console.log('✅ WhatsApp sent:', messageResponse.sid);
 
     return NextResponse.json({
       success: true,
-      messageSid: data.sid,
-      message: "WhatsApp notification sent successfully",
+      messageSid: messageResponse.sid,
+      status: messageResponse.status,
+      message: 'WhatsApp notification sent successfully'
     });
+
   } catch (error) {
+    console.error('❌ Error sending WhatsApp:', error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
+        error: error instanceof Error ? error.message : 'Unknown error'
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

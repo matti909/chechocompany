@@ -1,6 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+import twilio from 'twilio';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Log environment variables (sin mostrar los valores completos por seguridad)
     const config = {
@@ -30,58 +31,45 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Missing CLIENT_WHATSAPP_NUMBER' }, { status: 500 });
     }
 
+    // Initialize Twilio client with API Key credentials
+    const client = twilio(
+      process.env.TWILIO_API_KEY_SID,
+      process.env.TWILIO_API_KEY_SECRET,
+      { accountSid: process.env.TWILIO_ACCOUNT_SID }
+    );
+
     // Mensaje de prueba simple
     const message = '🧪 Test desde ChexSeeds - ' + new Date().toLocaleTimeString('es-AR');
 
-    // Intentar enviar mensaje
-    const response = await fetch(
-      `https://api.twilio.com/2010-04-01/Accounts/${process.env.TWILIO_ACCOUNT_SID}/Messages.json`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': 'Basic ' + Buffer.from(
-            `${process.env.TWILIO_API_KEY_SID}:${process.env.TWILIO_API_KEY_SECRET}`
-          ).toString('base64')
-        },
-        body: new URLSearchParams({
-          From: process.env.TWILIO_WHATSAPP_NUMBER,
-          To: process.env.CLIENT_WHATSAPP_NUMBER,
-          Body: message
-        })
-      }
-    );
+    // Intentar enviar mensaje usando el SDK
+    const messageResponse = await client.messages.create({
+      from: process.env.TWILIO_WHATSAPP_NUMBER,
+      to: process.env.CLIENT_WHATSAPP_NUMBER,
+      body: message
+    });
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      console.error('❌ Twilio Error:', data);
-      return NextResponse.json({
-        success: false,
-        error: data.message || 'Failed to send',
-        code: data.code,
-        moreInfo: data.more_info,
-        config: config,
-        status: response.status
-      }, { status: response.status });
-    }
-
-    console.log('✅ Message sent:', data.sid);
+    console.log('✅ Message sent:', messageResponse.sid);
 
     return NextResponse.json({
       success: true,
-      messageSid: data.sid,
-      status: data.status,
+      messageSid: messageResponse.sid,
+      status: messageResponse.status,
       message: 'WhatsApp test message sent successfully!',
       config: config
     });
 
   } catch (error) {
     console.error('💥 Exception:', error);
+
+    // Si es un error de Twilio, extraer detalles útiles
+    const twilioError = error as any;
+
     return NextResponse.json({
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined
+      error: twilioError.message || 'Unknown error',
+      code: twilioError.code,
+      moreInfo: twilioError.moreInfo,
+      status: twilioError.status
     }, { status: 500 });
   }
 }
