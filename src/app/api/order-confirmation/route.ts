@@ -236,7 +236,7 @@ export async function POST(request: NextRequest) {
     // Company notification email
     const companyEmailData = {
       from: "contacto@chexseeds.com",
-      to: "chexseeds@gmail.com",
+      to: "chexseed@gmail.com",
       subject: `🎉 NUEVO PEDIDO #${orderData.orderNumber} - $${orderData.total.toLocaleString()}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 700px; margin: 0 auto; background: linear-gradient(135deg, #000000, #1a1a1a); color: white; border-radius: 20px; overflow: hidden;">
