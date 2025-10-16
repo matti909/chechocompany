@@ -14,7 +14,6 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import useCartStore from '@/store/cart-store';
 
 // Mock data for genetics - you can replace this with real data later
 const geneticsData = [

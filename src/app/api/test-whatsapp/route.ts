@@ -62,7 +62,7 @@ export async function GET() {
     console.error('💥 Exception:', error);
 
     // Si es un error de Twilio, extraer detalles útiles
-    const twilioError = error as any;
+    const twilioError = error as { message?: string; code?: number; moreInfo?: string; status?: number };
 
     return NextResponse.json({
       success: false,
