@@ -1,7 +1,10 @@
 'use client';
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Instagram, Mail, ArrowUp } from "lucide-react";
+import { toast } from "sonner";
+import { useAuthStore } from "@/store/auth-store";
 
 function MountainIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -23,11 +26,28 @@ function MountainIcon(props: React.SVGProps<SVGSVGElement>) {
 }
 
 export function Footer() {
+  const router = useRouter();
+  const { session } = useAuthStore();
+
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
       behavior: 'smooth'
     });
+  };
+
+  const handleCartClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    if (!session) {
+      toast.error("Debes iniciar sesión", {
+        description: "Por favor inicia sesión para acceder al carrito de compras",
+        duration: 4000,
+      });
+      return;
+    }
+
+    router.push("/cart");
   };
 
   return (
@@ -65,9 +85,9 @@ export function Footer() {
               <Link href="/genetics" className="block text-gray-300 hover:text-emerald-400 transition-colors">
                 Genéticas
               </Link>
-              <Link href="/cart" className="block text-gray-300 hover:text-emerald-400 transition-colors">
+              <a href="/cart" onClick={handleCartClick} className="block text-gray-300 hover:text-emerald-400 transition-colors cursor-pointer">
                 Carrito
-              </Link>
+              </a>
               <Link href="/contacto" className="block text-gray-300 hover:text-emerald-400 transition-colors">
                 Contacto
               </Link>

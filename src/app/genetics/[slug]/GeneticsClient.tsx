@@ -8,8 +8,10 @@ import { Card } from "@/components/ui/card";
 import { ArrowLeft, ShoppingBag, Award, Star, Leaf, FlaskConical, Package, Clock, TrendingUp, Sparkles, ShoppingCart, Check, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { toast } from "sonner";
 import { GeneticsProfileChart } from "@/components/charts";
 import useCartStore from "@/store/cart-store";
+import { useSession } from "@/lib/auth-client";
 
 export interface GeneticsData {
   name: string;
@@ -65,6 +67,7 @@ export function GeneticsClient({ genetics }: GeneticsClientProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const router = useRouter();
   const { addItem } = useCartStore();
+  const { data: session } = useSession();
 
   const handleAddToCart = () => {
     addItem({
@@ -82,6 +85,14 @@ export function GeneticsClient({ genetics }: GeneticsClientProps) {
   };
 
   const handleBuyNow = () => {
+    if (!session) {
+      toast.error("Debes iniciar sesión", {
+        description: "Por favor inicia sesión para realizar tu compra",
+        duration: 4000,
+      });
+      return;
+    }
+
     handleAddToCart();
     router.push('/cart');
   };

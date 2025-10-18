@@ -2,7 +2,9 @@
 
 import { useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ShoppingCart, User, Settings, LogOut } from "lucide-react";
+import { toast } from "sonner";
 import { useAuthStore } from "@/store/auth-store";
 import { signOut } from "@/lib/auth-client";
 import useCartStore from "@/store/cart-store";
@@ -25,6 +27,7 @@ export function MobileMenu({ isOpen, onClose, onLoginClick }: MobileMenuProps) {
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const { session, clearSession } = useAuthStore();
   const { totalItems } = useCartStore();
+  const router = useRouter();
 
   const handleLogout = async () => {
     try {
@@ -34,6 +37,20 @@ export function MobileMenu({ isOpen, onClose, onLoginClick }: MobileMenuProps) {
     } catch (error) {
       console.error("Error logging out:", error);
     }
+  };
+
+  const handleCartClick = () => {
+    if (!session) {
+      toast.error("Debes iniciar sesión", {
+        description: "Por favor inicia sesión para acceder al carrito de compras",
+        duration: 4000,
+      });
+      onClose();
+      return;
+    }
+
+    onClose();
+    router.push("/cart");
   };
 
   if (!isOpen) return null;
@@ -119,11 +136,8 @@ export function MobileMenu({ isOpen, onClose, onLoginClick }: MobileMenuProps) {
           )}
 
           {/* Cart Button */}
-          <Link href="/cart" className="block">
-            <div
-              className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-emerald-500 to-lime-500 rounded-lg text-black font-bold relative"
-              onClick={onClose}
-            >
+          <button onClick={handleCartClick} className="w-full">
+            <div className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-emerald-500 to-lime-500 rounded-lg text-black font-bold relative">
               <ShoppingCart className="w-5 h-5" />
               CARRITO
               {totalItems > 0 && (
@@ -132,7 +146,7 @@ export function MobileMenu({ isOpen, onClose, onLoginClick }: MobileMenuProps) {
                 </span>
               )}
             </div>
-          </Link>
+          </button>
         </div>
       </div>
     </div>
