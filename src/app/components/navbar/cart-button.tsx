@@ -6,11 +6,13 @@ import { gsap } from "gsap";
 import { toast } from "sonner";
 import useCartStore from "@/store/cart-store";
 import { useSession } from "@/lib/auth-client";
+import { useModalStore } from "@/store/modal-store";
 
 export function CartButton() {
   const { totalItems } = useCartStore();
   const { data: session } = useSession();
   const router = useRouter();
+  const openLoginModal = useModalStore((state) => state.openLoginModal);
 
   const handleCartClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -20,6 +22,7 @@ export function CartButton() {
         description: "Por favor inicia sesión para acceder al carrito de compras",
         duration: 4000,
       });
+      openLoginModal();
       return;
     }
 

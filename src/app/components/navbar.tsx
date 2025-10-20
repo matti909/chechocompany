@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { LoginModal } from "@/components/ui/login-modal";
 import { Menu, X, Zap } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { gsap } from "gsap";
@@ -10,11 +9,12 @@ import { NavLinks } from "./navbar/nav-links";
 import { UserMenu } from "./navbar/user-menu";
 import { CartButton } from "./navbar/cart-button";
 import { MobileMenu } from "./navbar/mobile-menu";
+import { useModalStore } from "@/store/modal-store";
 
 export function Navbar() {
   const [, setIsScrolled] = useState(false);
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const openLoginModal = useModalStore((state) => state.openLoginModal);
   const navbarRef = useRef<HTMLDivElement>(null);
   const cartRef = useRef<HTMLDivElement>(null);
 
@@ -83,7 +83,7 @@ export function Navbar() {
           <div ref={cartRef} className="hidden lg:flex items-center space-x-6">
 
             {/* User Menu (Login/Profile) */}
-            <UserMenu onLoginClick={() => setIsLoginModalOpen(true)} />
+            <UserMenu onLoginClick={openLoginModal} />
 
             {/* Cart Button */}
             <CartButton />
@@ -120,13 +120,7 @@ export function Navbar() {
       <MobileMenu
         isOpen={isMobileMenuOpen}
         onClose={() => setIsMobileMenuOpen(false)}
-        onLoginClick={() => setIsLoginModalOpen(true)}
-      />
-
-      {/* Login Modal */}
-      <LoginModal
-        isOpen={isLoginModalOpen}
-        onClose={() => setIsLoginModalOpen(false)}
+        onLoginClick={openLoginModal}
       />
     </nav>
   );
