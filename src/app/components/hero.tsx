@@ -72,21 +72,16 @@ export function Hero() {
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
 
-      <div className="absolute inset-0">
-              <Image
-                src="/hero-background.jpg"
-                alt="Sierras Chicas de Córdoba, Argentina"
-                fill
-                priority
-                className="object-cover"
-                quality={90}
-              />
-              {/* Dark overlay for better text readability */}
-              <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/80" />
-            </div>
-
-      {/* Sophisticated background */}
+      {/* Background with image */}
       <div className="absolute inset-0 bg-black">
+        <Image
+          src="/hero-background.jpg"
+          alt="Sierras Chicas de Córdoba, Argentina"
+          fill
+          priority
+          className="object-cover opacity-30"
+          quality={90}
+        />
         {/* Subtle gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-emerald-950/20 via-black to-lime-950/20" />
 
