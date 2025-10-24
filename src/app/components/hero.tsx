@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Leaf } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import Link from "next/link";
-import Image from "next/image"
+import Image from "next/image";
 
 export function Hero() {
   const heroRef = useRef<HTMLDivElement>(null);
@@ -19,29 +19,33 @@ export function Hero() {
     // Hero entrance animation
     const tl = gsap.timeline();
 
-    tl.fromTo(titleRef.current,
+    tl.fromTo(
+      titleRef.current,
       { opacity: 0, y: 100, scale: 0.8 },
-      { opacity: 1, y: 0, scale: 1, duration: 1.2, ease: "power3.out" }
+      { opacity: 1, y: 0, scale: 1, duration: 1.2, ease: "power3.out" },
     )
-    .fromTo(subtitleRef.current,
-      { opacity: 0, y: 50 },
-      { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" },
-      "-=0.6"
-    )
-    .fromTo(descriptionRef.current,
-      { opacity: 0, y: 30 },
-      { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" },
-      "-=0.4"
-    )
-    .fromTo(ctaRef.current,
-      { opacity: 0, y: 30 },
-      { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" },
-      "-=0.4"
-    );
+      .fromTo(
+        subtitleRef.current,
+        { opacity: 0, y: 50 },
+        { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" },
+        "-=0.6",
+      )
+      .fromTo(
+        descriptionRef.current,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" },
+        "-=0.4",
+      )
+      .fromTo(
+        ctaRef.current,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" },
+        "-=0.4",
+      );
 
     // Floating particles animation
     if (particlesRef.current) {
-      const particles = particlesRef.current.querySelectorAll('.particle');
+      const particles = particlesRef.current.querySelectorAll(".particle");
       particles.forEach((particle, i) => {
         gsap.to(particle, {
           y: -30,
@@ -49,7 +53,7 @@ export function Hero() {
           repeat: -1,
           yoyo: true,
           ease: "power1.inOut",
-          delay: i * 0.3
+          delay: i * 0.3,
         });
       });
     }
@@ -57,11 +61,12 @@ export function Hero() {
     // Continuous title glow animation
     if (titleRef.current) {
       gsap.to(titleRef.current, {
-        textShadow: "0 0 20px rgba(16, 185, 129, 0.3), 0 0 40px rgba(16, 185, 129, 0.2), 0 0 60px rgba(16, 185, 129, 0.1)",
+        textShadow:
+          "0 0 20px rgba(16, 185, 129, 0.3), 0 0 40px rgba(16, 185, 129, 0.2), 0 0 60px rgba(16, 185, 129, 0.1)",
         duration: 2,
         repeat: -1,
         yoyo: true,
-        ease: "power1.inOut"
+        ease: "power1.inOut",
       });
     }
   }, []);
@@ -71,7 +76,6 @@ export function Hero() {
       ref={heroRef}
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
-
       {/* Background with image */}
       <div className="absolute inset-0 bg-black">
         <Image
@@ -79,9 +83,10 @@ export function Hero() {
           alt="Sierras Chicas de Córdoba, Argentina"
           fill
           priority
-          className="object-cover opacity-30"
-          quality={90}
+          className="object-cover opacity-80"
+          quality={100}
         />
+
         {/* Subtle gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-emerald-950/20 via-black to-lime-950/20" />
 
@@ -112,7 +117,6 @@ export function Hero() {
 
       {/* Main content */}
       <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
-
         {/* Main title */}
         <h1
           ref={titleRef}
@@ -143,7 +147,9 @@ export function Hero() {
         >
           Genéticas premium argentinas que redefinen los estándares de calidad.
           <br />
-          <span className="text-emerald-400">Cultivando el futuro, semilla por semilla.</span>
+          <span className="text-emerald-400">
+            Cultivando el futuro, semilla por semilla.
+          </span>
         </p>
 
         {/* CTA Section */}
@@ -180,3 +186,4 @@ export function Hero() {
     </section>
   );
 }
+
