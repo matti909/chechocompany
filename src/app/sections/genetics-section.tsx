@@ -257,7 +257,7 @@ export function GeneticsSection() {
 
               <div className="p-8 flex-1 flex flex-col">
                 <h3 className="text-2xl font-bold text-white mb-2 text-center">
-                  Bipolaridad maniatica
+                  BIPOLARIDAD MANIÁTICA
                 </h3>
                 <h4 className="text-lg font-medium text-pink-400 mb-4 text-center">
                   Super Lemon Haze x Critical+2

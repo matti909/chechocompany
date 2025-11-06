@@ -249,7 +249,7 @@ export default function GeneticsPage() {
             </h1>
 
             <p className="text-xl text-gray-300 leading-relaxed max-w-3xl mx-auto font-light mb-8">
-              Explora nuestra colección completa de semillas feminizadas fotoperiódicas.
+              Explora nuestra colección completa de semillas regulares fotoperiódicas.
               Cada genética está cuidadosamente desarrollada para ofrecer la máxima calidad,
               potencia y rendimiento en tu cultivo.
             </p>
