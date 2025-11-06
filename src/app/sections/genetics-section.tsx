@@ -186,8 +186,8 @@ export function GeneticsSection() {
                 <h3 className="text-2xl font-bold text-white mb-2 text-center">
                   ESQUIZOFRENIA
                 </h3>
-                <h4 className="text-lg font-medium text-emerald-400 mb-4 text-center">
-                  Ultra Rápida
+                <h4 className="text-lg font-medium text-pink-400 mb-4 text-center">
+                 Critical Mass x Lavender
                 </h4>
 
                 <div className="space-y-2 mb-6 text-sm">
@@ -197,11 +197,11 @@ export function GeneticsSection() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">THC:</span>
-                    <span className="text-white">21%</span>
+                    <span className="text-white">18%</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">Floración:</span>
-                    <span className="text-white">45 días interior</span>
+                    <span className="text-white">50 días interior</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">Olor:</span>
@@ -257,10 +257,10 @@ export function GeneticsSection() {
 
               <div className="p-8 flex-1 flex flex-col">
                 <h3 className="text-2xl font-bold text-white mb-2 text-center">
-                  MARMALATE
+                  Bipolaridad maniatica
                 </h3>
-                <h4 className="text-lg font-medium text-blue-400 mb-4 text-center">
-                  Early Version
+                <h4 className="text-lg font-medium text-pink-400 mb-4 text-center">
+                  Super Lemon Haze x Critical+2
                 </h4>
 
                 <div className="space-y-2 mb-6 text-sm">
@@ -270,7 +270,7 @@ export function GeneticsSection() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">THC:</span>
-                    <span className="text-white">21%</span>
+                    <span className="text-white">18%</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">Floración:</span>
