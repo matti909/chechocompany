@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Navbar } from "../components/navbar";
 import { Footer } from "../components/footer";
 import { Button } from "@/components/ui/button";
 import {
@@ -68,8 +67,6 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen bg-black">
-      <Navbar />
-
       {/* Hero Section */}
       <section className="relative pt-24 pb-20 overflow-hidden">
         {/* Background Effects */}

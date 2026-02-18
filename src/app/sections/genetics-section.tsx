@@ -302,7 +302,7 @@ export function GeneticsSection() {
                   </div>
                 </div>
 
-                <Link href="/genetics/marmalate" className="w-full mt-auto">
+                <Link href="/genetics/bipolaridad-maniaca" className="w-full mt-auto">
                   <Button className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold transition-all duration-300 hover:scale-105">
                     <ShoppingBag className="w-4 h-4 mr-2" />
                     Ver detalles

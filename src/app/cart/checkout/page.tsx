@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Navbar } from "../../components/navbar";
 import { Footer } from "../../components/footer";
 import { Button } from "@/components/ui/button";
 import useCartStore from "@/store/cart-store";
@@ -222,8 +221,6 @@ export default function CheckoutPage() {
   if (checkout.orderPlaced) {
     return (
       <div className="min-h-screen bg-black">
-        <Navbar />
-
         <section className="relative py-32 overflow-hidden">
           {/* Background Effects */}
           <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-r from-emerald-400/20 to-lime-400/20 rounded-full blur-3xl animate-pulse" />
@@ -298,8 +295,6 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-black">
-      <Navbar />
-
       {/* Hero Section */}
       <section className="relative pt-24 pb-12 overflow-hidden">
         {/* Background Effects */}

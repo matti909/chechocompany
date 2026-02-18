@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Navbar } from '../components/navbar';
 import { Footer } from '../components/footer';
 import { Button } from '@/components/ui/button';
 import useCartStore from '@/store/cart-store';
@@ -71,8 +70,6 @@ export default function CartPage() {
 
   return (
     <div className="min-h-screen bg-black">
-      <Navbar />
-
       {/* Hero Section */}
       <section className="relative pt-24 pb-12 overflow-hidden">
         {/* Background Effects */}
