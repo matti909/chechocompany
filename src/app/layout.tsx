@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, UnifrakturMaguntia } from "next/font/google";
+import { Geist, Geist_Mono, Bebas_Neue } from "next/font/google";
 import "./globals.css";
 import { MouseGraviton } from "./components/mouse-graviton";
 import { AgeVerificationModal } from "@/components/ui/age-verification-modal";
@@ -18,8 +18,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const unifraktur = UnifrakturMaguntia({
-  variable: "--font-gothic",
+const bebasNeue = Bebas_Neue({
+  variable: "--font-display",
   weight: "400",
   subsets: ["latin"],
 });
@@ -37,7 +37,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${unifraktur.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${bebasNeue.variable} antialiased`}
       >
         <AuthProvider>
           <AgeVerificationModal />

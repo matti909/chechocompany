@@ -41,8 +41,8 @@ export function NavLogo() {
         }}
       >
         <div>
-          <div className="font-[var(--font-gothic)] text-3xl text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-lime-400 leading-none" style={{ fontFamily: "var(--font-gothic)" }}>
-            Chex Seeds
+          <div className="font-[var(--font-display)] text-3xl text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-lime-400 leading-none tracking-wider">
+            CHEX SEEDS
           </div>
         </div>
       </div>
