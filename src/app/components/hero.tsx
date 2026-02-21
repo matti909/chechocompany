@@ -41,19 +41,22 @@ export function Hero() {
   }, []);
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-black">
-      {/* Subtle green ambient glow */}
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-emerald-900/20 rounded-full blur-[120px]" />
-      <div className="absolute bottom-0 left-1/3 w-[400px] h-[400px] bg-emerald-950/30 rounded-full blur-[100px]" />
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-[#050505]">
+      {/* Radial gradient glow */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(57,255,20,0.08),transparent_40%)]" />
+
+      {/* Decorative blurred orbs */}
+      <div className="absolute top-1/4 left-10 w-64 h-64 bg-[#39FF14]/5 rounded-full blur-[120px]" />
+      <div className="absolute bottom-10 right-10 w-96 h-96 bg-[#39FF14]/5 rounded-full blur-[120px]" />
 
       {/* Content */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-24">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-24 lg:py-32">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left column - Text */}
-          <div className="space-y-8">
+          <div className="flex flex-col space-y-8 max-w-2xl">
             <h1
               ref={titleRef}
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.1] tracking-tight"
+              className="text-5xl sm:text-6xl lg:text-7xl font-black text-white leading-[1.1] tracking-tight"
             >
               Desbloquea el
               <br />
@@ -62,23 +65,22 @@ export function Hero() {
               tu Jardín
             </h1>
 
-            <div ref={descriptionRef} className="flex items-stretch gap-4">
-              <div className="w-1 bg-emerald-500 rounded-full shrink-0" />
-              <p className="text-gray-400 text-base sm:text-lg leading-relaxed max-w-md">
+            <div ref={descriptionRef}>
+              <p className="text-[#9ca3af] text-lg lg:text-xl font-light leading-relaxed max-w-lg border-l-2 border-[#4ade80] pl-6">
                 Semillas Chex: Calidad superior, rendimiento garantizado y una
                 tradición de excelencia en cada grano.
               </p>
             </div>
 
-            <div ref={ctaRef} className="flex flex-wrap items-center gap-4 pt-2">
+            <div ref={ctaRef} className="flex flex-col sm:flex-row gap-4 pt-4">
               <Link href="/genetics">
-                <button className="group flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold px-8 py-4 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-emerald-500/25 cursor-pointer">
+                <button className="group inline-flex items-center justify-center gap-2 bg-[#4ade80] hover:bg-[#3ce277] text-black font-bold text-lg px-8 py-4 rounded-full transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-green-500/20 cursor-pointer">
                   Ver Catálogo
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </button>
               </Link>
               <Link href="#semillas">
-                <button className="border border-emerald-500 text-emerald-400 hover:bg-emerald-500/10 font-semibold px-8 py-4 rounded-full transition-all duration-300 cursor-pointer">
+                <button className="inline-flex items-center justify-center bg-transparent border border-[#4ade80] text-[#4ade80] hover:bg-[#4ade80]/10 font-bold text-lg px-8 py-4 rounded-full transition-all duration-300 cursor-pointer">
                   Nuestras Semillas
                 </button>
               </Link>
@@ -86,19 +88,20 @@ export function Hero() {
           </div>
 
           {/* Right column - Image */}
-          <div ref={imageRef} className="relative flex justify-center lg:justify-end">
-            <div className="relative w-full max-w-lg aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl shadow-black/50">
+          <div
+            ref={imageRef}
+            className="relative w-full flex justify-center lg:justify-end items-center"
+          >
+            <div className="relative w-full max-w-lg aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl hover:scale-105 transition-transform duration-500">
               <Image
-                src="/hero-background.jpg"
-                alt="Semillas premium Chex Seeds"
+                src="/hero-background.png"
+                alt="Semillas premium Chex Seeds germinando"
                 fill
                 priority
                 className="object-cover"
                 quality={90}
               />
             </div>
-            {/* Decorative border offset */}
-            <div className="absolute -bottom-3 -right-3 w-full max-w-lg aspect-[4/3] rounded-2xl border border-emerald-500/20 -z-10" />
           </div>
         </div>
       </div>
