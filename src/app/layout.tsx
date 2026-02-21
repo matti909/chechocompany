@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, UnifrakturMaguntia } from "next/font/google";
 import "./globals.css";
 import { MouseGraviton } from "./components/mouse-graviton";
 import { AgeVerificationModal } from "@/components/ui/age-verification-modal";
@@ -18,6 +18,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const unifraktur = UnifrakturMaguntia({
+  variable: "--font-gothic",
+  weight: "400",
+  subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
   title: "Chex Seeds | Semillas de Cannabis Premium",
   description: "Genéticas de cannabis autoflorecientes de la más alta calidad. Semillas feminizadas con 98% de germinación garantizada. Envíos discretos a todo el país.",
@@ -31,7 +37,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${unifraktur.variable} antialiased`}
       >
         <AuthProvider>
           <AgeVerificationModal />
