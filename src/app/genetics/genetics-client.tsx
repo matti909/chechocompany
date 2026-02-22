@@ -152,15 +152,18 @@ export function GeneticsClient({ genetics }: { genetics: Genetic[] }) {
           {/* Grid */}
           <div
             ref={gridRef}
-            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto"
           >
             {filteredGenetics.map((genetic) => (
               <Link
                 key={genetic.id}
                 href={`/genetics/${genetic.slug}`}
-                className="group relative block"
+                className="group relative block mx-auto w-full max-w-sm"
               >
-                <div className="relative aspect-square rounded-2xl overflow-hidden bg-emerald-950/20 border border-emerald-500/10 group-hover:border-emerald-500/40 transition-all duration-500">
+                {/* Glow Effect Background */}
+                <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500/20 via-lime-500/20 to-emerald-500/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                <div className="relative aspect-[3/4] rounded-3xl overflow-hidden bg-black border border-emerald-500/20 group-hover:border-emerald-500/50 transition-all duration-500 shadow-2xl shadow-black/50 group-hover:shadow-emerald-500/20 group-hover:-translate-y-2">
                   {/* Image */}
                   <Image
                     src={genetic.image}
@@ -170,31 +173,39 @@ export function GeneticsClient({ genetics }: { genetics: Genetic[] }) {
                   />
 
                   {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-70 group-hover:opacity-85 transition-opacity duration-300" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
+
+                  {/* Inner Shadow for Depth */}
+                  <div className="absolute inset-0 shadow-inner-lg" />
 
                   {/* Content Overlay */}
-                  <div className="absolute inset-0 p-4 flex flex-col justify-end">
-                    <div className="space-y-1">
-                      <h3 className="text-white font-bold text-lg">
+                  <div className="absolute inset-0 p-6 flex flex-col justify-end">
+                    <div className="space-y-2 backdrop-blur-sm bg-black/30 p-4 rounded-2xl border border-white/10">
+                      <h3 className="text-white font-black text-xl tracking-tight">
                         {genetic.title}
                       </h3>
-                      <p className="text-emerald-400 text-sm font-medium">
+                      <p className="text-emerald-400 text-sm font-semibold">
                         {genetic.genetics}
                       </p>
-                      <div className="flex items-center justify-between pt-2">
-                        <span className="text-white font-bold text-lg">
-                          ${genetic.prices.pack6.toLocaleString()}
-                        </span>
-                        <span className="text-xs text-gray-400">
-                          Pack x6
-                        </span>
+                      <p className="text-gray-400 text-xs">
+                        {genetic.composition}
+                      </p>
+                      <div className="flex items-center justify-between pt-3 border-t border-white/10">
+                        <div>
+                          <span className="text-white font-black text-2xl">
+                            ${genetic.prices.pack6.toLocaleString()}
+                          </span>
+                          <span className="text-gray-400 text-xs ml-2">
+                            Pack x6
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
 
                   {/* THC Badge */}
-                  <div className="absolute top-3 right-3 bg-emerald-500 text-black text-xs font-bold px-2.5 py-1 rounded-full">
-                    {genetic.thc}
+                  <div className="absolute top-4 right-4 bg-emerald-500 text-black text-sm font-black px-4 py-2 rounded-full shadow-lg shadow-emerald-500/50">
+                    THC {genetic.thc}
                   </div>
                 </div>
               </Link>
