@@ -1,3 +1,4 @@
+import { genetics } from '#site/content';
 import { Hero } from "./components/hero";
 import { Footer } from "./components/footer";
 import { GrowingGuideSection } from "./sections/growing-guide-section";
@@ -10,7 +11,7 @@ export default function Home() {
     <div className="min-h-screen">
       <Hero />
       <AboutSection />
-      <GeneticsSection />
+      <GeneticsSection genetics={genetics} />
       <GrowingGuideSection />
       <NewsSection />
       <Footer />

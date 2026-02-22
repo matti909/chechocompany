@@ -7,7 +7,27 @@ import Link from "next/link";
 import Image from "next/image";
 import { gsap } from "gsap";
 
-export function GeneticsSection() {
+interface GeneticsProps {
+  genetics: Array<{
+    id: string;
+    title: string;
+    slug: string;
+    genetics: string;
+    composition: string;
+    thc: string;
+    image: string;
+    color: string;
+    prices: {
+      pack6: number;
+      pack12: number;
+      pack25: number;
+      pack50: number;
+      pack100: number;
+    };
+  }>;
+}
+
+export function GeneticsSection({ genetics }: GeneticsProps) {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
@@ -45,72 +65,8 @@ export function GeneticsSection() {
     return () => observer.disconnect();
   }, []);
 
-  const genetics = [
-    {
-      id: 1,
-      name: "Purple Haze",
-      strain: "Sativa Dominante",
-      image: "/sems/indu.jpeg",
-      badge: "Bestseller",
-      price: "$15.000"
-    },
-    {
-      id: 2,
-      name: "Northern Lights",
-      strain: "Indica Pura",
-      image: "/sems/sati.jpeg",
-      badge: "New",
-      price: "$18.000"
-    },
-    {
-      id: 3,
-      name: "Green Dream",
-      strain: "Híbrida",
-      image: "/sems/cali.jpeg",
-      badge: null,
-      price: "$16.000"
-    },
-    {
-      id: 4,
-      name: "Gold Rush",
-      strain: "Sativa",
-      image: "/sems/algo.jpeg",
-      badge: "Premium",
-      price: "$20.000"
-    },
-    {
-      id: 5,
-      name: "Purple Passion",
-      strain: "Indica",
-      image: "/sems/bipolaridad.jpg",
-      badge: null,
-      price: "$17.000"
-    },
-    {
-      id: 6,
-      name: "Crystal Clear",
-      strain: "Híbrida",
-      image: "/sems/cana.png",
-      badge: "Limited",
-      price: "$22.000"
-    },
-    {
-      id: 7,
-      name: "Ocean Breeze",
-      strain: "Sativa",
-      image: "/sems/indu.jpeg",
-      badge: null,
-      price: "$16.000"
-    },
-    {
-      id: 8,
-      name: "Forest Mist",
-      strain: "Indica",
-      image: "/sems/sati.jpeg",
-      badge: "Exclusive",
-      price: "$19.000"
-    }
-  ];
+  // Show only first 3 genetics on homepage
+  const displayGenetics = genetics.slice(0, 3);
 
   return (
     <section
@@ -155,19 +111,19 @@ export function GeneticsSection() {
         {/* Genetics Grid */}
         <div
           ref={cardsRef}
-          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 mb-16"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-16"
         >
-          {genetics.map((genetic) => (
+          {displayGenetics.map((genetic) => (
             <Link
               key={genetic.id}
-              href="/genetics"
+              href={`/genetics/${genetic.slug}`}
               className="group relative block"
             >
               <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-emerald-950/20 border border-emerald-500/10 group-hover:border-emerald-500/30 transition-all duration-500">
                 {/* Image */}
                 <Image
                   src={genetic.image}
-                  alt={genetic.name}
+                  alt={genetic.title}
                   fill
                   className="object-cover group-hover:scale-110 transition-transform duration-700"
                 />
@@ -175,37 +131,42 @@ export function GeneticsSection() {
                 {/* Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300" />
 
-                {/* Badge */}
-                {genetic.badge && (
-                  <div className="absolute top-3 right-3 bg-emerald-500 text-black text-xs font-bold px-3 py-1 rounded-full">
-                    {genetic.badge}
-                  </div>
-                )}
+                {/* Badge - THC Level */}
+                <div className="absolute top-4 right-4 bg-emerald-500 text-black text-xs font-bold px-3 py-1.5 rounded-full">
+                  THC {genetic.thc}
+                </div>
 
                 {/* Content */}
-                <div className="absolute bottom-0 left-0 right-0 p-4">
-                  <div className="flex items-end justify-between gap-2">
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-white font-bold text-lg truncate">
-                        {genetic.name}
+                <div className="absolute bottom-0 left-0 right-0 p-6">
+                  <div className="space-y-3">
+                    <div>
+                      <h3 className="text-white font-bold text-2xl mb-1">
+                        {genetic.title}
                       </h3>
-                      <p className="text-emerald-400 text-sm">
-                        {genetic.strain}
+                      <p className="text-emerald-400 text-sm font-medium">
+                        {genetic.genetics}
+                      </p>
+                      <p className="text-gray-400 text-xs mt-1">
+                        {genetic.composition}
                       </p>
                     </div>
-                    <div className="flex-shrink-0">
-                      <div className="text-white font-bold text-lg">
-                        {genetic.price}
+
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-white font-bold text-xl">
+                          ${genetic.prices.pack6.toLocaleString()}
+                        </div>
+                        <div className="text-gray-400 text-xs">Pack x6 semillas</div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Hover Button */}
-                  <div className="mt-3 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                    <div className="flex items-center gap-2 text-emerald-400 text-sm font-medium">
-                      <ShoppingBag className="w-4 h-4" />
-                      <span>Ver detalles</span>
-                      <ArrowRight className="w-4 h-4" />
+                    {/* Hover Button */}
+                    <div className="opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                      <div className="flex items-center gap-2 text-emerald-400 text-sm font-medium bg-emerald-500/10 backdrop-blur-sm border border-emerald-500/30 rounded-full px-4 py-2">
+                        <ShoppingBag className="w-4 h-4" />
+                        <span>Ver detalles</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </div>
                     </div>
                   </div>
                 </div>

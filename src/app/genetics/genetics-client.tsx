@@ -2,13 +2,9 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import {
-  Search,
-  SortDesc,
-  ChevronDown,
-} from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { gsap } from 'gsap';
 
 interface Genetic {
   id: string;
@@ -31,250 +27,213 @@ interface Genetic {
   };
 }
 
-const colorSchemes = {
-  pink: {
-    gradient: 'from-pink-500/20 via-purple-500/20 to-pink-500/20',
-    border: 'border-pink-500/30 group-hover:border-pink-400/50',
-    text: 'text-pink-400',
-    button: 'from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600'
-  },
-  emerald: {
-    gradient: 'from-emerald-500/20 via-lime-500/20 to-emerald-500/20',
-    border: 'border-emerald-500/30 group-hover:border-emerald-400/50',
-    text: 'text-emerald-400',
-    button: 'from-emerald-500 to-lime-500 hover:from-emerald-600 hover:to-lime-600'
-  },
-  blue: {
-    gradient: 'from-blue-500/20 via-purple-500/20 to-blue-500/20',
-    border: 'border-blue-500/30 group-hover:border-blue-400/50',
-    text: 'text-blue-400',
-    button: 'from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600'
-  },
-  orange: {
-    gradient: 'from-orange-500/20 via-yellow-500/20 to-orange-500/20',
-    border: 'border-orange-500/30 group-hover:border-orange-400/50',
-    text: 'text-orange-400',
-    button: 'from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600'
-  },
-  purple: {
-    gradient: 'from-purple-500/20 via-violet-500/20 to-purple-500/20',
-    border: 'border-purple-500/30 group-hover:border-purple-400/50',
-    text: 'text-purple-400',
-    button: 'from-purple-500 to-violet-500 hover:from-purple-600 hover:to-violet-600'
-  },
-  cyan: {
-    gradient: 'from-cyan-500/20 via-blue-500/20 to-cyan-500/20',
-    border: 'border-cyan-500/30 group-hover:border-cyan-400/50',
-    text: 'text-cyan-400',
-    button: 'from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600'
-  }
-};
-
 export function GeneticsClient({ genetics }: { genetics: Genetic[] }) {
-  const [isVisible, setIsVisible] = useState(false);
-  const [filteredGenetics, setFilteredGenetics] = useState(genetics);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sortBy, setSortBy] = useState('name');
   const [filterBy, setFilterBy] = useState('all');
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
+  const [filteredGenetics, setFilteredGenetics] = useState(genetics);
+  const gridRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let filtered = genetics;
 
-    // Filter by search term
-    if (searchTerm) {
-      filtered = filtered.filter(item =>
-        item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.genetics.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    // Filter by category
     if (filterBy !== 'all') {
-      filtered = filtered.filter(item => {
+      filtered = genetics.filter(item => {
         switch (filterBy) {
           case 'indica':
-            return item.composition.includes('Indica');
+            return item.composition.toLowerCase().includes('indica');
           case 'sativa':
-            return item.composition.includes('Sativa');
+            return item.composition.toLowerCase().includes('sativa');
           case 'hybrid':
-            return item.composition.includes('50%');
+            return item.composition.includes('50');
           default:
             return true;
         }
       });
     }
 
-    // Sort
-    filtered.sort((a, b) => {
-      switch (sortBy) {
-        case 'price':
-          return a.prices.pack6 - b.prices.pack6;
-        case 'thc':
-          return parseFloat(b.thc.replace('%', '')) - parseFloat(a.thc.replace('%', ''));
-        case 'flowering':
-          return parseInt(a.flowering.replace(/[^0-9]/g, '')) - parseInt(b.flowering.replace(/[^0-9]/g, ''));
-        default:
-          return a.title.localeCompare(b.title);
-      }
-    });
-
     setFilteredGenetics(filtered);
-  }, [searchTerm, sortBy, filterBy, genetics]);
+
+    // Animate grid items
+    if (gridRef.current) {
+      gsap.fromTo(
+        gridRef.current.children,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          stagger: 0.08,
+          ease: "power3.out"
+        }
+      );
+    }
+  }, [filterBy, genetics]);
 
   return (
-    <>
-      {/* Filters and Search */}
-      <section className="relative py-8 border-y border-emerald-500/20">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid md:grid-cols-3 gap-6">
-            {/* Search */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Buscar genéticas..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-black/60 border border-emerald-500/30 rounded-xl text-white placeholder-gray-400 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
-              />
-            </div>
+    <div className="w-full">
+      {/* Hero Section */}
+      <section className="relative w-full min-h-[60vh] flex items-center justify-center overflow-hidden bg-black">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-cover bg-center opacity-40"
+            style={{
+              backgroundImage: `url('/sems/indu.jpeg')`
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/30" />
+        </div>
 
-            {/* Filter */}
-            <div className="relative">
-              <select
-                value={filterBy}
-                onChange={(e) => setFilterBy(e.target.value)}
-                className="w-full appearance-none px-4 py-3 bg-black/60 border border-emerald-500/30 rounded-xl text-white focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
-              >
-                <option value="all">Todas las genéticas</option>
-                <option value="indica">Indica Dominante</option>
-                <option value="sativa">Sativa Dominante</option>
-                <option value="hybrid">Híbridas 50/50</option>
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
-            </div>
+        {/* Content */}
+        <div className="relative z-10 text-center max-w-4xl px-6 flex flex-col items-center gap-6">
+          <span className="inline-flex items-center rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-sm font-medium text-emerald-400 backdrop-blur-xl">
+            Nueva Colección 2024
+          </span>
 
-            {/* Sort */}
-            <div className="relative">
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="w-full appearance-none px-4 py-3 bg-black/60 border border-emerald-500/30 rounded-xl text-white focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
-              >
-                <option value="name">Ordenar por Nombre</option>
-                <option value="price">Ordenar por Precio</option>
-                <option value="thc">Ordenar por THC</option>
-                <option value="flowering">Ordenar por Floración</option>
-              </select>
-              <SortDesc className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
-            </div>
-          </div>
+          <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-white">
+            Cultivating
+            <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-lime-400">
+              Excellence
+            </span>
+          </h1>
+
+          <p className="text-xl text-gray-300 max-w-2xl leading-relaxed">
+            Genéticas premium desarrolladas con precisión científica. Cada cepa representa años de selección y perfección.
+          </p>
         </div>
       </section>
 
       {/* Genetics Grid */}
-      <section ref={sectionRef} className="relative py-20">
+      <section className="py-20 bg-black">
         <div className="max-w-7xl mx-auto px-6">
-          <div className={`grid md:grid-cols-2 lg:grid-cols-3 gap-8 transition-all duration-1000 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-          }`}>
-            {filteredGenetics.map((genetic) => {
-              const colors = colorSchemes[genetic.color as keyof typeof colorSchemes];
+          {/* Filter Tabs */}
+          <div className="flex flex-wrap justify-center gap-3 mb-12">
+            <button
+              onClick={() => setFilterBy('all')}
+              className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${
+                filterBy === 'all'
+                  ? 'bg-emerald-500 text-black'
+                  : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20'
+              }`}
+            >
+              Todas
+            </button>
+            <button
+              onClick={() => setFilterBy('indica')}
+              className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${
+                filterBy === 'indica'
+                  ? 'bg-emerald-500 text-black'
+                  : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20'
+              }`}
+            >
+              Indica
+            </button>
+            <button
+              onClick={() => setFilterBy('sativa')}
+              className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${
+                filterBy === 'sativa'
+                  ? 'bg-emerald-500 text-black'
+                  : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20'
+              }`}
+            >
+              Sativa
+            </button>
+            <button
+              onClick={() => setFilterBy('hybrid')}
+              className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${
+                filterBy === 'hybrid'
+                  ? 'bg-emerald-500 text-black'
+                  : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20'
+              }`}
+            >
+              Híbridas
+            </button>
+          </div>
 
-              return (
-                <div key={genetic.id} className="group relative">
-                  <div className={`absolute -inset-1 bg-gradient-to-r ${colors.gradient} rounded-3xl blur-xl opacity-60 group-hover:opacity-80 transition-opacity duration-500`} />
+          {/* Grid */}
+          <div
+            ref={gridRef}
+            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"
+          >
+            {filteredGenetics.map((genetic) => (
+              <Link
+                key={genetic.id}
+                href={`/genetics/${genetic.slug}`}
+                className="group relative block"
+              >
+                <div className="relative aspect-square rounded-2xl overflow-hidden bg-emerald-950/20 border border-emerald-500/10 group-hover:border-emerald-500/40 transition-all duration-500">
+                  {/* Image */}
+                  <Image
+                    src={genetic.image}
+                    alt={genetic.title}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
 
-                  <div className={`relative bg-black/80 backdrop-blur-xl border ${colors.border} rounded-3xl overflow-hidden transition-all duration-500 h-full flex flex-col`}>
-                    {/* Product Image */}
-                    <div className="relative w-full h-48 overflow-hidden">
-                      <Image
-                        src={genetic.image}
-                        alt={genetic.title}
-                        fill
-                        className="object-cover group-hover:scale-110 transition-transform duration-500"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
-                      {/* Price Badge */}
-                      <div className="absolute top-3 right-3 bg-black/80 backdrop-blur-sm border border-emerald-500/30 rounded-xl px-3 py-1.5">
-                        <div className={`text-xl font-bold ${colors.text}`}>${genetic.prices.pack6.toLocaleString()}</div>
-                        <div className="text-[10px] text-gray-400 text-center">Pack x6</div>
-                      </div>
-                    </div>
+                  {/* Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-70 group-hover:opacity-85 transition-opacity duration-300" />
 
-                    <div className="p-5 flex-1 flex flex-col">
-                      <h3 className="text-xl font-bold text-white mb-1">
+                  {/* Content Overlay */}
+                  <div className="absolute inset-0 p-4 flex flex-col justify-end">
+                    <div className="space-y-1">
+                      <h3 className="text-white font-bold text-lg">
                         {genetic.title}
                       </h3>
-                      <h4 className={`text-sm font-medium ${colors.text} mb-4`}>
+                      <p className="text-emerald-400 text-sm font-medium">
                         {genetic.genetics}
-                      </h4>
-
-                      {/* Minimal Specs */}
-                      <div className="space-y-1.5 mb-4 text-xs">
-                        <div className="flex justify-between">
-                          <span className="text-gray-400">THC:</span>
-                          <span className="text-white font-medium">{genetic.thc}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-400">Floración:</span>
-                          <span className="text-white font-medium">{genetic.flowering}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-400">Tipo:</span>
-                          <span className="text-white font-medium">{genetic.composition.split('-')[0].trim()}</span>
-                        </div>
-                      </div>
-
-                      {/* Seed Type Notice */}
-                      <div className="p-2 bg-blue-500/10 border border-blue-500/30 rounded-lg mb-3">
-                        <p className="text-xs text-blue-200 text-center">
-                          <span className="font-semibold">Regulares</span> - 90% femeninas
-                        </p>
-                      </div>
-
-                      {/* Actions */}
-                      <div className="space-y-2">
-                        <Link href={`/genetics/${genetic.slug}`} className="block">
-                          <Button className={`w-full bg-gradient-to-r ${colors.button} text-white font-bold transition-all duration-300 hover:scale-105`}>
-                            Ver detalles
-                          </Button>
-                        </Link>
+                      </p>
+                      <div className="flex items-center justify-between pt-2">
+                        <span className="text-white font-bold text-lg">
+                          ${genetic.prices.pack6.toLocaleString()}
+                        </span>
+                        <span className="text-xs text-gray-400">
+                          Pack x6
+                        </span>
                       </div>
                     </div>
                   </div>
+
+                  {/* THC Badge */}
+                  <div className="absolute top-3 right-3 bg-emerald-500 text-black text-xs font-bold px-2.5 py-1 rounded-full">
+                    {genetic.thc}
+                  </div>
                 </div>
-              );
-            })}
+              </Link>
+            ))}
           </div>
 
+          {/* Load More */}
           {filteredGenetics.length === 0 && (
             <div className="text-center py-20">
-              <div className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-              <h3 className="text-2xl font-bold text-gray-400 mb-2">No se encontraron genéticas</h3>
-              <p className="text-gray-500">Intenta ajustar tus filtros de búsqueda</p>
+              <p className="text-gray-400 text-lg">
+                No se encontraron genéticas con ese filtro
+              </p>
             </div>
           )}
         </div>
       </section>
-    </>
+
+      {/* CTA Section - Join Inner Circle */}
+      <section className="py-24 bg-emerald-950/10 border-y border-emerald-500/20">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/30 mb-6">
+            <svg className="w-8 h-8 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+          </div>
+
+          <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
+            Join the Inner Circle
+          </h2>
+
+          <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+            Obtené acceso exclusivo a nuevas genéticas, guías de cultivo premium y ofertas especiales para miembros.
+          </p>
+
+          <Button className="bg-gradient-to-r from-emerald-500 to-lime-500 hover:from-emerald-400 hover:to-lime-400 text-black font-bold px-8 py-6 text-lg rounded-full transition-all duration-300 hover:scale-105">
+            Unirse Ahora
+          </Button>
+        </div>
+      </section>
+    </div>
   );
 }
