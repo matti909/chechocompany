@@ -92,5 +92,37 @@
     },
     "content": "<h2>ESQUIZOFRENIA 🧠</h2>\n<p><strong>Composición:</strong> 70% Indica - 30% Sativa\n<strong>THC:</strong> 21%</p>\n<h3>Características</h3>\n<ul>\n<li><strong>Floración:</strong> 6-7 semanas (45 días indoor)</li>\n<li><strong>Dificultad:</strong> Fácil</li>\n<li><strong>Tipo:</strong> Fotoperiódica feminizada</li>\n<li><strong>Olor:</strong> Bajo - Discreto</li>\n<li><strong>Sabor:</strong> Dulce a uva y golosinas, notas de vainilla y madera aromática</li>\n</ul>\n<h3>Producción</h3>\n<ul>\n<li><strong>Interior:</strong> 500g/m² | Altura: Medio</li>\n<li><strong>Exterior:</strong> 600g/planta | Altura: Medio</li>\n<li><strong>Cosecha exterior:</strong> Principios de septiembre</li>\n<li><strong>Especial para clonar</strong></li>\n</ul>\n<h3>Efectos</h3>\n<ul>\n<li><strong>Tipo de efecto:</strong> Eufórico cerebral equilibrado</li>\n<li>Estimulación cerebral inicial seguida de relajación física</li>\n<li>Ideal para momentos de tensión y estrés</li>\n<li>Body-buzz relajante de intensidad media</li>\n</ul>\n<h3>Uso Medicinal</h3>\n<ul>\n<li>Anti-ansiedad potente</li>\n<li>Reduce nerviosismo</li>\n<li>Efecto analgésico</li>\n<li>Uso medicinal recomendado</li>\n</ul>\n<h3>Perfil de Sabores</h3>\n<ul>\n<li>Dulce base</li>\n<li>Notas de vainilla</li>\n<li>Toques de caramelo</li>\n<li>Madera aromática sutil</li>\n</ul>",
     "permalink": "/genetics/esquizofrenia"
+  },
+  {
+    "id": "pack-mix",
+    "title": "PACK MIX",
+    "slug": "pack-mix",
+    "genetics": "Epilepsia + Esquizofrenia + Bipolaridad Maníaca",
+    "composition": "50% Indica - 50% Sativa",
+    "thc": "18-25%",
+    "cbd": "Variado",
+    "flowering": "6-10 semanas",
+    "difficulty": "Fácil",
+    "type": "Pack colección completa",
+    "smell": "Variado - Todos los perfiles",
+    "flavor": "Mix completo - Floral, Uva, Frutal",
+    "productionIndoor": "500-650g/m²",
+    "productionOutdoor": "600-1000g/planta",
+    "heightIndoor": "Media",
+    "heightOutdoor": "Media-Grande",
+    "harvestTime": "Septiembre - Octubre",
+    "effectType": "Efecto completo y variado",
+    "specialFeature": "Las 3 genéticas premium en 1 pack",
+    "image": "/sems/cana.png",
+    "color": "purple",
+    "prices": {
+      "pack6": 42000,
+      "pack12": 80000,
+      "pack25": 155000,
+      "pack50": 290000,
+      "pack100": 520000
+    },
+    "content": "<h2>PACK MIX 🌿🔥✨</h2>\n<p><strong>Genética:</strong> Epilepsia + Esquizofrenia + Bipolaridad Maníaca\n<strong>Composición:</strong> Mix Indica/Sativa\n<strong>THC:</strong> 18-25% (variable según cepa) | <strong>CBD:</strong> Variado</p>\n<h3>Incluye</h3>\n<ul>\n<li><strong>Epilepsia</strong> — Big Bud x Skunk #1 | 70% Indica | THC 18-20%</li>\n<li><strong>Esquizofrenia</strong> — Genética exclusiva Chex Seeds | THC 21%</li>\n<li><strong>Bipolaridad Maníaca</strong> — GG#4 x Santabilbo | 60% Sativa | THC 25%</li>\n</ul>\n<h3>Características</h3>\n<ul>\n<li><strong>Floración:</strong> 6-10 semanas (variable)</li>\n<li><strong>Dificultad:</strong> Fácil</li>\n<li><strong>Tipo:</strong> Pack colección completa</li>\n<li><strong>Olor:</strong> Variado - todos los perfiles aromáticos</li>\n<li><strong>Sabor:</strong> Mix completo: Floral dulce, Uva vainilla, Frutal terroso</li>\n</ul>\n<h3>Producción</h3>\n<ul>\n<li><strong>Interior:</strong> 500-650g/m²</li>\n<li><strong>Exterior:</strong> 600-1000g/planta</li>\n<li><strong>Cosecha exterior:</strong> Septiembre - Octubre</li>\n</ul>\n<h3>Efectos</h3>\n<ul>\n<li>La combinación completa de nuestras tres genéticas</li>\n<li>Desde el sedante relajante de Epilepsia</li>\n<li>Hasta el eufórico cerebral de Bipolaridad Maníaca</li>\n<li>Pasando por la velocidad extrema de Esquizofrenia</li>\n</ul>\n<h3>Ideal para</h3>\n<ul>\n<li>Cultivadores que quieren conocer toda la línea Chex Seeds</li>\n<li>Experimentar con diferentes perfiles de efectos y sabores</li>\n<li>Mejor precio por semilla de toda la colección</li>\n</ul>",
+    "permalink": "/genetics/pack-mix"
   }
 ]

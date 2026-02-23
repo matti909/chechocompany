@@ -96,10 +96,10 @@ export function GeneticsSection({ genetics }: GeneticsProps) {
           </span>
 
           <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-white mb-6">
-            Cultivating
+            Genéticas
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-lime-400">
-              Excellence
+              de Élite
             </span>
           </h2>
 
