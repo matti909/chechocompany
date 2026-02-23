@@ -20,11 +20,11 @@ effectType: Cerebral eufórico intenso
 image: /sems/bipolaridad.jpg
 color: blue
 prices:
-  pack6: 18000
-  pack12: 34000
-  pack25: 65000
-  pack50: 120000
-  pack100: 220000
+  pack6: 54000
+  pack12: 89000
+  pack25: 152000
+  pack50: 280000
+  pack100: 399000
 ---
 
 ## BIPOLARIDAD MANÍACA 🔥
@@ -34,6 +34,7 @@ prices:
 **THC:** 25% (Alto) | **CBD:** Medio
 
 ### Características
+
 - **Floración:** 8-10 semanas
 - **Dificultad:** Fácil
 - **Tipo:** Feminizada
@@ -41,23 +42,27 @@ prices:
 - **Sabor:** Dulce con notas frutales y terrosas
 
 ### Producción
+
 - **Interior:** 550-650g/m² | Altura: Mediana
 - **Exterior:** 800-1000g/planta | Altura: Grande
 - **Cosecha exterior:** Mediados de octubre
 
 ### Efectos
+
 - **Tipo de efecto:** Cerebral eufórico intenso
 - Estimulación cerebral potente y duradera
 - Ideal para estabilizar el ánimo y combatir el estrés
 - Perfecto para creatividad y estado mental positivo
 
 ### Uso Medicinal
+
 - Estabilizador de ánimo
 - Anti-estrés
 - Estimula creatividad
 - Efecto cerebral eufórico
 
 ### Perfil de Sabores
+
 - Dulce base
 - Notas frutales
 - Toques terrosos

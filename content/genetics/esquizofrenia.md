@@ -21,11 +21,11 @@ specialFeature: Especial para clonar
 image: /Esquizofrenia-20251004T225522Z-1-001/Frente esq_.jpg
 color: emerald
 prices:
-  pack6: 16000
-  pack12: 30000
-  pack25: 58000
-  pack50: 110000
-  pack100: 200000
+  pack6: 54000
+  pack12: 89000
+  pack25: 152000
+  pack50: 280000
+  pack100: 399000
 ---
 
 ## ESQUIZOFRENIA 🧠

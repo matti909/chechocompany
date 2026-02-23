@@ -42,6 +42,20 @@ export interface GeneticsData {
     spicy: number;
     floral: number;
   };
+  prices: {
+    pack6: number;
+    pack12: number;
+    pack25: number;
+    pack50: number;
+    pack100: number;
+  };
+  prices: {
+    pack6: number;
+    pack12: number;
+    pack25: number;
+    pack50: number;
+    pack100: number;
+  };
   color: string;
   icon: React.ComponentType<{ className?: string }> | null;
   image?: string;
@@ -53,16 +67,18 @@ interface GeneticsClientProps {
   genetics: GeneticsData;
 }
 
-// Bulk pricing options
-const bulkPricing = [
-  { quantity: 6, price: 21000, label: '6x $21.000' },
-  { quantity: 12, price: 41000, label: '12x $41.000' },
-  { quantity: 25, price: 80000, label: '25x $80.000' },
-  { quantity: 50, price: 150000, label: '50x $150.000' },
-  { quantity: 100, price: 250000, label: '100x $250.000' },
-];
+function buildBulkPricing(prices: GeneticsData['prices']) {
+  return [
+    { quantity: 6,   price: prices.pack6 },
+    { quantity: 12,  price: prices.pack12 },
+    { quantity: 25,  price: prices.pack25 },
+    { quantity: 50,  price: prices.pack50 },
+    { quantity: 100, price: prices.pack100 },
+  ];
+}
 
 export function GeneticsClient({ genetics }: GeneticsClientProps) {
+  const bulkPricing = buildBulkPricing(genetics.prices);
   const [selectedQuantity, setSelectedQuantity] = useState(bulkPricing[0]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const router = useRouter();

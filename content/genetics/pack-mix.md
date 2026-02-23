@@ -21,11 +21,11 @@ specialFeature: Las 3 genéticas premium en 1 pack
 image: /sems/cana.png
 color: purple
 prices:
-  pack6: 42000
-  pack12: 80000
-  pack25: 155000
-  pack50: 290000
-  pack100: 520000
+  pack6: 54000
+  pack12: 89000
+  pack25: 152000
+  pack50: 280000
+  pack100: 399000
 ---
 
 ## PACK MIX 🌿🔥✨

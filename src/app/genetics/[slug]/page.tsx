@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { Clock, Sparkles } from "lucide-react";
+import { genetics as allGenetics } from '#site/content';
 import { GeneticsClient, type GeneticsData } from './GeneticsClient';
 
 const geneticsData = {
@@ -255,10 +256,12 @@ export default async function GeneticsDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  // Convert the genetics data to be client-safe
+  const veliteGenetic = allGenetics.find((g) => g.slug === slug);
+
   const clientSafeGenetics = {
     ...genetics,
-    icon: null // Remove the icon component for now
+    prices: veliteGenetic?.prices ?? { pack6: 0, pack12: 0, pack25: 0, pack50: 0, pack100: 0 },
+    icon: null,
   };
 
   return <GeneticsClient genetics={clientSafeGenetics as GeneticsData} />;

@@ -20,11 +20,11 @@ effectType: Sedante cerebral equilibrado
 image: /Epilesia-20251004T225525Z-1-001/Epilepsiafrente.jpg
 color: pink
 prices:
-  pack6: 15000
-  pack12: 28000
-  pack25: 55000
-  pack50: 100000
-  pack100: 180000
+  pack6: 54000
+  pack12: 89000
+  pack25: 152000
+  pack50: 280000
+  pack100: 399000
 ---
 
 ## EPILEPSIA 🌿
