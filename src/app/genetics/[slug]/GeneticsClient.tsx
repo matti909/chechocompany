@@ -49,13 +49,6 @@ export interface GeneticsData {
     pack50: number;
     pack100: number;
   };
-  prices: {
-    pack6: number;
-    pack12: number;
-    pack25: number;
-    pack50: number;
-    pack100: number;
-  };
   color: string;
   icon: React.ComponentType<{ className?: string }> | null;
   image?: string;
