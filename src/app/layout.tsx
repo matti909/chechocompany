@@ -7,6 +7,7 @@ import { AuthProvider } from "@/components/providers/auth-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { Navbar } from "./components/navbar";
 import { LoginModalWrapper } from "@/components/ui/login-modal-wrapper";
+import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,7 +27,8 @@ const bebasNeue = Bebas_Neue({
 
 export const metadata: Metadata = {
   title: "Chex Seeds | Semillas de Cannabis Premium",
-  description: "Genéticas de cannabis autoflorecientes de la más alta calidad. Semillas feminizadas con 98% de germinación garantizada. Envíos discretos a todo el país.",
+  description:
+    "Genéticas de cannabis autoflorecientes de la más alta calidad. Semillas feminizadas con 98% de germinación garantizada. Envíos discretos a todo el país.",
 };
 
 export default function RootLayout({
@@ -45,6 +47,7 @@ export default function RootLayout({
           <LoginModalWrapper />
           <MouseGraviton />
           {children}
+          <Analytics />
           <Toaster />
         </AuthProvider>
       </body>
