@@ -30,9 +30,12 @@ export async function POST(request: NextRequest) {
 
     const resend = new Resend(process.env.RESEND_API_KEY);
 
+    const fromEmail = process.env.RESEND_FROM_EMAIL ?? "contacto@chexseeds.com";
+    const vendorEmail = process.env.VENDOR_EMAIL ?? "matias.saantiago@gmail.com";
+
     const companyEmailData = {
-      from: "contacto@chexseeds.com",
-      to: "chexseed@gmail.com",
+      from: fromEmail,
+      to: vendorEmail,
       subject: `[CONTACTO WEB] ${subject}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #000000, #1a1a1a); color: white; border-radius: 20px; overflow: hidden;">
@@ -89,7 +92,7 @@ export async function POST(request: NextRequest) {
 
     // Send auto-reply to customer
     const customerEmailData = {
-      from: "contacto@chexseeds.com",
+      from: fromEmail,
       to: email,
       subject: "✅ Hemos recibido tu mensaje - CHEX SEEDS",
       html: `
@@ -169,6 +172,7 @@ export async function POST(request: NextRequest) {
         { status: 200 },
       );
     } catch (emailError) {
+      console.error("[Resend contact] Error:", JSON.stringify(emailError, null, 2));
       return NextResponse.json(
         { error: "Error al enviar el email: " + (emailError as Error).message },
         { status: 500 },

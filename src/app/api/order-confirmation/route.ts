@@ -86,8 +86,10 @@ export async function POST(request: NextRequest) {
       )
       .join("");
 
+    const fromEmail = process.env.RESEND_FROM_EMAIL ?? "onboarding@resend.dev";
+
     const customerEmailData = {
-      from: "contacto@chexseeds.com",
+      from: fromEmail,
       to: orderData.customerInfo.email,
       subject: `✅ Pedido Confirmado #${orderData.orderNumber} - CHEX SEEDS`,
       html: `
@@ -236,7 +238,7 @@ export async function POST(request: NextRequest) {
     // Company notification email
     const companyEmailData = {
       from: "contacto@chexseeds.com",
-      to: "chexseed@gmail.com",
+      to: process.env.VENDOR_EMAIL ?? "matias.saantiago@gmail.com",
       subject: `🎉 NUEVO PEDIDO #${orderData.orderNumber} - $${orderData.total.toLocaleString()}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 700px; margin: 0 auto; background: linear-gradient(135deg, #000000, #1a1a1a); color: white; border-radius: 20px; overflow: hidden;">
@@ -303,11 +305,11 @@ export async function POST(request: NextRequest) {
         { status: 200 },
       );
     } catch (emailError) {
+      console.error("[Resend] Error completo:", JSON.stringify(emailError, null, 2));
       return NextResponse.json(
         {
-          error:
-            "Error al enviar emails de confirmación: " +
-            (emailError as Error).message,
+          error: "Error al enviar emails de confirmación: " + (emailError as Error).message,
+          detail: emailError,
         },
         { status: 500 },
       );
