@@ -9,9 +9,10 @@ export function NavLogo() {
 
   useEffect(() => {
     if (logoRef.current) {
-      gsap.fromTo(logoRef.current,
+      gsap.fromTo(
+        logoRef.current,
         { opacity: 0, x: -50 },
-        { opacity: 1, x: 0, duration: 1, ease: "power3.out" }
+        { opacity: 1, x: 0, duration: 1, ease: "power3.out" },
       );
     }
   }, []);
@@ -26,7 +27,7 @@ export function NavLogo() {
             gsap.to(logoRef.current, {
               scale: 1.05,
               duration: 0.3,
-              ease: "power2.out"
+              ease: "power2.out",
             });
           }
         }}
@@ -35,13 +36,16 @@ export function NavLogo() {
             gsap.to(logoRef.current, {
               scale: 1,
               duration: 0.3,
-              ease: "power2.out"
+              ease: "power2.out",
             });
           }
         }}
       >
         <div>
-          <div className="font-[var(--font-display)] text-3xl text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-lime-400 leading-none tracking-wider">
+          <div
+            className="text-5xl text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-lime-400 leading-none tracking-wider"
+            style={{ fontFamily: "'Gothic War', sans-serif" }}
+          >
             CHEX SEEDS
           </div>
         </div>
