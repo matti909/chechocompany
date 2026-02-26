@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { ShoppingBag, ArrowRight } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { gsap } from "gsap";
@@ -27,168 +26,252 @@ interface GeneticsProps {
   }>;
 }
 
+const colorTints: Record<string, string> = {
+  pink:    "rgba(236,72,153,0.25)",
+  emerald: "rgba(16,185,129,0.22)",
+  blue:    "rgba(251,146,60,0.22)",
+  orange:  "rgba(251,146,60,0.25)",
+  purple:  "rgba(168,85,247,0.22)",
+  cyan:    "rgba(6,182,212,0.22)",
+};
+
+const colorAccents: Record<string, string> = {
+  pink:    "#f472b6",
+  emerald: "#34d399",
+  blue:    "#fb923c",
+  orange:  "#fb923c",
+  purple:  "#c084fc",
+  cyan:    "#22d3ee",
+};
+
 export function GeneticsSection({ genetics }: GeneticsProps) {
-  const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef<HTMLElement>(null);
-  const cardsRef = useRef<HTMLDivElement>(null);
+  const sectionRef  = useRef<HTMLElement>(null);
+  const headerRef   = useRef<HTMLDivElement>(null);
+  const cardsRef    = useRef<HTMLDivElement>(null);
+  const ctaRef      = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
+        if (!entry.isIntersecting) return;
 
-          // Animate cards with GSAP
-          if (cardsRef.current) {
-            gsap.fromTo(
-              cardsRef.current.children,
-              { opacity: 0, y: 40, scale: 0.95 },
-              {
-                opacity: 1,
-                y: 0,
-                scale: 1,
-                duration: 0.6,
-                stagger: 0.1,
-                ease: "power3.out"
-              }
-            );
-          }
-        }
+        const tl = gsap.timeline();
+        tl
+          .fromTo(headerRef.current,
+            { opacity: 0, y: 30 },
+            { opacity: 1, y: 0, duration: 0.9, ease: "power4.out" }
+          )
+          .fromTo(Array.from(cardsRef.current?.children ?? []),
+            { opacity: 0, y: 50, scale: 0.97 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.7, stagger: 0.12, ease: "power3.out" },
+            "-=0.4"
+          )
+          .fromTo(ctaRef.current,
+            { opacity: 0, y: 16 },
+            { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" },
+            "-=0.3"
+          );
       },
-      { threshold: 0.1 },
+      { threshold: 0.08 }
     );
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
+    if (sectionRef.current) observer.observe(sectionRef.current);
     return () => observer.disconnect();
   }, []);
 
-  // Show only first 3 genetics on homepage
   const displayGenetics = genetics.slice(0, 3);
 
   return (
-    <section
-      id="genetics"
-      ref={sectionRef}
-      className="relative py-32 overflow-hidden bg-black"
-    >
-      {/* Background texture */}
-      <div className="absolute inset-0 opacity-5">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-          }}
-        />
-      </div>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap');
+        .gs-display { font-family: 'Syne', sans-serif; }
+        .gs-mono    { font-family: 'Space Mono', monospace; }
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6">
-        {/* Header */}
-        <div
-          className={`text-center mb-20 transition-all duration-1000 ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-          }`}
-        >
-          <span className="inline-flex items-center rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-1.5 text-sm font-medium text-emerald-400 backdrop-blur-xl mb-6">
-            Colección Premium 2024
-          </span>
+        .gs-card {
+          transition: transform 0.45s cubic-bezier(0.22,1,0.36,1),
+                      box-shadow 0.45s cubic-bezier(0.22,1,0.36,1);
+        }
+        .gs-card:hover {
+          transform: translateY(-10px) scale(1.015);
+          box-shadow: 0 32px 64px rgba(0,0,0,0.6);
+        }
+        .gs-card:hover .gs-tint {
+          opacity: 1 !important;
+        }
+        .gs-card:hover .gs-arrow {
+          transform: translate(2px, -2px);
+        }
+        .gs-arrow {
+          transition: transform 0.3s ease;
+        }
+        .gs-thc {
+          clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+        }
+        .gs-cta-btn {
+          clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+          transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+        .gs-cta-btn:hover { opacity: 0.9; transform: scale(1.02); }
+        .gs-cta-btn:active { transform: scale(0.98); }
+      `}</style>
 
-          <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-white mb-6">
-            Genéticas
-            <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-lime-400">
-              de Élite
-            </span>
-          </h2>
+      <section
+        ref={sectionRef}
+        id="genetics"
+        className="relative bg-[#050a05] overflow-hidden"
+      >
+        {/* Top border from previous section */}
+        <div className="border-t border-white/[0.08]" />
 
-          <p className="text-xl text-gray-400 leading-relaxed max-w-3xl mx-auto">
-            Genéticas desarrolladas con precisión científica para cultivadores que buscan lo mejor.
-          </p>
-        </div>
+        <div className="max-w-7xl mx-auto px-6">
 
-        {/* Genetics Grid */}
-        <div
-          ref={cardsRef}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-16"
-        >
-          {displayGenetics.map((genetic) => (
-            <Link
-              key={genetic.id}
-              href={`/genetics/${genetic.slug}`}
-              className="group relative block"
-            >
-              <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-emerald-950/20 border border-emerald-500/10 group-hover:border-emerald-500/30 transition-all duration-500">
-                {/* Image */}
-                <Image
-                  src={genetic.image}
-                  alt={genetic.title}
-                  fill
-                  className="object-cover group-hover:scale-110 transition-transform duration-700"
-                />
+          {/* ── Header ── */}
+          <div ref={headerRef} className="py-16 lg:py-20 border-b border-white/[0.08]">
+            <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
 
-                {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300" />
+              <div>
+                <span className="gs-mono text-[10px] text-[#39FF14]/50 tracking-[0.35em] uppercase block mb-5">
+                  — Colección Premium 2025
+                </span>
+                <h2
+                  className="gs-display font-black leading-[0.88] tracking-tight text-white"
+                  style={{ fontSize: "clamp(36px, 5.5vw, 68px)" }}
+                >
+                  Genéticas
+                  <br />
+                  <span style={{ color: "#39FF14" }}>de Élite.</span>
+                </h2>
+              </div>
 
-                {/* Badge - THC Level */}
-                <div className="absolute top-4 right-4 bg-emerald-500 text-black text-xs font-bold px-3 py-1.5 rounded-full">
-                  THC {genetic.thc}
-                </div>
+              <p className="text-[#7a9a7a] text-sm leading-relaxed max-w-sm lg:text-right gs-mono">
+                Desarrolladas con precisión científica para cultivadores que buscan lo mejor del mercado argentino.
+              </p>
+            </div>
+          </div>
 
-                {/* Content */}
-                <div className="absolute bottom-0 left-0 right-0 p-6">
-                  <div className="space-y-3">
-                    <div>
-                      <h3 className="text-white font-bold text-2xl mb-1">
-                        {genetic.title}
-                      </h3>
-                      <p className="text-emerald-400 text-sm font-medium">
-                        {genetic.genetics}
-                      </p>
-                      <p className="text-gray-400 text-xs mt-1">
-                        {genetic.composition}
-                      </p>
-                    </div>
+          {/* ── Cards grid ── */}
+          <div
+            ref={cardsRef}
+            className="grid grid-cols-1 md:grid-cols-3 gap-6 py-12"
+          >
+            {displayGenetics.map((genetic, i) => {
+              const tint   = colorTints[genetic.color]   ?? "rgba(57,255,20,0.18)";
+              const accent = colorAccents[genetic.color] ?? "#39FF14";
 
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="text-white font-bold text-xl">
-                          ${genetic.prices.pack6.toLocaleString()}
-                        </div>
-                        <div className="text-gray-400 text-xs">Pack x6 semillas</div>
+              return (
+                <Link
+                  key={genetic.id}
+                  href={`/genetics/${genetic.slug}`}
+                  className="block group"
+                  style={{ marginTop: i === 1 ? "-20px" : "0" }}
+                >
+                  <div className="gs-card relative overflow-hidden rounded-none" style={{ background: "#0a0f0a" }}>
+
+                    {/* Illustration */}
+                    <div className="relative" style={{ aspectRatio: "3/4" }}>
+                      <Image
+                        src={genetic.image}
+                        alt={genetic.title}
+                        fill
+                        className="object-cover object-top"
+                      />
+
+                      {/* Color tint overlay */}
+                      <div
+                        className="gs-tint absolute inset-0 transition-opacity duration-500"
+                        style={{ background: tint, opacity: 0 }}
+                      />
+
+                      {/* Bottom gradient for readability */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0a0f0a] via-[#0a0f0a]/10 to-transparent" />
+
+                      {/* THC badge */}
+                      <div
+                        className="gs-thc absolute top-4 right-4 bg-[#39FF14] text-black gs-mono text-[10px] font-bold px-3 py-1.5 tracking-wider"
+                      >
+                        THC {genetic.thc}
+                      </div>
+
+                      {/* Collector number */}
+                      <div className="absolute top-4 left-4 gs-mono text-white/20 text-[10px] tracking-widest">
+                        {String(i + 1).padStart(2, "0")} / 03
                       </div>
                     </div>
 
-                    {/* Hover Button */}
-                    <div className="opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                      <div className="flex items-center gap-2 text-emerald-400 text-sm font-medium bg-emerald-500/10 backdrop-blur-sm border border-emerald-500/30 rounded-full px-4 py-2">
-                        <ShoppingBag className="w-4 h-4" />
-                        <span>Ver detalles</span>
-                        <ArrowRight className="w-4 h-4" />
+                    {/* Info panel */}
+                    <div className="p-5 border-t" style={{ borderColor: `${accent}22` }}>
+                      <div className="flex items-start justify-between gap-3 mb-3">
+                        <div>
+                          <h3 className="gs-display font-black text-white leading-tight text-base uppercase tracking-tight">
+                            {genetic.title}
+                          </h3>
+                          <p className="gs-mono mt-1 text-[11px]" style={{ color: accent }}>
+                            {genetic.genetics}
+                          </p>
+                          <p className="gs-mono text-[10px] text-[#3a5a3a] mt-0.5">
+                            {genetic.composition}
+                          </p>
+                        </div>
+                        <ArrowUpRight
+                          className="gs-arrow w-4 h-4 flex-shrink-0 mt-1"
+                          style={{ color: accent }}
+                        />
+                      </div>
+
+                      {/* Divider */}
+                      <div className="h-px w-full mb-3" style={{ background: `${accent}20` }} />
+
+                      <div className="flex items-end justify-between">
+                        <div>
+                          <div className="gs-display font-black text-white text-xl leading-none">
+                            ${genetic.prices.pack6.toLocaleString("es-AR")}
+                          </div>
+                          <div className="gs-mono text-[10px] text-[#3a5a3a] mt-1 tracking-wider">
+                            Pack x6 semillas
+                          </div>
+                        </div>
+                        <div
+                          className="gs-mono text-[10px] px-3 py-1.5 font-bold tracking-widest uppercase"
+                          style={{
+                            color: accent,
+                            border: `1px solid ${accent}40`,
+                            background: `${accent}0d`,
+                          }}
+                        >
+                          Ver más
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
+                </Link>
+              );
+            })}
+          </div>
 
-        {/* CTA */}
-        <div
-          className={`text-center transition-all duration-1000 delay-500 ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-          }`}
-        >
-          <Link href="/genetics">
-            <Button className="bg-gradient-to-r from-emerald-500 to-lime-500 hover:from-emerald-400 hover:to-lime-400 text-black font-bold px-8 py-6 text-lg rounded-full transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-emerald-500/25">
-              Ver Catálogo Completo
-              <ArrowRight className="w-5 h-5 ml-2" />
-            </Button>
-          </Link>
+          {/* ── CTA ── */}
+          <div ref={ctaRef} className="border-t border-white/[0.08] py-12 flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div>
+              <p className="gs-display font-bold text-white text-lg">
+                ¿Querés ver toda la colección?
+              </p>
+              <p className="gs-mono text-[#3a5a3a] text-xs mt-1 tracking-wide">
+                4 genéticas disponibles — envío discreto a todo el país
+              </p>
+            </div>
+
+            <Link href="/genetics">
+              <button
+                className="gs-display gs-cta-btn font-bold text-black text-xs tracking-[0.25em] uppercase px-8 py-4 whitespace-nowrap"
+                style={{ background: "#39FF14" }}
+              >
+                Ver Catálogo Completo
+              </button>
+            </Link>
+          </div>
+
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }

@@ -1,17 +1,15 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
-import { ArrowLeft, ShoppingBag, Award, Star, Leaf, FlaskConical, Package, Clock, TrendingUp, Sparkles, ShoppingCart, Check, ChevronDown } from "lucide-react";
+import { ArrowLeft, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { toast } from "sonner";
-import { GeneticsProfileChart } from "@/components/charts";
+import { RadarChart } from "@/components/charts";
 import useCartStore from "@/store/cart-store";
 import { useSession } from "@/lib/auth-client";
+import { gsap } from "gsap";
 
 export interface GeneticsData {
   name: string;
@@ -70,13 +68,53 @@ function buildBulkPricing(prices: GeneticsData['prices']) {
   ];
 }
 
+function getType(composition: string): 'SATIVA' | 'INDICA' | 'HÍBRIDO' {
+  const lower = composition.toLowerCase();
+  const sativaMatch = lower.match(/(\d+)%\s*sativa/);
+  const indicaMatch = lower.match(/(\d+)%\s*indica/);
+  const sativa = sativaMatch ? parseInt(sativaMatch[1]) : 0;
+  const indica = indicaMatch ? parseInt(indicaMatch[1]) : 0;
+  if (sativa > indica) return 'SATIVA';
+  if (indica > sativa) return 'INDICA';
+  return 'HÍBRIDO';
+}
+
+const TYPE_ACCENTS: Record<string, string> = {
+  SATIVA:  '#fbbf24',
+  INDICA:  '#a78bfa',
+  HÍBRIDO: '#34d399',
+};
+
+const colorAccents: Record<string, string> = {
+  pink:    '#f472b6',
+  emerald: '#34d399',
+  blue:    '#fb923c',
+  orange:  '#fb923c',
+  purple:  '#c084fc',
+  cyan:    '#22d3ee',
+};
+
 export function GeneticsClient({ genetics }: GeneticsClientProps) {
   const bulkPricing = buildBulkPricing(genetics.prices);
   const [selectedQuantity, setSelectedQuantity] = useState(bulkPricing[0]);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const router = useRouter();
   const { addItem } = useCartStore();
   const { data: session } = useSession();
+  const infoRef = useRef<HTMLDivElement>(null);
+
+  const accent     = colorAccents[genetics.color] ?? '#39FF14';
+  const type       = getType(genetics.composition);
+  const typeAccent = TYPE_ACCENTS[type];
+
+  useEffect(() => {
+    if (infoRef.current) {
+      gsap.fromTo(
+        Array.from(infoRef.current.children),
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.65, stagger: 0.09, ease: 'power3.out', delay: 0.15 }
+      );
+    }
+  }, []);
 
   const handleAddToCart = () => {
     addItem({
@@ -91,6 +129,7 @@ export function GeneticsClient({ genetics }: GeneticsClientProps) {
       genotype: genetics.composition,
       image: genetics.image,
     });
+    toast.success("Agregado al carrito", { duration: 2000 });
   };
 
   const handleBuyNow = () => {
@@ -101,424 +140,515 @@ export function GeneticsClient({ genetics }: GeneticsClientProps) {
       });
       return;
     }
-
     handleAddToCart();
     router.push('/cart');
   };
 
-  const colorClasses = {
-    pink: {
-      gradient: "from-pink-500/20 via-purple-500/20 to-pink-500/20",
-      border: "border-pink-500/30",
-      bg: "bg-gradient-to-r from-pink-500/20 to-purple-500/20",
-      accent: "text-pink-400",
-      button: "from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600"
-    },
-    emerald: {
-      gradient: "from-emerald-500/20 via-lime-500/20 to-emerald-500/20",
-      border: "border-emerald-500/30",
-      bg: "bg-gradient-to-r from-emerald-500/20 to-lime-500/20",
-      accent: "text-emerald-400",
-      button: "from-emerald-500 to-lime-500 hover:from-emerald-600 hover:to-lime-600"
-    },
-    blue: {
-      gradient: "from-blue-500/20 via-purple-500/20 to-blue-500/20",
-      border: "border-blue-500/30",
-      bg: "bg-gradient-to-r from-blue-500/20 to-purple-500/20",
-      accent: "text-blue-400",
-      button: "from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
-    },
-    orange: {
-      gradient: "from-orange-500/20 via-yellow-500/20 to-orange-500/20",
-      border: "border-orange-500/30",
-      bg: "bg-gradient-to-r from-orange-500/20 to-yellow-500/20",
-      accent: "text-orange-400",
-      button: "from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600"
-    },
-    purple: {
-      gradient: "from-purple-500/20 via-violet-500/20 to-purple-500/20",
-      border: "border-purple-500/30",
-      bg: "bg-gradient-to-r from-purple-500/20 to-violet-500/20",
-      accent: "text-purple-400",
-      button: "from-purple-500 to-violet-500 hover:from-purple-600 hover:to-violet-600"
-    }
-  };
+  const effectsData = [
+    { label: 'Cerebral',  value: genetics.effectsData.cerebral,  maxValue: 100 },
+    { label: 'Corporal',  value: genetics.effectsData.body,       maxValue: 100 },
+    { label: 'Eufórico',  value: genetics.effectsData.euphoric,   maxValue: 100 },
+    { label: 'Relajante', value: genetics.effectsData.relaxing,   maxValue: 100 },
+    { label: 'Creativo',  value: genetics.effectsData.creative,   maxValue: 100 },
+  ];
 
-  const colors = colorClasses[genetics.color as keyof typeof colorClasses];
+  const flavorsData = [
+    { label: 'Dulce',   value: genetics.flavorsData.sweet,  maxValue: 100 },
+    { label: 'Frutal',  value: genetics.flavorsData.fruity, maxValue: 100 },
+    { label: 'Terroso', value: genetics.flavorsData.earthy, maxValue: 100 },
+    { label: 'Picante', value: genetics.flavorsData.spicy,  maxValue: 100 },
+    { label: 'Floral',  value: genetics.flavorsData.floral, maxValue: 100 },
+  ];
+
+  const specs = [
+    { label: 'Genética',     value: genetics.genetics },
+    { label: 'Composición',  value: genetics.composition },
+    { label: 'THC',          value: genetics.thc },
+    { label: 'CBD',          value: genetics.cbd },
+    { label: 'Floración',    value: genetics.floweringIndoor },
+    { label: 'Dificultad',   value: genetics.difficulty },
+    { label: 'Aroma',        value: genetics.smell },
+    { label: 'Cosecha',      value: genetics.harvestTime },
+    { label: 'Sabor',        value: genetics.flavor },
+  ];
 
   return (
-    <div className="min-h-screen bg-black">
-      {/* Sticky Header with Price */}
-      <div className="sticky top-0 z-50 bg-black/95 backdrop-blur-xl border-b border-emerald-500/30">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <button onClick={() => router.back()} className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors cursor-pointer">
-              <ArrowLeft className="w-5 h-5" />
-              <span className="hidden sm:inline">Volver</span>
-            </button>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap');
+        .gd-display { font-family: 'Syne', sans-serif; }
+        .gd-mono    { font-family: 'Space Mono', monospace; }
 
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <div className="text-sm text-gray-400">Pack x{selectedQuantity.quantity}</div>
-                <div className={`text-2xl font-bold ${colors.accent}`}>${selectedQuantity.price.toLocaleString('es-AR')}</div>
+        .gd-pack-btn {
+          clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 7px 100%, 0 calc(100% - 7px));
+          transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+        }
+        .gd-pack-btn:hover:not(.gd-pack-active) {
+          color: rgba(255,255,255,0.7) !important;
+          border-color: rgba(255,255,255,0.2) !important;
+        }
+        .gd-cta {
+          clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+          transition: opacity 0.22s ease, transform 0.22s ease;
+        }
+        .gd-cta:hover  { opacity: 0.88; transform: scale(1.02); }
+        .gd-cta:active { transform: scale(0.98); }
+        .gd-sec {
+          clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+          transition: opacity 0.2s ease;
+        }
+        .gd-sec:hover { opacity: 0.7; }
+        .gd-type {
+          clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%);
+        }
+        .gd-thc {
+          clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 0 100%);
+        }
+        .gd-tag {
+          clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%);
+        }
+        .gd-nav-cta {
+          clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+          transition: opacity 0.2s ease;
+        }
+        .gd-nav-cta:hover { opacity: 0.88; }
+      `}</style>
+
+      <div className="w-full min-h-screen bg-[#050a05]">
+
+        {/* ── STICKY SUBHEADER ── */}
+        <div className="sticky top-[80px] z-30 border-b border-white/[0.08] bg-[#050a05]/95 backdrop-blur-md">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="flex items-center justify-between gap-4 py-3">
+
+              {/* Breadcrumb */}
+              <div className="flex items-center gap-2.5">
+                <Link
+                  href="/genetics"
+                  className="gd-mono text-[10px] text-[#3a5a3a] hover:text-[#7a9a7a] tracking-widest uppercase transition-colors flex items-center gap-1.5"
+                >
+                  <ArrowLeft className="w-3 h-3" />
+                  Genéticas
+                </Link>
+                <span className="text-white/10 gd-mono text-[10px]">/</span>
+                <span className="gd-mono text-[10px] text-[#39FF14]/40 tracking-widest uppercase truncate max-w-[160px]">
+                  {genetics.name}
+                </span>
               </div>
-              <Button
-                onClick={handleBuyNow}
-                className={`bg-gradient-to-r ${colors.button} text-black font-bold hover:scale-105 transition-all`}
-              >
-                <ShoppingCart className="w-5 h-5 mr-2" />
-                Comprar
-              </Button>
+
+              {/* Sticky price + buy */}
+              <div className="flex items-center gap-4">
+                <div className="text-right hidden sm:block">
+                  <div className="gd-mono text-[9px] text-[#3a5a3a] tracking-widest">
+                    Pack x{selectedQuantity.quantity}
+                  </div>
+                  <div className="gd-display font-black text-white text-base leading-none">
+                    ${selectedQuantity.price.toLocaleString('es-AR')}
+                  </div>
+                </div>
+                <button
+                  onClick={handleBuyNow}
+                  className="gd-nav-cta gd-display font-bold text-black text-[10px] tracking-[0.2em] uppercase px-5 py-2.5"
+                  style={{ background: '#39FF14' }}
+                >
+                  Comprar
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Hero Section */}
-      <div className="relative py-12 overflow-hidden">
-        <div className="absolute inset-0">
-          <div className={`absolute top-20 left-10 w-40 h-40 bg-gradient-to-r ${colors.gradient} rounded-full blur-3xl animate-pulse`} />
-          <div className={`absolute bottom-32 right-16 w-60 h-60 bg-gradient-to-l ${colors.gradient} rounded-full blur-3xl animate-pulse delay-1000`} />
-        </div>
+        {/* ── HERO ── */}
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid lg:grid-cols-[440px_1fr] border-b border-white/[0.08]">
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-12">
-            {/* Product Image */}
-            {genetics.image && (
-              <div className="relative">
-                {/* Offer Badge */}
-                <div className="absolute top-4 left-4 z-10 bg-gradient-to-r from-emerald-500 to-lime-500 text-black px-4 py-2 rounded-full text-sm font-bold">
-                  Oferta 75% OFF
-                </div>
-
-                <div className="relative w-full h-[500px] rounded-3xl overflow-hidden group border-2 border-emerald-500/30">
+            {/* Image column */}
+            <div
+              className="relative lg:border-r border-white/[0.08] overflow-hidden"
+              style={{ minHeight: '520px' }}
+            >
+              {genetics.image ? (
+                <>
                   <Image
                     src={genetics.image}
                     alt={genetics.name}
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="object-cover object-top"
                     priority
+                  />
+                  {/* soft bottom fade */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#050a05] via-[#050a05]/20 to-transparent" />
+
+                  {/* Badges top-left */}
+                  <div className="absolute top-5 left-5 flex flex-col gap-2">
+                    <span
+                      className="gd-type gd-mono text-[9px] font-bold px-3 py-1.5 tracking-widest uppercase"
+                      style={{
+                        color: typeAccent,
+                        background: `${typeAccent}15`,
+                        border: `1px solid ${typeAccent}30`,
+                      }}
+                    >
+                      {type}
+                    </span>
+                  </div>
+
+                  {/* THC badge top-right */}
+                  <div
+                    className="gd-thc absolute top-5 right-5 gd-mono text-[9px] font-bold px-3 py-1.5 tracking-wider text-black"
+                    style={{ background: '#39FF14' }}
+                  >
+                    THC {genetics.thc}
+                  </div>
+
+                  {/* Specimen marker bottom */}
+                  <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between">
+                    <span className="gd-mono text-white/15 text-[8px] tracking-[0.3em] uppercase">
+                      Chex Seeds Co. — ARG
+                    </span>
+                    <span className="gd-mono text-white/15 text-[8px] tracking-widest">
+                      SPEC-01
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <div className="absolute inset-0 bg-[#0a0f0a] flex items-center justify-center">
+                  <span
+                    className="gd-display font-black text-white/[0.04]"
+                    style={{ fontSize: '120px' }}
+                  >
+                    {genetics.name[0]}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Info column */}
+            <div ref={infoRef} className="py-10 px-6 lg:px-12 flex flex-col gap-7">
+
+              {/* Label */}
+              <div className="flex items-center gap-3">
+                <div className="h-px w-6" style={{ background: '#39FF14' }} />
+                <span className="gd-mono text-[10px] text-[#39FF14]/50 tracking-[0.35em] uppercase">
+                  Colección Premium 2025
+                </span>
+              </div>
+
+              {/* Title */}
+              <div>
+                <h1
+                  className="gd-display font-black leading-[0.88] tracking-tight text-white uppercase mb-2.5"
+                  style={{ fontSize: 'clamp(32px, 4vw, 58px)' }}
+                >
+                  {genetics.name}
+                </h1>
+                <p className="gd-mono text-[11px]" style={{ color: accent }}>
+                  {genetics.genetics}
+                </p>
+              </div>
+
+              {/* Key stats — border grid */}
+              <div className="grid grid-cols-3 border-t border-l border-white/[0.06]">
+                {[
+                  { label: 'Composición', value: genetics.composition },
+                  { label: 'Floración',   value: genetics.floweringIndoor },
+                  { label: 'Dificultad',  value: genetics.difficulty },
+                ].map((stat) => (
+                  <div
+                    key={stat.label}
+                    className="p-4 border-b border-r border-white/[0.06]"
+                  >
+                    <div className="gd-mono text-[9px] text-[#3a5a3a] tracking-[0.25em] uppercase mb-1.5">
+                      {stat.label}
+                    </div>
+                    <div className="gd-display font-bold text-white text-[11px] leading-tight">
+                      {stat.value}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Pack selector */}
+              <div>
+                <div className="gd-mono text-[9px] text-[#3a5a3a] tracking-[0.25em] uppercase mb-3">
+                  Seleccioná tu pack
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {bulkPricing.map((option) => {
+                    const isActive = selectedQuantity.quantity === option.quantity;
+                    return (
+                      <button
+                        key={option.quantity}
+                        onClick={() => setSelectedQuantity(option)}
+                        className={`gd-pack-btn gd-mono text-[10px] font-bold tracking-[0.15em] uppercase px-4 py-2.5 ${isActive ? 'gd-pack-active' : ''}`}
+                        style={{
+                          background: isActive ? '#39FF14' : 'transparent',
+                          color:      isActive ? '#000' : 'rgba(255,255,255,0.35)',
+                          border:     isActive ? 'none' : '1px solid rgba(255,255,255,0.07)',
+                        }}
+                      >
+                        x{option.quantity}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Price + CTAs */}
+              <div>
+                <div className="h-px w-full mb-6" style={{ background: `${accent}18` }} />
+
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-5">
+                  {/* Price */}
+                  <div>
+                    <div className="gd-mono text-[9px] text-[#3a5a3a] tracking-widest mb-1.5">
+                      Pack x{selectedQuantity.quantity} — precio total
+                    </div>
+                    <div
+                      className="gd-display font-black leading-none text-white"
+                      style={{ fontSize: 'clamp(30px, 3.5vw, 44px)' }}
+                    >
+                      ${selectedQuantity.price.toLocaleString('es-AR')}
+                    </div>
+                    <div className="gd-mono text-[9px] text-[#2a4a2a] tracking-wide mt-1.5">
+                      + envío a cargo del comprador
+                    </div>
+                  </div>
+
+                  {/* Buttons */}
+                  <div className="flex flex-col gap-2">
+                    <button
+                      onClick={handleBuyNow}
+                      className="gd-cta gd-display font-bold text-black text-[11px] tracking-[0.25em] uppercase px-7 py-4 flex items-center justify-center gap-2"
+                      style={{ background: '#39FF14' }}
+                    >
+                      <ShoppingBag className="w-4 h-4" />
+                      Comprar Ahora
+                    </button>
+                    <button
+                      onClick={handleAddToCart}
+                      className="gd-sec gd-mono text-[9px] tracking-widest uppercase px-5 py-3 text-center"
+                      style={{
+                        color:  accent,
+                        border: `1px solid ${accent}30`,
+                        background: `${accent}08`,
+                      }}
+                    >
+                      Agregar al carrito
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Regulares notice */}
+              <p className="gd-mono text-[9px] text-[#2a4a2a] tracking-wide">
+                Semillas regulares — 90% de probabilidad de feminización
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* ── BODY ── */}
+        <div className="max-w-7xl mx-auto px-6">
+
+          {/* Description */}
+          <div className="border-b border-white/[0.08] py-12">
+            <div className="grid lg:grid-cols-[180px_1fr] gap-6 lg:gap-12">
+              <div className="flex items-center gap-2.5">
+                <div className="h-px w-4" style={{ background: `${accent}60` }} />
+                <span className="gd-mono text-[9px] tracking-[0.3em] uppercase" style={{ color: `${accent}60` }}>
+                  Descripción
+                </span>
+              </div>
+              <p className="gd-mono text-[#7a9a7a] text-[13px] leading-relaxed">
+                {genetics.description}
+              </p>
+            </div>
+          </div>
+
+          {/* Technical specs */}
+          <div className="border-b border-white/[0.08] py-12">
+            <div className="grid lg:grid-cols-[180px_1fr] gap-6 lg:gap-12">
+              <div className="flex items-start gap-2.5 pt-1">
+                <div className="h-px w-4 mt-1.5" style={{ background: `${accent}60` }} />
+                <span className="gd-mono text-[9px] tracking-[0.3em] uppercase leading-relaxed" style={{ color: `${accent}60` }}>
+                  Especif&shy;icaciones
+                </span>
+              </div>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 border-t border-l border-white/[0.06]">
+                {specs.map((spec) => (
+                  <div
+                    key={spec.label}
+                    className="p-5 border-b border-r border-white/[0.06]"
+                  >
+                    <div className="gd-mono text-[9px] text-[#3a5a3a] tracking-[0.25em] uppercase mb-1.5">
+                      {spec.label}
+                    </div>
+                    <div className="gd-display font-bold text-white text-[12px] leading-snug">
+                      {spec.value}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Charts: Effects + Flavors */}
+          <div className="border-b border-white/[0.08] py-12">
+            <div className="grid lg:grid-cols-2 gap-0">
+
+              {/* Effects */}
+              <div className="pr-0 lg:pr-10 pb-10 lg:pb-0 border-b lg:border-b-0 lg:border-r border-white/[0.08]">
+                <div className="flex items-center gap-3 mb-8">
+                  <div className="h-px w-5" style={{ background: accent }} />
+                  <span className="gd-mono text-[9px] tracking-[0.3em] uppercase" style={{ color: `${accent}70` }}>
+                    Perfil de Efectos
+                  </span>
+                </div>
+                <div className="flex justify-center">
+                  <RadarChart
+                    data={effectsData}
+                    size={260}
+                    color={genetics.color as 'pink' | 'emerald' | 'blue' | 'purple' | 'orange'}
+                    showLabels={true}
                   />
                 </div>
               </div>
-            )}
 
-            {/* Product Info */}
-            <div className="flex flex-col justify-center">
-              <h1 className="text-5xl md:text-6xl font-black text-white mb-4">
-                {genetics.name}
-              </h1>
-
-              {/* Badges Row */}
-              <div className="flex flex-wrap gap-2 mb-6">
-                <Badge className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-3 py-1">
-                  AUTOFLORECIENTE
-                </Badge>
-                <Badge className="bg-pink-500/20 text-pink-400 border border-pink-500/30 px-3 py-1">
-                  {genetics.subtitle}
-                </Badge>
-                <Badge className="bg-black text-white border border-white/30 px-3 py-1 flex items-center gap-1">
-                  <Sparkles className="w-3 h-3" />
-                  THC Alto
-                </Badge>
-              </div>
-
-              {/* Pack Selector - Dropdown */}
-              <Card className={`bg-gradient-to-r ${colors.gradient} border-2 ${colors.border} p-6 mb-6`}>
-                <h3 className="text-lg font-bold text-white mb-4">Selecciona tu pack</h3>
-
-                {/* Dropdown */}
-                <div className="relative mb-4">
-                  <button
-                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className="w-full bg-black/40 border-2 border-white/30 rounded-xl p-4 flex items-center justify-between hover:border-white/50 transition-all"
-                  >
-                    <div className="text-left">
-                      <div className="text-sm text-gray-300">Pack seleccionado</div>
-                      <div className="flex items-center gap-3 mt-1">
-                        <span className="font-bold text-white">Pack x{selectedQuantity.quantity}</span>
-                        <span className={`text-2xl font-black ${colors.accent}`}>
-                          ${selectedQuantity.price.toLocaleString('es-AR')}
-                        </span>
-                      </div>
-                    </div>
-                    <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
-                  </button>
-
-                  {/* Dropdown Options */}
-                  {isDropdownOpen && (
-                    <div className="absolute z-50 w-full mt-2 bg-black border-2 border-white/30 rounded-xl overflow-hidden shadow-2xl">
-                      {bulkPricing.map((option) => (
-                        <button
-                          key={option.quantity}
-                          onClick={() => {
-                            setSelectedQuantity(option);
-                            setIsDropdownOpen(false);
-                          }}
-                          className={`w-full p-4 flex items-center justify-between hover:bg-white/10 transition-all border-b border-white/10 last:border-b-0 ${
-                            selectedQuantity.quantity === option.quantity ? 'bg-white/10' : ''
-                          }`}
-                        >
-                          <div className="text-left">
-                            <div className="font-bold text-white">Pack x{option.quantity}</div>
-                            <div className={`text-xl font-black ${colors.accent}`}>
-                              ${option.price.toLocaleString('es-AR')}
-                            </div>
-                          </div>
-                          {selectedQuantity.quantity === option.quantity && (
-                            <Check className="w-5 h-5 text-emerald-400" />
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  )}
+              {/* Flavors */}
+              <div className="pl-0 lg:pl-10 pt-10 lg:pt-0">
+                <div className="flex items-center gap-3 mb-8">
+                  <div className="h-px w-5" style={{ background: '#c084fc' }} />
+                  <span className="gd-mono text-[9px] text-[#c084fc]/70 tracking-[0.3em] uppercase">
+                    Perfil de Sabores
+                  </span>
                 </div>
-
-                {/* Buy Now Button - inline with selection */}
-                <Button
-                  onClick={handleBuyNow}
-                  className={`w-full bg-gradient-to-r ${colors.button} text-black font-bold py-4 text-lg hover:scale-105 transition-all mb-3`}
-                >
-                  <ShoppingBag className="w-5 h-5 mr-2" />
-                  Comprar Ahora
-                </Button>
-
-                {/* Shipping Notice */}
-                <div className="p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-                  <p className="text-xs text-yellow-200 text-center">
-                    + Envío a cargo del cliente
-                  </p>
+                <div className="flex justify-center">
+                  <RadarChart
+                    data={flavorsData}
+                    size={260}
+                    color="purple"
+                    showLabels={true}
+                  />
                 </div>
-              </Card>
-
-              {/* Description */}
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold text-white mb-3">
-                  Pensando en una {genetics.name}?
-                </h2>
-                <p className="text-gray-300 leading-relaxed">
-                  {genetics.description}
-                </p>
               </div>
+            </div>
+          </div>
 
-              {/* Key Info Box */}
-              <Card className={`bg-black/60 border ${colors.border} p-6 mb-4`}>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <div className="text-sm text-gray-300 mb-1">Variedad</div>
-                    <div className="text-white font-bold">{genetics.composition}</div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-300 mb-1 flex items-center gap-1">
-                      <Clock className="w-4 h-4" />
-                      Floración
+          {/* Medical uses */}
+          {genetics.medicalUse?.length > 0 && (
+            <div className="border-b border-white/[0.08] py-12">
+              <div className="grid lg:grid-cols-[180px_1fr] gap-6 lg:gap-12">
+                <div className="flex items-start gap-2.5 pt-1">
+                  <div className="h-px w-4 mt-1.5" style={{ background: `${accent}60` }} />
+                  <span className="gd-mono text-[9px] tracking-[0.3em] uppercase leading-relaxed" style={{ color: `${accent}60` }}>
+                    Usos Medicinales
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {genetics.medicalUse.map((use) => (
+                    <span
+                      key={use}
+                      className="gd-tag gd-mono text-[10px] tracking-wider px-4 py-2"
+                      style={{
+                        color:      accent,
+                        border:     `1px solid ${accent}28`,
+                        background: `${accent}07`,
+                      }}
+                    >
+                      {use}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Flavor profile */}
+          {genetics.flavorProfile?.length > 0 && (
+            <div className="border-b border-white/[0.08] py-12">
+              <div className="grid lg:grid-cols-[180px_1fr] gap-6 lg:gap-12">
+                <div className="flex items-center gap-2.5">
+                  <div className="h-px w-4" style={{ background: `${accent}60` }} />
+                  <span className="gd-mono text-[9px] tracking-[0.3em] uppercase" style={{ color: `${accent}60` }}>
+                    Sabores
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {genetics.flavorProfile.map((flavor) => (
+                    <span
+                      key={flavor}
+                      className="gd-tag gd-mono text-[10px] tracking-wider px-4 py-2"
+                      style={{
+                        color:      'rgba(255,255,255,0.35)',
+                        border:     '1px solid rgba(255,255,255,0.07)',
+                        background: 'transparent',
+                      }}
+                    >
+                      {flavor}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Features */}
+          {genetics.features && genetics.features.length > 0 && (
+            <div className="border-b border-white/[0.08] py-12">
+              <div className="grid lg:grid-cols-[180px_1fr] gap-6 lg:gap-12">
+                <div className="flex items-center gap-2.5">
+                  <div className="h-px w-4" style={{ background: `${accent}60` }} />
+                  <span className="gd-mono text-[9px] tracking-[0.3em] uppercase" style={{ color: `${accent}60` }}>
+                    Características
+                  </span>
+                </div>
+                <div className="space-y-3">
+                  {genetics.features.map((feature) => (
+                    <div key={feature} className="flex items-center gap-3">
+                      <div className="w-px h-4 flex-shrink-0" style={{ background: `${accent}50` }} />
+                      <span className="gd-mono text-[#7a9a7a] text-[12px] tracking-wide">{feature}</span>
                     </div>
-                    <div className="text-white font-bold">{genetics.floweringIndoor}</div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-300 mb-1">Producción</div>
-                    <div className="text-emerald-400 font-bold">ALTA</div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-300 mb-1">THC</div>
-                    <div className="text-white font-bold">{genetics.thc}</div>
-                  </div>
+                  ))}
                 </div>
-              </Card>
-
-              {/* Seed Type Notice */}
-              <div className="p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl mb-6">
-                <p className="text-sm text-blue-200 text-center">
-                  <span className="font-bold">Semillas Regulares</span> - 90% de probabilidad de ser femeninas
-                </p>
               </div>
+            </div>
+          )}
+
+          {/* Bottom CTA */}
+          <div className="py-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+            <div>
+              <div className="gd-mono text-[9px] text-[#3a5a3a] tracking-widest mb-1.5">
+                Pack x{selectedQuantity.quantity} seleccionado
+              </div>
+              <div
+                className="gd-display font-black text-white leading-none"
+                style={{ fontSize: 'clamp(26px, 3.5vw, 40px)' }}
+              >
+                ${selectedQuantity.price.toLocaleString('es-AR')}
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <Link
+                href="/genetics"
+                className="gd-mono text-[10px] text-[#3a5a3a] hover:text-[#7a9a7a] tracking-widest uppercase transition-colors flex items-center gap-1.5"
+              >
+                <ArrowLeft className="w-3 h-3" />
+                Catálogo
+              </Link>
+              <button
+                onClick={handleBuyNow}
+                className="gd-cta gd-display font-bold text-black text-[11px] tracking-[0.25em] uppercase px-8 py-4 flex items-center gap-2"
+                style={{ background: '#39FF14' }}
+              >
+                <ShoppingBag className="w-4 h-4" />
+                Comprar Ahora
+              </button>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Content Section */}
-      <div className="max-w-7xl mx-auto px-6 py-12">
-        <div className="grid lg:grid-cols-3 gap-8">
-
-          {/* Left Column - Technical Specs */}
-          <div className="lg:col-span-2 space-y-8">
-
-            {/* Technical Specifications */}
-            <Card className={`bg-black/80 backdrop-blur-xl border ${colors.border} p-8`}>
-              <h2 className={`text-2xl font-bold ${colors.accent} mb-6 flex items-center gap-3`}>
-                <FlaskConical className="w-6 h-6" />
-                Especificaciones Técnicas
-              </h2>
-
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                <div className="space-y-2">
-                  <div className="text-sm text-gray-400">Genética</div>
-                  <div className="text-white font-medium">{genetics.genetics}</div>
-                </div>
-                <div className="space-y-2">
-                  <div className="text-sm text-gray-400">Composición</div>
-                  <div className="text-white font-medium">{genetics.composition}</div>
-                </div>
-                <div className="space-y-2">
-                  <div className="text-sm text-gray-400">THC</div>
-                  <Badge className={`${colors.bg} ${colors.accent} border-0 w-fit`}>
-                    {genetics.thc}
-                  </Badge>
-                </div>
-                <div className="space-y-2">
-                  <div className="text-sm text-gray-400">CBD</div>
-                  <div className="text-white font-medium">{genetics.cbd}</div>
-                </div>
-                <div className="space-y-2">
-                  <div className="text-sm text-gray-400">Floración</div>
-                  <div className="text-white font-medium">{genetics.floweringIndoor}</div>
-                </div>
-                <div className="space-y-2">
-                  <div className="text-sm text-gray-400">Dificultad</div>
-                  <Badge className="bg-green-500/20 text-green-400 border-0 w-fit">
-                    {genetics.difficulty}
-                  </Badge>
-                </div>
-                <div className="space-y-2">
-                  <div className="text-sm text-gray-400">Olor</div>
-                  <div className="text-white font-medium">{genetics.smell}</div>
-                </div>
-                <div className="space-y-2">
-                  <div className="text-sm text-gray-400">Cosecha</div>
-                  <div className="text-white font-medium">{genetics.harvestTime}</div>
-                </div>
-              </div>
-            </Card>
-
-            {/* Charts */}
-            <GeneticsProfileChart
-              genetics={{
-                name: genetics.name,
-                thc: parseInt(genetics.thc.replace('%', '').split('-')[0]),
-                cbd: genetics.cbd === 'Desconocido' ? 0 : parseFloat(genetics.cbd.replace('%', '')),
-                flowering: parseInt(genetics.floweringIndoor.replace(/[^\d]/g, '')),
-                production: 85,
-                effects: genetics.effectsData,
-                flavors: genetics.flavorsData,
-                color: genetics.color as 'pink' | 'emerald' | 'blue' | 'purple' | 'orange'
-              }}
-              variant="compact"
-            />
-
-            {/* Medical Uses */}
-            <Card className={`bg-black/80 backdrop-blur-xl border ${colors.border} p-8`}>
-              <h3 className={`text-2xl font-bold ${colors.accent} mb-6 flex items-center gap-3`}>
-                <Award className="w-6 h-6" />
-                Beneficios Medicinales
-              </h3>
-
-              <div className="grid sm:grid-cols-2 gap-4">
-                {genetics.medicalUse?.map((use: string) => (
-                  <div key={use} className="flex items-center gap-3 bg-white/5 p-3 rounded-lg">
-                    <div className={`w-2 h-2 ${colors.bg} rounded-full flex-shrink-0`} />
-                    <span className="text-gray-300">{use}</span>
-                  </div>
-                ))}
-              </div>
-            </Card>
-
-            {/* Flavor Profile */}
-            <Card className={`bg-black/80 backdrop-blur-xl border ${colors.border} p-8`}>
-              <h3 className={`text-2xl font-bold ${colors.accent} mb-6 flex items-center gap-3`}>
-                <Leaf className="w-6 h-6" />
-                Perfil de Sabor & Aroma
-              </h3>
-
-              <p className="text-gray-300 leading-relaxed mb-4">
-                {genetics.flavor}
-              </p>
-
-              <div className="flex flex-wrap gap-2">
-                {genetics.flavorProfile?.map((flavor: string) => (
-                  <Badge key={flavor} className={`${colors.bg} ${colors.accent} border-0 px-4 py-2`}>
-                    {flavor}
-                  </Badge>
-                ))}
-              </div>
-            </Card>
-          </div>
-
-          {/* Right Column - Sidebar */}
-          <div className="space-y-6">
-
-            {/* Info Card */}
-            <Card className={`bg-gradient-to-br ${colors.gradient} border-2 ${colors.border} p-6 sticky top-24`}>
-              <div className="mb-6">
-                <h3 className="text-lg font-bold text-white mb-4">Pack seleccionado</h3>
-
-                <div className={`p-4 rounded-xl border-2 ${colors.border} bg-white/10 mb-4`}>
-                  <div className="text-center">
-                    <div className="font-bold text-white text-lg">Pack x{selectedQuantity.quantity}</div>
-                    <div className={`text-3xl font-black ${colors.accent} my-2`}>
-                      ${selectedQuantity.price.toLocaleString('es-AR')}
-                    </div>
-                    <div className="text-xs text-gray-300">+ Envío a cargo del cliente</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 text-sm text-gray-300">
-                  <TrendingUp className="w-4 h-4 text-emerald-400" />
-                  <span>98% de germinación garantizada</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-300">
-                  <Star className="w-4 h-4 text-yellow-400" />
-                  <span>Genética premiada</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-300">
-                  <Package className="w-4 h-4 text-emerald-400" />
-                  <span>Envío discreto y seguro</span>
-                </div>
-              </div>
-            </Card>
-
-            {/* Awards */}
-            {genetics.awards && (
-              <Card className={`bg-black/80 backdrop-blur-xl border ${colors.border} p-6`}>
-                <h3 className={`text-lg font-bold ${colors.accent} mb-4 flex items-center gap-2`}>
-                  <Star className="w-5 h-5" />
-                  Premios
-                </h3>
-
-                <div className="space-y-2">
-                  {genetics.awards?.map((award: string) => (
-                    <div key={award} className="flex items-start gap-2 text-sm">
-                      <Star className="w-4 h-4 text-yellow-400 flex-shrink-0 mt-0.5" />
-                      <span className="text-gray-300">{award}</span>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-            )}
-
-            {/* Features */}
-            {genetics.features && (
-              <Card className={`bg-black/80 backdrop-blur-xl border ${colors.border} p-6`}>
-                <h3 className={`text-lg font-bold ${colors.accent} mb-4 flex items-center gap-2`}>
-                  <Sparkles className="w-5 h-5" />
-                  Características
-                </h3>
-
-                <div className="space-y-2">
-                  {genetics.features?.map((feature: string) => (
-                    <div key={feature} className="flex items-start gap-2 text-sm">
-                      <div className={`w-1.5 h-1.5 ${colors.bg} rounded-full flex-shrink-0 mt-1.5`} />
-                      <span className="text-gray-300">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
+    </>
   );
 }

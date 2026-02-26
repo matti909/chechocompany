@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Button } from "@/components/ui/button";
-import { Calendar, ArrowRight, Newspaper, Leaf, ExternalLink, Scale, FileText } from "lucide-react";
+import { Calendar, ArrowUpRight, ExternalLink, Scale, Leaf, FileText } from "lucide-react";
 import Link from "next/link";
 
 interface ScrapedContent {
@@ -10,312 +9,323 @@ interface ScrapedContent {
   [key: string]: unknown;
 }
 
+interface NewsItem {
+  id: string;
+  title: string;
+  excerpt: string;
+  date: string;
+  category: string;
+  icon: React.ComponentType<{ className?: string }>;
+  accent: string;
+  isExternal: boolean;
+  sourceUrl: string;
+  tags: string[];
+}
+
 export function NewsSection() {
-  const [isVisible, setIsVisible] = useState(false);
-  const [scrapedNews, setScrapedNews] = useState<ScrapedContent | null>(null);
-  const [scrapedInase, setScrapedInase] = useState<ScrapedContent | null>(null);
+  const [scrapedNews,      setScrapedNews]      = useState<ScrapedContent | null>(null);
+  const [scrapedInase,     setScrapedInase]     = useState<ScrapedContent | null>(null);
   const [scrapedNormativa, setScrapedNormativa] = useState<ScrapedContent | null>(null);
+
   const sectionRef = useRef<HTMLElement>(null);
+  const headerRef  = useRef<HTMLDivElement>(null);
+  const listRef    = useRef<HTMLDivElement>(null);
+  const ctaRef     = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
+    const loadData = async () => {
+      try { const r = await import('../../data/noticias-reprocann.json'); setScrapedNews(r.default); } catch {}
+      try { const r = await import('../../data/noticias-inase.json');     setScrapedInase(r.default); } catch {}
+      try { const r = await import('../../data/noticias-normativa.json'); setScrapedNormativa(r.default); } catch {}
+    };
+    loadData();
   }, []);
 
   useEffect(() => {
-    const loadScrapedData = async () => {
-      try {
-        const response1 = await import('../../data/noticias-reprocann.json');
-        setScrapedNews(response1.default);
-      } catch {
-        console.log('No se encontraron datos scrapeados de REPROCANN');
-      }
+    let gsapInstance: typeof import('gsap')['gsap'] | null = null;
 
-      try {
-        const response2 = await import('../../data/noticias-inase.json');
-        setScrapedInase(response2.default);
-      } catch {
-        console.log('No se encontraron datos scrapeados de INASE');
-      }
+    const init = async () => {
+      const { gsap } = await import('gsap');
+      gsapInstance = gsap;
 
-      try {
-        const response3 = await import('../../data/noticias-normativa.json');
-        setScrapedNormativa(response3.default);
-      } catch {
-        console.log('No se encontraron datos scrapeados de Normativa');
-      }
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting) return;
+          const tl = gsap.timeline();
+          tl
+            .fromTo(headerRef.current,
+              { opacity: 0, y: 24 },
+              { opacity: 1, y: 0, duration: 0.8, ease: "power4.out" }
+            )
+            .fromTo(Array.from(listRef.current?.children ?? []),
+              { opacity: 0, x: -20 },
+              { opacity: 1, x: 0, duration: 0.55, stagger: 0.1, ease: "power3.out" },
+              "-=0.4"
+            )
+            .fromTo(ctaRef.current,
+              { opacity: 0, y: 16 },
+              { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" },
+              "-=0.2"
+            );
+        },
+        { threshold: 0.08 }
+      );
+
+      if (sectionRef.current) observer.observe(sectionRef.current);
+      return () => observer.disconnect();
     };
 
-    loadScrapedData();
+    init();
   }, []);
 
-  // Only use scraped data - no static news
-
-  // Create scraped news items if available
-  const scrapedNewsItem = scrapedNews ? {
-    id: 'scraped-reprocann',
-    title: 'Registro REPROCANN',
-    excerpt: 'El Programa procura mejorar el acceso a quienes tienen indicación médica basada en la evidencia científica disponible, a un producto como especialidad medicinal o cultivo controlado de cannabis.',
-    date: '29 enero 2025',
-    category: 'Regulación',
-    icon: Scale,
-    color: "purple",
-    isExternal: true,
-    sourceUrl: 'https://www.argentina.gob.ar/salud/cannabis-medicinal/reprocann',
-    tags: ['REPROCANN', 'Cannabis Medicinal', 'Argentina', 'Regulación', 'Salud Pública'],
-    content: scrapedNews?.contenido
-  } : null;
-
-  const scrapedInaseItem = scrapedInase ? {
-    id: 'scraped-inase',
-    title: 'Certificación de Semillas - INASE',
-    excerpt: 'El Instituto Nacional de Semillas regula la fiscalización para asegurar la pureza varietal y calidad de las semillas utilizadas en la agricultura argentina.',
-    date: '29 enero 2025',
-    category: 'Certificación',
-    icon: Leaf,
-    color: "emerald",
-    isExternal: true,
-    sourceUrl: 'https://www.argentina.gob.ar/inase/certificacionsemillas',
-    tags: ['INASE', 'Certificación Semillas', 'Argentina', 'Agricultura'],
-    content: scrapedInase?.contenido
-  } : null;
-
-  const scrapedNormativaItem = scrapedNormativa ? {
-    id: 'scraped-normativa',
-    title: 'Decreto 883/2020 - Cannabis Medicinal',
-    excerpt: 'El Decreto 883/2020 establece el marco normativo para la regulación del cannabis medicinal en Argentina, definiendo los procedimientos, requisitos y autoridades competentes.',
-    date: '01 diciembre 2020',
-    category: 'Normativa',
-    icon: FileText,
-    color: "blue",
-    isExternal: true,
-    sourceUrl: 'https://www.argentina.gob.ar/normativa/nacional/decreto-883-2020-344131/texto',
-    tags: ['Decreto 883/2020', 'Cannabis Medicinal', 'Argentina', 'Normativa'],
-    content: scrapedNormativa?.contenido
-  } : null;
-
-  // Only show scraped items
-  const news = [scrapedNewsItem, scrapedInaseItem, scrapedNormativaItem].filter((item): item is NonNullable<typeof item> => item !== null);
+  const allItems: NewsItem[] = [
+    scrapedNews ? {
+      id: 'scraped-reprocann',
+      title: 'Registro REPROCANN',
+      excerpt: 'El Programa procura mejorar el acceso a quienes tienen indicación médica basada en la evidencia científica disponible, a un producto como especialidad medicinal o cultivo controlado.',
+      date: '29 Ene 2025',
+      category: 'Regulación',
+      icon: Scale,
+      accent: '#c084fc',
+      isExternal: true,
+      sourceUrl: 'https://www.argentina.gob.ar/salud/cannabis-medicinal/reprocann',
+      tags: ['REPROCANN', 'Cannabis Medicinal', 'Argentina'],
+    } : null,
+    scrapedInase ? {
+      id: 'scraped-inase',
+      title: 'Certificación de Semillas — INASE',
+      excerpt: 'El Instituto Nacional de Semillas regula la fiscalización para asegurar la pureza varietal y calidad de las semillas utilizadas en la agricultura argentina.',
+      date: '29 Ene 2025',
+      category: 'Certificación',
+      icon: Leaf,
+      accent: '#34d399',
+      isExternal: true,
+      sourceUrl: 'https://www.argentina.gob.ar/inase/certificacionsemillas',
+      tags: ['INASE', 'Certificación', 'Agricultura'],
+    } : null,
+    scrapedNormativa ? {
+      id: 'scraped-normativa',
+      title: 'Decreto 883/2020 — Cannabis Medicinal',
+      excerpt: 'El Decreto 883/2020 establece el marco normativo para la regulación del cannabis medicinal en Argentina, definiendo procedimientos, requisitos y autoridades competentes.',
+      date: '01 Dic 2020',
+      category: 'Normativa',
+      icon: FileText,
+      accent: '#fb923c',
+      isExternal: true,
+      sourceUrl: 'https://www.argentina.gob.ar/normativa/nacional/decreto-883-2020-344131/texto',
+      tags: ['Decreto 883/2020', 'Normativa', 'Argentina'],
+    } : null,
+  ].filter((i): i is NewsItem => i !== null);
 
   return (
-    <section
-      id="noticias"
-      ref={sectionRef}
-      className="relative py-32 overflow-hidden"
-    >
-      {/* Animated background elements */}
-      <div className="absolute inset-0">
-        <div className="absolute top-20 left-20 w-56 h-56 bg-gradient-to-r from-emerald-500/8 to-lime-500/8 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-32 right-20 w-72 h-72 bg-gradient-to-l from-blue-500/8 to-purple-500/8 rounded-full blur-3xl animate-pulse delay-1000" />
-        <div className="absolute top-1/2 right-1/3 w-40 h-40 bg-pink-500/8 rounded-lg rotate-45 blur-2xl animate-bounce" />
-      </div>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap');
+        .ns-display { font-family: 'Syne', sans-serif; }
+        .ns-mono    { font-family: 'Space Mono', monospace; }
 
-      {/* Grid pattern overlay */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `radial-gradient(circle at 2px 2px, rgba(255,255,255,0.3) 1px, transparent 0)`,
-          backgroundSize: '50px 50px'
-        }} />
-      </div>
+        .ns-row {
+          transition: background 0.3s ease;
+        }
+        .ns-row:hover {
+          background: rgba(57,255,20,0.02);
+        }
+        .ns-row:hover .ns-arrow {
+          transform: translate(3px,-3px);
+          opacity: 1;
+        }
+        .ns-row:hover .ns-title {
+          color: #39FF14;
+        }
+        .ns-arrow {
+          transition: transform 0.3s ease, opacity 0.3s ease;
+          opacity: 0.4;
+        }
+        .ns-title {
+          transition: color 0.3s ease;
+        }
+        .ns-cta-btn {
+          clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+          transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+        .ns-cta-btn:hover { opacity: 0.9; transform: scale(1.02); }
+        .ns-input {
+          clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+        }
+      `}</style>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6">
-        <div className={`text-center mb-16 transition-all duration-1000 ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}>
-          <div className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-500/20 to-lime-500/20 backdrop-blur-sm border border-emerald-500/30 text-emerald-400 px-6 py-3 rounded-xl text-sm font-mono uppercase tracking-wider mb-8">
-            <Newspaper className="w-5 h-5" />
-            <span>Últimas Noticias</span>
-            <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+      <section
+        ref={sectionRef}
+        id="noticias"
+        className="relative bg-[#050a05] overflow-hidden"
+      >
+        <div className="border-t border-white/[0.08]" />
+
+        <div className="max-w-7xl mx-auto px-6">
+
+          {/* ── Header ── */}
+          <div ref={headerRef} className="py-16 lg:py-20 border-b border-white/[0.08]">
+            <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+              <div>
+                <span className="ns-mono text-[10px] text-[#39FF14]/50 tracking-[0.35em] uppercase block mb-5">
+                  — Últimas Noticias
+                </span>
+                <h2
+                  className="ns-display font-black leading-[0.88] tracking-tight text-white"
+                  style={{ fontSize: "clamp(36px, 5.5vw, 68px)" }}
+                >
+                  Mantente
+                  <br />
+                  <span style={{ color: "#39FF14" }}>Actualizado.</span>
+                </h2>
+              </div>
+              <p className="ns-mono text-[#7a9a7a] text-sm leading-relaxed max-w-sm lg:text-right">
+                Normativas, regulaciones y novedades del mundo del cannabis medicinal en Argentina.
+              </p>
+            </div>
           </div>
-          
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6">
-            MANTENTE
-            <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-lime-400 to-emerald-400">
-              ACTUALIZADO
-            </span>
-          </h2>
-          
-          <p className="text-xl text-gray-300 leading-relaxed max-w-3xl mx-auto">
-            Las últimas novedades, lanzamientos de genéticas y consejos de cultivo 
-            directamente desde el equipo de ChexSeeds.
-          </p>
-        </div>
 
-        <div className={`grid md:grid-cols-3 gap-8 mb-16 transition-all duration-1000 delay-300 ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}>
-          {news.map((article) => {
-            const IconComponent = article.icon;
-            const colorClasses = {
-              emerald: "from-emerald-500/20 to-lime-500/20 border-emerald-500/30 group-hover:border-emerald-400/50",
-              blue: "from-blue-500/20 to-cyan-500/20 border-blue-500/30 group-hover:border-blue-400/50", 
-              purple: "from-purple-500/20 to-pink-500/20 border-purple-500/30 group-hover:border-purple-400/50"
-            };
+          {/* ── Article list ── */}
+          <div ref={listRef}>
+            {allItems.length === 0 ? (
+              <div className="py-20 text-center border-b border-white/[0.08]">
+                <p className="ns-mono text-[#3a5a3a] text-xs tracking-widest uppercase">
+                  — Próximamente
+                </p>
+              </div>
+            ) : (
+              allItems.map((article, i) => {
+                const Icon = article.icon;
+                return (
+                  <Link
+                    key={article.id}
+                    href={`/noticias/${article.id}`}
+                    className="ns-row block border-b border-white/[0.08]"
+                  >
+                    <div className="py-8 grid grid-cols-1 lg:grid-cols-[160px_120px_1fr_48px] gap-4 lg:gap-8 items-start">
 
-            const iconColors = {
-              emerald: "text-emerald-400",
-              blue: "text-blue-400",
-              purple: "text-purple-400"
-            };
-
-            const badgeColors = {
-              emerald: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
-              blue: "bg-blue-500/20 text-blue-400 border-blue-500/30",
-              purple: "bg-purple-500/20 text-purple-400 border-purple-500/30"
-            };
-
-            return (
-              <article key={article.id} className="group relative">
-                <div className={`absolute -inset-1 bg-gradient-to-r ${colorClasses[article.color as keyof typeof colorClasses]} rounded-3xl blur-xl opacity-30 group-hover:opacity-60 transition-opacity duration-500`} />
-                
-                <div className={`relative bg-black/80 backdrop-blur-xl border ${colorClasses[article.color as keyof typeof colorClasses]} rounded-3xl overflow-hidden transition-all duration-500 h-full group-hover:scale-105`}>
-                  {/* Image placeholder */}
-                  <div className="relative h-48 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
-                    <div className="absolute inset-0 bg-gradient-to-br from-black/20 to-black/60" />
-                    <IconComponent className={`w-16 h-16 ${iconColors[article.color as keyof typeof iconColors]} relative z-10`} />
-                    
-                    {/* Category badge */}
-                    <div className={`absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-mono uppercase tracking-wider border ${badgeColors[article.color as keyof typeof badgeColors]}`}>
-                      {article.category}
-                    </div>
-                  </div>
-                  
-                  <div className="p-6">
-                    {/* Date */}
-                    <div className="flex items-center gap-2 text-gray-400 text-sm mb-3">
-                      <Calendar className="w-4 h-4" />
-                      <time>{article.date}</time>
-                    </div>
-                    
-                    {/* Title */}
-                    <h3 className="text-xl font-bold text-white mb-3 group-hover:text-emerald-400 transition-colors duration-300 leading-tight">
-                      {article.title}
-                    </h3>
-                    
-                    {/* Excerpt */}
-                    <p className="text-gray-300 text-sm leading-relaxed mb-4">
-                      {article.excerpt}
-                    </p>
-
-                    {/* Tags for external articles */}
-                    {article.isExternal && article.tags && (
-                      <div className="flex flex-wrap gap-2 mb-6">
-                        {article.tags.slice(0, 3).map((tag, index) => (
-                          <span
-                            key={index}
-                            className={`px-2 py-1 text-xs font-mono uppercase tracking-wider rounded-full ${badgeColors[article.color as keyof typeof badgeColors]}`}
-                          >
-                            {tag}
-                          </span>
-                        ))}
+                      {/* Date */}
+                      <div className="flex lg:flex-col gap-3 items-center lg:items-start">
+                        <Calendar className="w-3.5 h-3.5 text-[#39FF14]/30 lg:hidden" />
+                        <span className="ns-mono text-[#3a5a3a] text-[11px] tracking-wide">
+                          {article.date}
+                        </span>
                       </div>
-                    )}
 
-                    {/* Read more link */}
-                    <div className={`flex items-center justify-between ${article.isExternal && article.tags ? '' : 'mt-2'}`}>
-                      {article.isExternal ? (
-                        <div className="flex gap-3">
-                          <Link href={`/noticias/${article.id}`}>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className={`text-${article.color}-400 hover:text-${article.color}-300 hover:bg-${article.color}-500/10 p-0 h-auto font-medium`}
+                      {/* Category */}
+                      <div>
+                        <span
+                          className="ns-mono text-[10px] font-bold tracking-[0.2em] uppercase px-3 py-1.5"
+                          style={{
+                            color: article.accent,
+                            border: `1px solid ${article.accent}35`,
+                            background: `${article.accent}0d`,
+                            clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%)",
+                          }}
+                        >
+                          {article.category}
+                        </span>
+                      </div>
+
+                      {/* Content */}
+                      <div className="space-y-3">
+                        <div className="flex items-start gap-3">
+                          <Icon
+                            className="w-4 h-4 flex-shrink-0 mt-1"
+                            style={{ color: article.accent }}
+                          />
+                          <h3 className="ns-title ns-display font-bold text-white text-lg leading-snug">
+                            {article.title}
+                          </h3>
+                        </div>
+
+                        <p className="ns-mono text-[#7a9a7a] text-xs leading-relaxed max-w-2xl">
+                          {article.excerpt}
+                        </p>
+
+                        {/* Tags + external link */}
+                        <div className="flex flex-wrap items-center gap-2 pt-1">
+                          {article.tags.map((tag, j) => (
+                            <span
+                              key={j}
+                              className="ns-mono text-[9px] text-[#2a4a2a] tracking-widest uppercase px-2 py-0.5 border border-white/[0.06]"
                             >
-                              Leer artículo completo
-                              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
-                            </Button>
-                          </Link>
+                              {tag}
+                            </span>
+                          ))}
                           <a
                             href={article.sourceUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex"
+                            onClick={(e) => e.stopPropagation()}
+                            className="inline-flex items-center gap-1 ml-2 text-[#39FF14]/30 hover:text-[#39FF14]/70 transition-colors"
                           >
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className={`text-${article.color}-400 hover:text-${article.color}-300 hover:bg-${article.color}-500/10 p-0 h-auto font-medium opacity-60 hover:opacity-100`}
-                            >
-                              <ExternalLink className="w-4 h-4" />
-                            </Button>
+                            <ExternalLink className="w-3 h-3" />
+                            <span className="ns-mono text-[9px] tracking-widest">Fuente oficial</span>
                           </a>
                         </div>
-                      ) : article.id === "3" ? (
-                        <Link href="/cultivation-guide">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className={`text-${article.color}-400 hover:text-${article.color}-300 hover:bg-${article.color}-500/10 p-0 h-auto font-medium`}
-                          >
-                            Leer más
-                            <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
-                          </Button>
-                        </Link>
-                      ) : (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className={`text-${article.color}-400 hover:text-${article.color}-300 hover:bg-${article.color}-500/10 p-0 h-auto font-medium`}
-                        >
-                          Leer más
-                          <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </article>
-            );
-          })}
-        </div>
+                      </div>
 
-        {/* Call to action */}
-        <div className={`text-center transition-all duration-1000 delay-500 ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}>
-          <div className="max-w-2xl mx-auto mb-8">
-            <h3 className="text-2xl font-bold text-white mb-4">
-              ¿Quieres estar al día con todas las novedades?
-            </h3>
-            <p className="text-gray-300 leading-relaxed">
-              Suscríbete a nuestro newsletter y recibe las últimas noticias, 
-              consejos de cultivo y ofertas exclusivas directamente en tu email.
-            </p>
+                      {/* Arrow */}
+                      <div className="hidden lg:flex items-start justify-end pt-1">
+                        <ArrowUpRight
+                          className="ns-arrow w-5 h-5 text-white"
+                        />
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })
+            )}
           </div>
-          
-          <div className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto mb-8">
-            <input 
-              type="email" 
-              placeholder="Tu email"
-              className="flex-1 px-4 py-3 bg-black/60 border border-emerald-500/30 rounded-xl text-white placeholder-gray-400 focus:border-emerald-400 focus:outline-none transition-colors"
-            />
-            <Button className="bg-gradient-to-r from-emerald-500 to-lime-500 hover:from-emerald-600 hover:to-lime-600 text-black font-bold px-8 py-3 transition-all duration-300 hover:scale-105 whitespace-nowrap">
-              Suscribirme
-            </Button>
+
+          {/* ── Newsletter + CTA ── */}
+          <div ref={ctaRef} className="py-12 border-b border-white/[0.08]">
+            <div className="flex flex-col lg:flex-row lg:items-center gap-8 lg:gap-16">
+
+              <div className="flex-shrink-0">
+                <p className="ns-display font-bold text-white text-lg">
+                  Newsletter
+                </p>
+                <p className="ns-mono text-[#3a5a3a] text-xs mt-1 tracking-wide">
+                  Novedades directamente a tu inbox
+                </p>
+              </div>
+
+              <form
+                className="flex flex-col sm:flex-row gap-3 flex-1 max-w-xl"
+                onSubmit={(e) => e.preventDefault()}
+              >
+                <input
+                  type="email"
+                  placeholder="tu@email.com"
+                  className="ns-input ns-mono flex-1 bg-white/[0.03] border border-white/[0.08] text-white placeholder-[#2a4a2a] text-xs tracking-wide px-4 py-3 focus:outline-none focus:border-[#39FF14]/30 transition-colors"
+                />
+                <button
+                  type="submit"
+                  className="ns-display ns-cta-btn font-bold text-black text-xs tracking-[0.25em] uppercase px-7 py-3 whitespace-nowrap"
+                  style={{ background: "#39FF14" }}
+                >
+                  Suscribirme
+                </button>
+              </form>
+
+              <div className="flex-shrink-0">
+                <Link href="/noticias">
+                  <button
+                    className="ns-mono text-[#39FF14]/50 text-[11px] tracking-[0.25em] uppercase hover:text-[#39FF14] transition-colors flex items-center gap-2"
+                  >
+                    Ver todas
+                    <ArrowUpRight className="w-3.5 h-3.5" />
+                  </button>
+                </Link>
+              </div>
+
+            </div>
           </div>
-          
-          <Button 
-            variant="outline" 
-            className="border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-400/50 transition-all duration-300"
-          >
-            <Newspaper className="w-4 h-4 mr-2" />
-            Ver Todas las Noticias
-          </Button>
+
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }

@@ -2,43 +2,30 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Instagram, Mail, ArrowUp } from "lucide-react";
+import { Instagram, ArrowUpRight, ArrowUp, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { useAuthStore } from "@/store/auth-store";
 
-function MountainIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
-    </svg>
-  );
-}
+const navLinks = [
+  { label: "Genéticas",  href: "/genetics" },
+  { label: "Guía",       href: "/guia" },
+  { label: "Contacto",   href: "/contacto" },
+  { label: "Noticias",   href: "/#noticias" },
+];
+
+const legalLinks = [
+  { label: "Privacidad", href: "#" },
+  { label: "Términos",   href: "#" },
+];
 
 export function Footer() {
   const router = useRouter();
   const { session } = useAuthStore();
 
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  };
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
   const handleCartClick = (e: React.MouseEvent) => {
     e.preventDefault();
-
     if (!session) {
       toast.error("Debes iniciar sesión", {
         description: "Por favor inicia sesión para acceder al carrito de compras",
@@ -46,116 +33,165 @@ export function Footer() {
       });
       return;
     }
-
     router.push("/cart");
   };
 
   return (
-    <footer className="bg-black text-white py-16 relative">
-      <div className="max-w-7xl mx-auto px-6">
-        {/* Main content */}
-        <div className="grid md:grid-cols-3 gap-12 mb-12">
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap');
+        .ft-display { font-family: 'Syne', sans-serif; }
+        .ft-mono    { font-family: 'Space Mono', monospace; }
+        .ft-link { transition: color 0.2s ease; }
+        .ft-link:hover { color: #39FF14; }
+        .ft-input {
+          clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+        }
+        .ft-btn {
+          clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+          transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+        .ft-btn:hover { opacity: 0.88; transform: scale(1.02); }
+        .ft-top-btn {
+          clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+          transition: background 0.25s ease, transform 0.25s ease;
+        }
+        .ft-top-btn:hover { background: rgba(57,255,20,0.15) !important; transform: translateY(-2px); }
+      `}</style>
 
-          {/* Brand */}
-          <div className="space-y-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-lime-500 rounded-lg flex items-center justify-center">
-                <MountainIcon className="w-6 h-6 text-black" />
-              </div>
-              <div>
-                <div className="text-xl font-bold">Chex Seeds</div>
-                <div className="text-gray-400 text-sm">Genéticas Premium</div>
-              </div>
-            </div>
+      <footer className="bg-[#050a05] text-white border-t border-white/[0.08]">
 
-            <p className="text-gray-300 text-sm leading-relaxed">
-              Empujando límites culturales desde 2014. Ofrecemos genéticas premium
-              para cultivadores que buscan la máxima calidad.
-            </p>
-
-            <div className="text-gray-400 text-sm">
-              Buenos Aires, Argentina
-            </div>
-          </div>
-
-          {/* Quick Links */}
-          <div className="space-y-4">
-            <h4 className="text-emerald-400 font-semibold">Enlaces</h4>
-            <div className="space-y-2 text-sm">
-              <Link href="/genetics" className="block text-gray-300 hover:text-emerald-400 transition-colors">
-                Genéticas
-              </Link>
-              <a href="/cart" onClick={handleCartClick} className="block text-gray-300 hover:text-emerald-400 transition-colors cursor-pointer">
-                Carrito
-              </a>
-              <Link href="/contacto" className="block text-gray-300 hover:text-emerald-400 transition-colors">
-                Contacto
-              </Link>
-              <Link href="/#noticias" className="block text-gray-300 hover:text-emerald-400 transition-colors">
-                Noticias
-              </Link>
-            </div>
-          </div>
-
-          {/* Newsletter */}
-          <div className="space-y-4">
-            <h4 className="text-emerald-400 font-semibold">Newsletter</h4>
-            <p className="text-gray-300 text-sm">
-              Recibe novedades y ofertas exclusivas
-            </p>
-
-            <div className="space-y-3">
-              <input
-                type="email"
-                placeholder="Tu email"
-                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white placeholder-gray-400 focus:border-emerald-400 focus:outline-none transition-colors"
-              />
-              <button className="w-full bg-gradient-to-r from-emerald-500 to-lime-500 hover:from-emerald-600 hover:to-lime-600 text-black font-semibold py-2 rounded-lg transition-all duration-300 text-sm">
-                <span className="flex items-center justify-center gap-2">
-                  <Mail className="w-4 h-4" />
-                  Suscribirse
-                </span>
-              </button>
-            </div>
-
-            {/* Social */}
-            <Link
-              href="#"
-              className="inline-flex items-center gap-2 text-gray-300 hover:text-purple-400 transition-colors text-sm"
-            >
-              <Instagram className="w-4 h-4" />
-              Instagram
-            </Link>
-          </div>
-        </div>
-
-        {/* Bottom */}
-        <div className="border-t border-gray-800 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
+        {/* ── Top band: brand statement ── */}
+        <div className="border-b border-white/[0.08]">
+          <div className="max-w-7xl mx-auto px-6 py-12 flex flex-col lg:flex-row lg:items-end justify-between gap-8">
             <div>
-              © 2025 Chex Seeds. Todos los derechos reservados.
+              <div
+                className="ft-display font-black leading-none tracking-tight text-white mb-3"
+                style={{ fontSize: "clamp(32px, 5vw, 64px)" }}
+              >
+                Chex{" "}
+                <span style={{ color: "#39FF14" }}>Seeds</span>
+                <span style={{ color: "rgba(255,255,255,0.15)" }}>.</span>
+              </div>
+              <p className="ft-mono text-[#3a5a3a] text-xs tracking-wide">
+                Empujando límites culturales desde 2014 — Buenos Aires, Argentina
+              </p>
             </div>
 
-            <div className="flex items-center gap-4">
-              <Link href="#" className="hover:text-emerald-400 transition-colors">
-                Privacidad
-              </Link>
-              <Link href="#" className="hover:text-emerald-400 transition-colors">
-                Términos
-              </Link>
+            {/* Back to top */}
+            <button
+              onClick={scrollToTop}
+              className="ft-top-btn self-start lg:self-end inline-flex items-center gap-2 border border-white/[0.08] px-5 py-3"
+              style={{ background: "rgba(255,255,255,0.02)" }}
+              aria-label="Volver arriba"
+            >
+              <ArrowUp className="w-3.5 h-3.5" style={{ color: "#39FF14" }} />
+              <span className="ft-mono text-[10px] tracking-[0.25em] uppercase text-[#3a5a3a]">
+                Volver arriba
+              </span>
+            </button>
+          </div>
+        </div>
+
+        {/* ── Main grid ── */}
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border-b border-white/[0.08]">
+
+            {/* Col 1 — About */}
+            <div className="py-12 md:pr-12 md:border-r border-white/[0.08]">
+              <span className="ft-mono text-[10px] text-[#39FF14]/40 tracking-[0.3em] uppercase block mb-5">
+                Nosotros
+              </span>
+              <p className="ft-mono text-[#3a5a3a] text-[11px] leading-relaxed mb-6">
+                Desarrollamos y producimos semillas fotoperiódicas regulares con 90% de probabilidad de feminización. Cada genética cuenta con trazabilidad real y libre de plagas.
+              </p>
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ft-link inline-flex items-center gap-2 text-[#3a5a3a] ft-mono text-[11px] tracking-wide"
+              >
+                <Instagram className="w-3.5 h-3.5" />
+                Instagram
+                <ArrowUpRight className="w-3 h-3" />
+              </a>
+            </div>
+
+            {/* Col 2 — Links */}
+            <div className="py-12 md:px-12 md:border-r border-white/[0.08] border-t md:border-t-0">
+              <span className="ft-mono text-[10px] text-[#39FF14]/40 tracking-[0.3em] uppercase block mb-5">
+                Navegación
+              </span>
+              <nav className="space-y-3">
+                {navLinks.map((l) => (
+                  <Link
+                    key={l.href}
+                    href={l.href}
+                    className="ft-link ft-display font-semibold text-[#7a9a7a] text-sm flex items-center justify-between group"
+                  >
+                    {l.label}
+                    <ArrowUpRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: "#39FF14" }} />
+                  </Link>
+                ))}
+                <a
+                  href="/cart"
+                  onClick={handleCartClick}
+                  className="ft-link ft-display font-semibold text-[#7a9a7a] text-sm flex items-center justify-between group cursor-pointer"
+                >
+                  Carrito
+                  <ArrowUpRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: "#39FF14" }} />
+                </a>
+              </nav>
+            </div>
+
+            {/* Col 3 — Newsletter */}
+            <div className="py-12 md:pl-12 border-t md:border-t-0">
+              <span className="ft-mono text-[10px] text-[#39FF14]/40 tracking-[0.3em] uppercase block mb-5">
+                Newsletter
+              </span>
+              <p className="ft-mono text-[#3a5a3a] text-[11px] leading-relaxed mb-5">
+                Novedades, lanzamientos y ofertas exclusivas directamente a tu inbox.
+              </p>
+              <form
+                className="space-y-3"
+                onSubmit={(e) => e.preventDefault()}
+              >
+                <input
+                  type="email"
+                  placeholder="tu@email.com"
+                  className="ft-input ft-mono w-full bg-white/[0.03] border border-white/[0.08] text-white placeholder-[#2a4a2a] text-xs tracking-wide px-4 py-3 focus:outline-none focus:border-[#39FF14]/30 transition-colors"
+                />
+                <button
+                  type="submit"
+                  className="ft-btn ft-mono font-bold text-black text-[10px] tracking-[0.25em] uppercase px-6 py-3 flex items-center gap-2"
+                  style={{ background: "#39FF14" }}
+                >
+                  <Mail className="w-3.5 h-3.5" />
+                  Suscribirse
+                </button>
+              </form>
+            </div>
+          </div>
+
+          {/* ── Bottom bar ── */}
+          <div className="py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <span className="ft-mono text-[#2a4a2a] text-[10px] tracking-wide">
+              © 2025 Chex Seeds. Todos los derechos reservados.
+            </span>
+            <div className="flex items-center gap-6">
+              {legalLinks.map((l) => (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  className="ft-link ft-mono text-[#2a4a2a] text-[10px] tracking-wide"
+                >
+                  {l.label}
+                </Link>
+              ))}
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Back to top button */}
-      <button
-        onClick={scrollToTop}
-        className="absolute bottom-4 right-4 md:bottom-8 md:right-8 bg-gradient-to-r from-emerald-500 to-lime-500 hover:from-emerald-400 hover:to-lime-400 text-black p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110 group z-10"
-        aria-label="Volver arriba"
-      >
-        <ArrowUp className="w-5 h-5 group-hover:-translate-y-0.5 transition-transform" />
-      </button>
-    </footer>
+      </footer>
+    </>
   );
 }

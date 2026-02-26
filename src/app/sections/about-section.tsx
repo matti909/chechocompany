@@ -2,202 +2,287 @@
 
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
-import { Button } from "@/components/ui/button";
-import { Sparkles, Shield, Clock, GitBranch } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { Dna, FlaskConical, Leaf, ScanLine } from "lucide-react";
+
+const features = [
+  {
+    num: "01",
+    icon: Dna,
+    title: "FEMINIZADAS",
+    description: "Alta probabilidad de plantas hembras con genética estabilizada al máximo.",
+  },
+  {
+    num: "02",
+    icon: FlaskConical,
+    title: "GENÉTICA DE ELITE",
+    description: "Resistencia y estabilidad excepcional en cada cepa que producimos.",
+  },
+  {
+    num: "03",
+    icon: Leaf,
+    title: "COSECHA RÁPIDA",
+    description: "Ciclos de floración optimizados para el máximo rendimiento posible.",
+  },
+  {
+    num: "04",
+    icon: ScanLine,
+    title: "TRAZABILIDAD REAL",
+    description: "Transparencia total en el origen y la evolución de cada genética.",
+  },
+];
+
+const stats = [
+  { value: "90%",  label: "Feminización" },
+  { value: "3+",   label: "Genéticas Premium" },
+  { value: "2014", label: "Establecidos" },
+  { value: "100%", label: "Control de Calidad" },
+];
 
 export function AboutSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const titleRef = useRef<HTMLDivElement>(null);
-  const descRef = useRef<HTMLParagraphElement>(null);
-  const cardsRef = useRef<HTMLDivElement>(null);
-  const ctaRef = useRef<HTMLDivElement>(null);
+  const sectionRef   = useRef<HTMLElement>(null);
+  const headingRef   = useRef<HTMLDivElement>(null);
+  const contentRef   = useRef<HTMLDivElement>(null);
+  const statsRef     = useRef<HTMLDivElement>(null);
+  const featuresRef  = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && titleRef.current) {
-          const tl = gsap.timeline();
+        if (!entry.isIntersecting) return;
 
-          tl.fromTo(
-            titleRef.current,
-            { opacity: 0, y: 40 },
-            { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }
+        const tl = gsap.timeline();
+        tl
+          .fromTo(headingRef.current,
+            { opacity: 0, x: -50 },
+            { opacity: 1, x: 0, duration: 1, ease: "power4.out" }
           )
-          .fromTo(
-            descRef.current,
-            { opacity: 0, y: 30 },
-            { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
+          .fromTo(contentRef.current,
+            { opacity: 0, y: 24 },
+            { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" },
+            "-=0.5"
+          )
+          .fromTo(Array.from(statsRef.current?.children ?? []),
+            { opacity: 0, y: 16 },
+            { opacity: 1, y: 0, duration: 0.45, stagger: 0.07, ease: "power2.out" },
             "-=0.4"
           )
-          .fromTo(
-            cardsRef.current?.children || [],
-            { opacity: 0, y: 20 },
-            {
-              opacity: 1,
-              y: 0,
-              duration: 0.5,
-              stagger: 0.1,
-              ease: "power2.out"
-            },
-            "-=0.3"
-          )
-          .fromTo(
-            ctaRef.current,
-            { opacity: 0, scale: 0.9 },
-            { opacity: 1, scale: 1, duration: 0.4, ease: "back.out" },
+          .fromTo(Array.from(featuresRef.current?.children ?? []),
+            { opacity: 0, y: 16 },
+            { opacity: 1, y: 0, duration: 0.45, stagger: 0.08, ease: "power2.out" },
             "-=0.2"
           );
-        }
       },
-      { threshold: 0.2 }
+      { threshold: 0.1 }
     );
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
+    if (sectionRef.current) observer.observe(sectionRef.current);
     return () => observer.disconnect();
   }, []);
 
-  const features = [
-    {
-      icon: Sparkles,
-      title: "DOS FEMINIZADAS",
-      description: "Alta probabilidad de plantas hembras",
-      color: "emerald"
-    },
-    {
-      icon: Shield,
-      title: "GENÉTICA DE ELITE",
-      description: "Resistencia y estabilidad excepcional",
-      color: "lime"
-    },
-    {
-      icon: Clock,
-      title: "COSECHA RÁPIDA",
-      description: "Ciclos de floración optimizados",
-      color: "green"
-    },
-    {
-      icon: GitBranch,
-      title: "TRAZABILIDAD REAL",
-      description: "Transparencia total en origen y evolución",
-      color: "teal"
-    }
-  ];
-
   return (
-    <section
-      ref={sectionRef}
-      className="relative py-32 overflow-hidden bg-black"
-      id="about"
-    >
-      {/* Background glow effects */}
-      <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-lime-500/10 rounded-full blur-[120px]" />
-      </div>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+        .ab-display { font-family: 'Syne', sans-serif; }
+        .ab-mono    { font-family: 'Space Mono', monospace; }
+      `}</style>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6">
-        <div className="grid lg:grid-cols-[300px_1fr_300px] gap-8 items-center">
-          {/* Left Image */}
-          <div className="hidden lg:block">
-            <div className="relative h-[500px] rounded-3xl overflow-hidden border border-emerald-500/20">
-              <Image
-                src="/sems/indu.jpeg"
-                alt="Cannabis plant"
-                fill
-                className="object-cover"
-              />
-            </div>
-          </div>
+      <section
+        ref={sectionRef}
+        id="about"
+        className="relative bg-[#050a05] overflow-hidden"
+      >
+        {/* Faint background watermark */}
+        <div
+          aria-hidden
+          className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden"
+        >
+          <span
+            className="ab-display font-black text-white leading-none"
+            style={{
+              fontSize: "clamp(160px, 30vw, 380px)",
+              opacity: 0.018,
+              transform: "rotate(-6deg) translateY(8%)",
+              letterSpacing: "-0.04em",
+            }}
+          >
+            CHEX
+          </span>
+        </div>
 
-          {/* Center Content */}
-          <div className="text-center space-y-8">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 px-4 py-2 rounded-full">
-              <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-              <span className="text-emerald-400 text-sm font-mono uppercase tracking-wider">
-                Nuestra Historia
-              </span>
-            </div>
-
-            {/* Title */}
-            <div ref={titleRef}>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight">
-                <span className="text-emerald-400">CHEX SEEDS</span>
-                <br />
-                <span className="text-white">COMPANY</span>
-              </h2>
-            </div>
-
-            {/* Description */}
-            <p
-              ref={descRef}
-              className="text-gray-300 text-lg leading-relaxed max-w-2xl mx-auto"
-            >
-              En <span className="text-emerald-400 font-semibold">ChexSeeds</span> desarrollamos y producimos semillas fotoperiódicas regulares con{" "}
-              <span className="text-white font-semibold">90% de probabilidad de feminización</span>, diseñadas para entregar las más fuertes y rápidas del mercado. Cada genética cuenta con{" "}
-              <span className="text-white font-semibold">trazabilidad real</span>, lo que asegura transparencia en el origen y evolución. Nuestras semillas están{" "}
-              <span className="text-white font-semibold">libres de plagas</span> y{" "}
-              <span className="text-white font-semibold">enfermedades</span>, aplicando estándares altos con excelencia y potencia.
-            </p>
-
-            {/* Feature Cards */}
-            <div
-              ref={cardsRef}
-              className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-8"
-            >
-              {features.map((feature, index) => (
-                <div
-                  key={index}
-                  className="group relative bg-black/60 backdrop-blur-sm border border-emerald-500/20 rounded-2xl p-6 hover:border-emerald-400/50 transition-all duration-300 hover:scale-105"
-                >
-                  {/* Glow effect on hover */}
-                  <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500/20 to-lime-500/20 rounded-2xl opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-300" />
-
-                  <div className="relative space-y-3">
-                    <div className="flex justify-center">
-                      <div className="p-3 bg-emerald-500/10 rounded-xl">
-                        <feature.icon className="w-6 h-6 text-emerald-400" />
-                      </div>
-                    </div>
-                    <h3 className="text-white font-bold text-sm uppercase tracking-wide">
-                      {feature.title}
-                    </h3>
-                    <p className="text-gray-400 text-xs leading-relaxed">
-                      {feature.description}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* CTA Button */}
-            <div ref={ctaRef} className="pt-4">
-              <Link href="/genetics">
-                <Button className="bg-gradient-to-r from-emerald-500 to-lime-500 hover:from-emerald-400 hover:to-lime-400 text-black font-bold px-8 py-6 text-lg rounded-full transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-emerald-500/25">
-                  COMPRAR AHORA
-                </Button>
-              </Link>
-            </div>
-          </div>
-
-          {/* Right Image */}
-          <div className="hidden lg:block">
-            <div className="relative h-[500px] rounded-3xl overflow-hidden border border-emerald-500/20">
-              <Image
-                src="/sems/sati.jpeg"
-                alt="Cannabis seeds"
-                fill
-                className="object-cover"
-              />
-            </div>
+        {/* ── Top label bar ── */}
+        <div className="border-b border-white/[0.08]">
+          <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+            <span className="ab-mono text-[10px] text-[#39FF14]/50 tracking-[0.35em] uppercase">
+              Nuestra Historia
+            </span>
+            <span className="ab-mono text-[10px] text-white/15 tracking-[0.25em]">
+              EST. 2014 — ARG
+            </span>
           </div>
         </div>
-      </div>
-    </section>
+
+        {/* ── Hero grid: heading / copy | image ── */}
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid lg:grid-cols-[1fr_420px] border-b border-white/[0.08]">
+
+            {/* Left column */}
+            <div className="py-16 lg:py-24 lg:pr-16 flex flex-col justify-between gap-12">
+
+              {/* Heading */}
+              <div ref={headingRef}>
+                <h2
+                  className="ab-display font-black leading-[0.88] tracking-tight text-white"
+                  style={{ fontSize: "clamp(36px, 5.5vw, 72px)" }}
+                >
+                  <span style={{ color: "#39FF14" }}>CHEX</span>
+                  <br />
+                  SEEDS
+                  <br />
+                  <span style={{ color: "rgba(255,255,255,0.18)" }}>CO.</span>
+                </h2>
+              </div>
+
+              {/* Copy + CTA */}
+              <div ref={contentRef} className="space-y-5 max-w-md">
+                <p className="text-[#7a9a7a] text-base leading-relaxed">
+                  Desarrollamos y producimos semillas fotoperiódicas regulares con{" "}
+                  <span style={{ color: "#39FF14" }} className="font-semibold">
+                    90% de probabilidad de feminización
+                  </span>
+                  , diseñadas para entregar las más fuertes y rápidas del mercado.
+                </p>
+                <p className="text-[#7a9a7a] text-base leading-relaxed">
+                  Cada genética cuenta con{" "}
+                  <span className="text-white font-medium">trazabilidad real</span>, garantizando transparencia en
+                  el origen y evolución. Semillas{" "}
+                  <span className="text-white font-medium">libres de plagas</span> con estándares de excelencia y
+                  potencia.
+                </p>
+
+                <div className="pt-3">
+                  <Link href="/genetics">
+                    <button
+                      className="ab-display font-bold text-black text-xs tracking-[0.25em] uppercase px-8 py-4 transition-all duration-300 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98]"
+                      style={{
+                        background: "#39FF14",
+                        clipPath:
+                          "polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px))",
+                      }}
+                    >
+                      Comprar Ahora
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* Right column — image */}
+            <div className="hidden lg:block relative border-l border-white/[0.08] overflow-hidden">
+              <Image
+                src="/sems/indu.jpeg"
+                alt="Genética premium ChexSeeds"
+                fill
+                className="object-cover object-center transition-transform duration-700 hover:scale-105"
+                style={{ filter: "saturate(0.85)" }}
+              />
+              {/* bottom fade */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#050a05] via-transparent to-transparent opacity-70" />
+
+              {/* floating tag */}
+              <div
+                className="absolute bottom-7 right-7 bg-[#050a05]/90 backdrop-blur-md border border-[#39FF14]/25 px-4 py-3"
+                style={{
+                  clipPath:
+                    "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%)",
+                }}
+              >
+                <div className="ab-mono text-[#39FF14] text-[10px] tracking-[0.3em] uppercase">
+                  Genética Premium
+                </div>
+                <div className="ab-mono text-white/30 text-[9px] mt-0.5 tracking-widest">
+                  Chex Seeds Co. — ARG
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Stats band ── */}
+          <div
+            ref={statsRef}
+            className="grid grid-cols-2 md:grid-cols-4 border-b border-white/[0.08]"
+          >
+            {stats.map((s, i) => (
+              <div
+                key={i}
+                className={[
+                  "group py-8 px-6",
+                  i < stats.length - 1 ? "border-r border-white/[0.08]" : "",
+                ].join(" ")}
+              >
+                <div
+                  className="ab-display font-black leading-none mb-1.5 transition-colors duration-300 group-hover:text-[#39FF14]"
+                  style={{
+                    fontSize: "clamp(26px, 3.5vw, 44px)",
+                    color: i === 0 ? "#39FF14" : "white",
+                  }}
+                >
+                  {s.value}
+                </div>
+                <div className="ab-mono text-[#3a5a3a] text-[10px] tracking-[0.25em] uppercase">
+                  {s.label}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* ── Features grid ── */}
+          <div
+            ref={featuresRef}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
+          >
+            {features.map((f, i) => (
+              <div
+                key={i}
+                className={[
+                  "group relative py-10 px-6",
+                  "border-b border-white/[0.08]",
+                  i < features.length - 1 ? "lg:border-r lg:border-white/[0.08]" : "",
+                  i % 2 === 0 ? "sm:border-r sm:border-white/[0.08] lg:border-r-0" : "",
+                  i < 2 ? "sm:border-b" : "",
+                  "hover:bg-white/[0.015] transition-colors duration-300",
+                ].join(" ")}
+              >
+                {/* large bg number */}
+                <span
+                  aria-hidden
+                  className="ab-display absolute top-4 right-5 font-black text-white/[0.04] leading-none select-none"
+                  style={{ fontSize: "72px" }}
+                >
+                  {f.num}
+                </span>
+
+                <div className="relative space-y-3">
+                  <div className="ab-mono text-[#39FF14]/35 text-[10px] tracking-[0.3em] mb-5">
+                    — {f.num}
+                  </div>
+                  <f.icon
+                    className="w-5 h-5 text-[#39FF14]/50 group-hover:text-[#39FF14] transition-colors duration-300"
+                  />
+                  <h3 className="ab-display font-bold text-white text-[13px] tracking-wider uppercase pt-1">
+                    {f.title}
+                  </h3>
+                  <p className="text-[#3a5a3a] text-xs leading-relaxed">
+                    {f.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
   );
 }

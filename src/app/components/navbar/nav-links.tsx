@@ -2,21 +2,14 @@
 
 import { useRef, useEffect } from "react";
 import Link from "next/link";
-import { ChevronDown } from "lucide-react";
 import { gsap } from "gsap";
 
-interface NavLink {
-  name: string;
-  hasDropdown: boolean;
-  href: string;
-}
-
-const LINKS: NavLink[] = [
-  { name: "TIENDA", hasDropdown: true, href: "/" },
-  { name: "SEMILLAS", hasDropdown: false, href: "/genetics" },
-  { name: "GUÍA", hasDropdown: false, href: "/growing-guide" },
-  { name: "CONTACTO", hasDropdown: false, href: "/contacto" },
-  { name: "BLOG", hasDropdown: false, href: "/cultivation-guide" },
+const LINKS = [
+  { name: "Tienda",    href: "/" },
+  { name: "Semillas",  href: "/genetics" },
+  { name: "Guía",      href: "/growing-guide" },
+  { name: "Contacto",  href: "/contacto" },
+  { name: "Blog",      href: "/cultivation-guide" },
 ];
 
 export function NavLinks() {
@@ -24,55 +17,47 @@ export function NavLinks() {
 
   useEffect(() => {
     if (linksRef.current) {
-      gsap.fromTo(linksRef.current.children,
-        { opacity: 0, y: -20 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          stagger: 0.1,
-          ease: "power3.out",
-          delay: 0.3
-        }
+      gsap.fromTo(
+        linksRef.current.children,
+        { opacity: 0, y: -16 },
+        { opacity: 1, y: 0, duration: 0.7, stagger: 0.08, ease: "power3.out", delay: 0.3 }
       );
     }
   }, []);
 
   return (
-    <div ref={linksRef} className="hidden lg:flex items-center space-x-8">
-      {LINKS.map((item) => (
-        <Link key={item.name} href={item.href}>
-          <div
-            className="relative group cursor-pointer"
-            onMouseEnter={(e) => {
-              gsap.to(e.currentTarget.querySelector('.glow-effect'), {
-                opacity: 1,
-                scale: 1.1,
-                duration: 0.3,
-                ease: "power2.out"
-              });
-            }}
-            onMouseLeave={(e) => {
-              gsap.to(e.currentTarget.querySelector('.glow-effect'), {
-                opacity: 0,
-                scale: 1,
-                duration: 0.3,
-                ease: "power2.out"
-              });
-            }}
-          >
-            <div className="glow-effect absolute inset-0 bg-gradient-to-r from-emerald-400/20 to-lime-400/20 rounded-lg blur-sm opacity-0 transition-all duration-300" />
-            <div className="relative flex items-center space-x-1 px-4 py-2">
-              <span className="font-bold text-white hover:text-emerald-400 transition-colors duration-300 tracking-wide">
-                {item.name}
-              </span>
-              {item.hasDropdown && (
-                <ChevronDown className="w-4 h-4 text-emerald-400 group-hover:rotate-180 transition-transform duration-300" />
-              )}
-            </div>
-          </div>
-        </Link>
-      ))}
-    </div>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+        .nl-link {
+          font-family: 'Space Mono', monospace;
+          position: relative;
+        }
+        .nl-link::after {
+          content: '';
+          position: absolute;
+          bottom: -2px;
+          left: 0;
+          width: 0;
+          height: 1px;
+          background: #39FF14;
+          transition: width 0.25s ease;
+        }
+        .nl-link:hover::after { width: 100%; }
+        .nl-link:hover { color: rgba(255,255,255,0.9); }
+      `}</style>
+
+      <div ref={linksRef} className="hidden lg:flex items-center gap-8">
+        {LINKS.map((item) => (
+          <Link key={item.name} href={item.href}>
+            <span
+              className="nl-link text-[13px] font-bold text-white/80 tracking-[0.15em] uppercase transition-colors duration-200"
+            >
+              {item.name}
+            </span>
+          </Link>
+        ))}
+      </div>
+    </>
   );
 }
