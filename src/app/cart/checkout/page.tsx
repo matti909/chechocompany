@@ -3,887 +3,582 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Footer } from "../../components/footer";
-import { Button } from "@/components/ui/button";
 import useCartStore from "@/store/cart-store";
 import { useAuthStore } from "@/store/auth-store";
 import { toast } from "sonner";
 import {
-  CreditCard,
-  ArrowLeft,
-  ArrowRight,
-  User,
-  Mail,
-  Phone,
-  MapPin,
-  FileText,
-  CheckCircle,
-  Shield,
-  Truck,
-  Package,
-  ShoppingBag,
-  AlertCircle,
-  Clock,
-  Sparkles,
+  ArrowLeft, ArrowRight, User, Mail, Phone, MapPin,
+  FileText, CheckCircle, Shield, Truck, Package,
+  ShoppingBag, AlertCircle, Clock,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
-const colorSchemes = {
-  pink: "from-pink-500 to-purple-500",
-  emerald: "from-emerald-500 to-lime-500",
-  blue: "from-blue-500 to-purple-500",
-  orange: "from-orange-500 to-yellow-500",
-  purple: "from-purple-500 to-violet-500",
-  cyan: "from-cyan-500 to-blue-500",
+const colorAccents: Record<string, string> = {
+  pink:    '#f472b6',
+  emerald: '#34d399',
+  blue:    '#fb923c',
+  orange:  '#fb923c',
+  purple:  '#c084fc',
+  cyan:    '#22d3ee',
 };
 
 export default function CheckoutPage() {
   const router = useRouter();
   const {
-    items,
-    totalItems,
-    totalPrice,
-    checkout,
-    setCheckoutStep,
-    updateCustomerInfo,
-    setSubmitting,
-    completeOrder,
-    resetCheckout,
+    items, totalItems, totalPrice,
+    checkout, setCheckoutStep, updateCustomerInfo,
+    setSubmitting, completeOrder, resetCheckout,
   } = useCartStore();
 
   const { session } = useAuthStore();
   const [isClient, setIsClient] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
+  useEffect(() => { setIsClient(true); resetCheckout(); }, [resetCheckout]);
   useEffect(() => {
-    setIsClient(true);
-    // Reset checkout when component mounts
-    resetCheckout();
-  }, [resetCheckout]);
-
-  useEffect(() => {
-    // Redirect to cart if no items
-    if (isClient && items.length === 0 && !checkout.orderPlaced) {
-      router.push("/cart");
-    }
+    if (isClient && items.length === 0 && !checkout.orderPlaced) router.push("/cart");
   }, [items.length, isClient, router, checkout.orderPlaced]);
+
+  const subtotal   = totalPrice;
+  const shipping   = subtotal > 100000 ? 0 : 8000;
+  const finalTotal = subtotal + shipping;
 
   const validateStep1 = () => {
     const errors: Record<string, string> = {};
     const { customerInfo } = checkout;
-
-    if (!customerInfo.fullName.trim()) {
-      errors.fullName = "El nombre completo es requerido";
-    }
-
-    if (!customerInfo.email.trim()) {
-      errors.email = "El email es requerido";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerInfo.email)) {
-      errors.email = "Formato de email inválido";
-    }
-
-    if (!customerInfo.phone.trim()) {
-      errors.phone = "El teléfono es requerido";
-    }
-
-    if (!customerInfo.address.trim()) {
-      errors.address = "La dirección es requerida";
-    }
-
-    if (!customerInfo.city.trim()) {
-      errors.city = "La ciudad es requerida";
-    }
-
-    if (!customerInfo.postalCode.trim()) {
-      errors.postalCode = "El código postal es requerido";
-    }
-
+    if (!customerInfo.fullName.trim())  errors.fullName   = "Requerido";
+    if (!customerInfo.email.trim())     errors.email      = "Requerido";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerInfo.email))
+                                        errors.email      = "Email inválido";
+    if (!customerInfo.phone.trim())     errors.phone      = "Requerido";
+    if (!customerInfo.address.trim())   errors.address    = "Requerido";
+    if (!customerInfo.city.trim())      errors.city       = "Requerido";
+    if (!customerInfo.postalCode.trim()) errors.postalCode = "Requerido";
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
   const handleStep1Submit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateStep1()) {
-      setCheckoutStep(2);
-    }
+    if (validateStep1()) setCheckoutStep(2);
   };
 
   const handleFinalSubmit = async () => {
     setSubmitting(true);
-
     try {
-      // Generate order number
       const orderNumber = `CHX-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
-
-      // Prepare order data
       const orderData = {
         customerInfo: checkout.customerInfo,
-        items: items,
-        subtotal: subtotal,
-        shipping: shipping,
-        total: finalTotal,
-        orderNumber: orderNumber,
+        items, subtotal, shipping, total: finalTotal, orderNumber,
         userId: session?.user?.id || null,
       };
 
-      // Show loading toast
       toast.loading("Procesando tu pedido...", { id: "order-processing" });
 
-      // 1. Save order to database
       const orderResponse = await fetch("/api/orders", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(orderData),
       });
-
       if (!orderResponse.ok) {
-        const errorData = await orderResponse.json();
-        throw new Error(errorData.error || "Error al guardar el pedido");
+        const err = await orderResponse.json();
+        throw new Error(err.error || "Error al guardar el pedido");
       }
+      toast.success("Pedido guardado", { id: "order-processing" });
 
-      await orderResponse.json();
-      toast.success("Pedido guardado exitosamente!", {
-        id: "order-processing",
-      });
-
-      // 2. Send confirmation email
-      toast.loading("Enviando email de confirmación...", {
-        id: "email-sending",
-      });
-      const emailResponse = await fetch("/api/order-confirmation", {
+      await fetch("/api/order-confirmation", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(orderData),
       });
 
-      if (!emailResponse.ok) {
-        toast.error("No se pudo enviar el email de confirmación", {
-          id: "email-sending",
-        });
-      } else {
-        toast.success("Email de confirmación enviado!", {
-          id: "email-sending",
-        });
-      }
-
-      // 3. Send WhatsApp notification
-      toast.loading("Enviando notificación de WhatsApp...", {
-        id: "whatsapp-sending",
-      });
-      const whatsappResponse = await fetch("/api/notify-whatsapp", {
+      await fetch("/api/notify-whatsapp", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(orderData),
       });
 
-      if (!whatsappResponse.ok) {
-        toast.error("No se pudo enviar la notificación de WhatsApp", {
-          id: "whatsapp-sending",
-        });
-      } else {
-        toast.success("Notificación de WhatsApp enviada!", {
-          id: "whatsapp-sending",
-        });
-      }
-
-      // 4. Show final success message
-      toast.success(`¡Pedido completado! Número: ${orderNumber}`, {
+      toast.success(`¡Pedido completado! Nº: ${orderNumber}`, {
         duration: 5000,
-        description: "Recibirás un email con los detalles del envío",
+        description: "Recibirás un email con los detalles",
       });
-
       completeOrder();
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Error al procesar el pedido",
-        {
-          id: "order-processing",
-        },
-      );
+      toast.error(error instanceof Error ? error.message : "Error al procesar el pedido", { id: "order-processing" });
       setSubmitting(false);
     }
   };
 
-  const subtotal = totalPrice;
-  const shipping = subtotal > 100000 ? 0 : 8000;
-  const finalTotal = subtotal + shipping;
+  if (!isClient) return null;
 
-  if (!isClient) {
-    return null;
-  }
+  /* ── SUCCESS STATE ── */
   if (checkout.orderPlaced) {
     return (
-      <div className="min-h-screen bg-black">
-        <section className="relative py-32 overflow-hidden">
-          {/* Background Effects */}
-          <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-r from-emerald-400/20 to-lime-400/20 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-20 right-16 w-48 h-48 bg-gradient-to-l from-blue-400/15 to-purple-400/15 rounded-full blur-3xl animate-pulse delay-1000" />
+      <>
+        <style>{`
+          @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Space+Mono:wght@400;700&display=swap');
+          .ck-display { font-family: 'Syne', sans-serif; }
+          .ck-mono    { font-family: 'Space Mono', monospace; }
+          .ck-cta {
+            clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+            transition: opacity 0.2s ease;
+          }
+          .ck-cta:hover { opacity: 0.85; }
+        `}</style>
+        <div className="min-h-screen bg-[#050a05]">
+          <div className="max-w-4xl mx-auto px-6 pt-32 pb-20">
 
-          <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
-            <div className="relative mx-auto w-32 h-32 mb-8">
-              <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/30 to-lime-500/30 rounded-full blur-xl animate-pulse" />
-              <div className="relative w-32 h-32 bg-black/60 border border-emerald-500/30 rounded-full flex items-center justify-center">
-                <CheckCircle className="w-16 h-16 text-emerald-400" />
-              </div>
+            <div className="flex items-center gap-3 mb-12">
+              <div className="h-px w-6" style={{ background: '#39FF14' }} />
+              <span className="ck-mono text-[10px] text-[#39FF14]/50 tracking-[0.35em] uppercase">
+                Pedido confirmado
+              </span>
             </div>
 
-            <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-emerald-300 to-lime-300 leading-none tracking-tight mb-6">
-              ¡PEDIDO
-              <br />
-              <span className="text-3xl md:text-4xl text-emerald-400 font-light tracking-wide">
-                confirmado!
-              </span>
+            <h1 className="ck-display font-black text-white leading-[0.88] tracking-tight mb-4"
+                style={{ fontSize: 'clamp(40px, 6vw, 72px)' }}>
+              ¡Pedido<br />
+              <span style={{ color: '#39FF14' }}>Confirmado!</span>
             </h1>
 
-            <p className="text-xl text-gray-300 leading-relaxed mb-8 max-w-2xl mx-auto">
-              Tu pedido ha sido procesado exitosamente. Recibirás un email de
-              confirmación con todos los detalles y el seguimiento del envío.
+            <p className="ck-mono text-[#7a9a7a] text-sm leading-relaxed mb-12 max-w-lg">
+              Tu pedido fue procesado exitosamente. Recibirás un email de confirmación con todos los detalles y el seguimiento del envío.
             </p>
 
-            <div className="grid md:grid-cols-3 gap-6 mb-12">
-              <div className="bg-black/60 border border-emerald-500/30 rounded-2xl p-6">
-                <Package className="w-8 h-8 text-emerald-400 mx-auto mb-4" />
-                <h3 className="text-lg font-bold text-white mb-2">
-                  Preparación
-                </h3>
-                <p className="text-gray-400 text-sm">1-2 días hábiles</p>
-              </div>
-              <div className="bg-black/60 border border-emerald-500/30 rounded-2xl p-6">
-                <Truck className="w-8 h-8 text-lime-400 mx-auto mb-4" />
-                <h3 className="text-lg font-bold text-white mb-2">Envío</h3>
-                <p className="text-gray-400 text-sm">3-5 días hábiles</p>
-              </div>
-              <div className="bg-black/60 border border-emerald-500/30 rounded-2xl p-6">
-                <Shield className="w-8 h-8 text-yellow-400 mx-auto mb-4" />
-                <h3 className="text-lg font-bold text-white mb-2">Garantía</h3>
-                <p className="text-gray-400 text-sm">98% germinación</p>
-              </div>
+            <div className="grid md:grid-cols-3 gap-4 mb-12">
+              {[
+                { icon: Package, label: 'Preparación', detail: '1–2 días hábiles' },
+                { icon: Truck,   label: 'Envío',       detail: '3–5 días hábiles' },
+                { icon: Shield,  label: 'Garantía',    detail: '98% germinación'  },
+              ].map(({ icon: Icon, label, detail }) => (
+                <div key={label}
+                     className="border border-white/[0.06] p-6"
+                     style={{ clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%)' }}>
+                  <Icon className="w-5 h-5 mb-3" style={{ color: '#39FF14' }} />
+                  <div className="ck-display font-bold text-white text-sm mb-1">{label}</div>
+                  <div className="ck-mono text-[10px] text-[#3a5a3a] tracking-wide">{detail}</div>
+                </div>
+              ))}
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3">
               <Link href="/genetics">
-                <Button className="bg-gradient-to-r from-emerald-500 to-lime-500 hover:from-emerald-600 hover:to-lime-600 text-black font-bold px-8 py-4 text-lg transition-all duration-300 hover:scale-105">
-                  <Sparkles className="w-5 h-5 mr-2" />
-                  Seguir Comprando
-                </Button>
+                <button className="ck-cta ck-display font-black text-black text-[11px] tracking-[0.2em] uppercase px-8 py-4"
+                        style={{ background: '#39FF14' }}>
+                  Seguir comprando
+                </button>
               </Link>
-
               <Link href="/contacto">
-                <Button
-                  variant="outline"
-                  className="border-2 border-emerald-400 text-emerald-400 hover:bg-emerald-400/10 font-bold px-8 py-4 text-lg transition-all duration-300"
-                >
-                  <Mail className="w-5 h-5 mr-2" />
-                  Contactar Soporte
-                </Button>
+                <button className="ck-cta ck-mono font-bold text-white/60 text-[10px] tracking-widest uppercase px-8 py-4"
+                        style={{ border: '1px solid rgba(255,255,255,0.08)' }}>
+                  Contactar soporte
+                </button>
               </Link>
             </div>
           </div>
-        </section>
-
-        <Footer />
-      </div>
+          <Footer />
+        </div>
+      </>
     );
   }
 
+  const inputClass = "w-full px-4 py-3 text-[12px] text-white ck-input";
+  const labelClass = "ck-mono text-[9px] tracking-[0.25em] uppercase mb-2 flex items-center gap-2";
+
   return (
-    <div className="min-h-screen bg-black">
-      {/* Hero Section */}
-      <section className="relative pt-24 pb-12 overflow-hidden">
-        {/* Background Effects */}
-        <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-r from-emerald-400/20 to-lime-400/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-16 w-48 h-48 bg-gradient-to-l from-blue-400/15 to-purple-400/15 rounded-full blur-3xl animate-pulse delay-1000" />
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Space+Mono:wght@400;700&display=swap');
+        .ck-display { font-family: 'Syne', sans-serif; }
+        .ck-mono    { font-family: 'Space Mono', monospace; }
+        .ck-cta {
+          clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+          transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+        .ck-cta:hover  { opacity: 0.88; transform: scale(1.015); }
+        .ck-cta:active { transform: scale(0.98); }
+        .ck-btn-ghost {
+          clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+          transition: background 0.2s ease;
+        }
+        .ck-btn-ghost:hover { background: rgba(255,255,255,0.04) !important; }
+        .ck-input {
+          background: transparent;
+          border: 1px solid rgba(255,255,255,0.08);
+          outline: none;
+          font-family: 'Space Mono', monospace;
+          transition: border-color 0.2s ease;
+          clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%);
+        }
+        .ck-input:focus { border-color: rgba(57,255,20,0.4); }
+        .ck-input::placeholder { color: rgba(255,255,255,0.18); }
+      `}</style>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6">
-          <div className="flex items-center gap-4 mb-8">
-            <Link href="/cart">
-              <Button
-                variant="outline"
-                className="border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Volver al Carrito
-              </Button>
+      <div className="min-h-screen bg-[#050a05]">
+
+        {/* ── HEADER ── */}
+        <div className="border-b border-white/[0.08] pt-28 pb-10">
+          <div className="max-w-7xl mx-auto px-6">
+            <Link href="/cart"
+                  className="ck-mono text-[10px] text-[#3a5a3a] hover:text-[#7a9a7a] tracking-widest uppercase transition-colors flex items-center gap-1.5 w-fit mb-8">
+              <ArrowLeft className="w-3 h-3" />
+              Volver al carrito
             </Link>
-          </div>
 
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-500 to-lime-500 text-black px-6 py-3 rounded-full text-sm font-bold uppercase tracking-wider shadow-lg backdrop-blur-sm mb-6">
-              <CreditCard className="w-4 h-4" />
-              <span>CHECKOUT</span>
-              <div className="w-2 h-2 bg-black rounded-full animate-pulse" />
-            </div>
-
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-emerald-300 to-lime-300 leading-none tracking-tight">
-              FINALIZAR
-              <br />
-              <span className="text-3xl md:text-4xl lg:text-5xl text-emerald-400 font-light tracking-wide">
-                compra
-              </span>
-            </h1>
-
-            {/* Step Indicator */}
-            <div className="flex items-center justify-center gap-4 mt-8">
-              <div
-                className={`flex items-center gap-2 px-4 py-2 rounded-full ${
-                  checkout.step === 1
-                    ? "bg-emerald-500/20 border border-emerald-500/40"
-                    : "bg-gray-800/50"
-                }`}
-              >
-                <div
-                  className={`w-2 h-2 rounded-full ${
-                    checkout.step === 1 ? "bg-emerald-400" : "bg-gray-400"
-                  }`}
-                />
-                <span
-                  className={`text-sm font-medium ${
-                    checkout.step === 1 ? "text-emerald-400" : "text-gray-400"
-                  }`}
-                >
-                  Información Personal
-                </span>
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="h-px w-6" style={{ background: '#39FF14' }} />
+                  <span className="ck-mono text-[10px] text-[#39FF14]/50 tracking-[0.35em] uppercase">
+                    Finalizar compra
+                  </span>
+                </div>
+                <h1 className="ck-display font-black text-white leading-none tracking-tight"
+                    style={{ fontSize: 'clamp(30px, 4.5vw, 56px)' }}>
+                  Checkout
+                </h1>
               </div>
 
-              <div className="w-8 h-px bg-gray-600" />
-
-              <div
-                className={`flex items-center gap-2 px-4 py-2 rounded-full ${
-                  checkout.step === 2
-                    ? "bg-emerald-500/20 border border-emerald-500/40"
-                    : "bg-gray-800/50"
-                }`}
-              >
-                <div
-                  className={`w-2 h-2 rounded-full ${
-                    checkout.step === 2 ? "bg-emerald-400" : "bg-gray-400"
-                  }`}
-                />
-                <span
-                  className={`text-sm font-medium ${
-                    checkout.step === 2 ? "text-emerald-400" : "text-gray-400"
-                  }`}
-                >
-                  Confirmar Pedido
-                </span>
+              {/* Step indicator */}
+              <div className="flex items-center gap-3 pb-1">
+                {[
+                  { n: 1, label: 'Datos' },
+                  { n: 2, label: 'Confirmar' },
+                ].map(({ n, label }, i) => (
+                  <div key={n} className="flex items-center gap-3">
+                    {i > 0 && <div className="w-8 h-px bg-white/[0.06]" />}
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="ck-display font-black text-[11px] w-6 h-6 flex items-center justify-center"
+                        style={{
+                          background: checkout.step === n ? '#39FF14' : 'transparent',
+                          color: checkout.step === n ? '#000' : 'rgba(255,255,255,0.2)',
+                          border: checkout.step === n ? 'none' : '1px solid rgba(255,255,255,0.08)',
+                          clipPath: 'polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 5px 100%, 0 calc(100% - 5px))',
+                        }}
+                      >
+                        {n}
+                      </span>
+                      <span className={`ck-mono text-[10px] tracking-[0.2em] uppercase hidden sm:block ${checkout.step === n ? 'text-white' : 'text-white/25'}`}>
+                        {label}
+                      </span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         </div>
-      </section>
 
-      {/* Checkout Content */}
-      <section className="relative pb-20">
-        <div className="max-w-6xl mx-auto px-6">
-          {checkout.step === 1 ? (
-            // Step 1: Customer Information
-            <div className="grid lg:grid-cols-3 gap-12">
-              {/* Form */}
-              <div className="lg:col-span-2">
-                <div className="relative">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500/30 via-lime-500/30 to-emerald-500/30 rounded-3xl blur-xl opacity-60" />
-                  <div className="relative bg-black/90 backdrop-blur-xl border border-emerald-500/30 rounded-3xl p-8">
-                    <div className="flex items-center gap-4 mb-8">
-                      <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-lime-500 rounded-xl flex items-center justify-center">
-                        <User className="w-6 h-6 text-black" />
-                      </div>
-                      <div>
-                        <h2 className="text-2xl font-bold text-white">
-                          Información Personal
-                        </h2>
-                        <p className="text-gray-400">
-                          Completa tus datos para el envío
-                        </p>
-                      </div>
-                    </div>
+        {/* ── CHECKOUT CONTENT ── */}
+        <div className="max-w-7xl mx-auto px-6 py-10">
+          <div className="grid lg:grid-cols-[1fr_340px] gap-8 items-start">
 
-                    <form onSubmit={handleStep1Submit} className="space-y-6">
-                      {/* Full Name */}
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-emerald-400 font-mono uppercase tracking-wider flex items-center gap-2">
-                          <User className="w-4 h-4" />
-                          Nombre Completo *
-                        </label>
-                        <input
-                          type="text"
-                          value={checkout.customerInfo.fullName}
-                          onChange={(e) =>
-                            updateCustomerInfo({ fullName: e.target.value })
-                          }
-                          placeholder="Juan Pérez"
-                          className="w-full px-4 py-3 bg-black/60 border border-emerald-500/30 rounded-xl text-white placeholder-gray-400 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
-                        />
-                        {formErrors.fullName && (
-                          <div className="flex items-center gap-2 text-red-400 text-sm">
-                            <AlertCircle className="w-4 h-4" />
-                            <span>{formErrors.fullName}</span>
-                          </div>
-                        )}
-                      </div>
+            {/* ── MAIN AREA ── */}
+            <div>
+              {checkout.step === 1 ? (
 
-                      {/* Email and Phone */}
-                      <div className="grid md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium text-emerald-400 font-mono uppercase tracking-wider flex items-center gap-2">
-                            <Mail className="w-4 h-4" />
-                            Email *
-                          </label>
-                          <input
-                            type="email"
-                            value={checkout.customerInfo.email}
-                            onChange={(e) =>
-                              updateCustomerInfo({ email: e.target.value })
-                            }
-                            placeholder="juan@email.com"
-                            className="w-full px-4 py-3 bg-black/60 border border-emerald-500/30 rounded-xl text-white placeholder-gray-400 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
-                          />
-                          {formErrors.email && (
-                            <div className="flex items-center gap-2 text-red-400 text-sm">
-                              <AlertCircle className="w-4 h-4" />
-                              <span>{formErrors.email}</span>
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium text-emerald-400 font-mono uppercase tracking-wider flex items-center gap-2">
-                            <Phone className="w-4 h-4" />
-                            Teléfono *
-                          </label>
-                          <input
-                            type="tel"
-                            value={checkout.customerInfo.phone}
-                            onChange={(e) =>
-                              updateCustomerInfo({ phone: e.target.value })
-                            }
-                            placeholder="+54 11 1234-5678"
-                            className="w-full px-4 py-3 bg-black/60 border border-emerald-500/30 rounded-xl text-white placeholder-gray-400 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
-                          />
-                          {formErrors.phone && (
-                            <div className="flex items-center gap-2 text-red-400 text-sm">
-                              <AlertCircle className="w-4 h-4" />
-                              <span>{formErrors.phone}</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Address */}
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-emerald-400 font-mono uppercase tracking-wider flex items-center gap-2">
-                          <MapPin className="w-4 h-4" />
-                          Dirección *
-                        </label>
-                        <input
-                          type="text"
-                          value={checkout.customerInfo.address}
-                          onChange={(e) =>
-                            updateCustomerInfo({ address: e.target.value })
-                          }
-                          placeholder="Av. Corrientes 1234"
-                          className="w-full px-4 py-3 bg-black/60 border border-emerald-500/30 rounded-xl text-white placeholder-gray-400 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
-                        />
-                        {formErrors.address && (
-                          <div className="flex items-center gap-2 text-red-400 text-sm">
-                            <AlertCircle className="w-4 h-4" />
-                            <span>{formErrors.address}</span>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* City and Postal Code */}
-                      <div className="grid md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium text-emerald-400 font-mono uppercase tracking-wider">
-                            Ciudad *
-                          </label>
-                          <input
-                            type="text"
-                            value={checkout.customerInfo.city}
-                            onChange={(e) =>
-                              updateCustomerInfo({ city: e.target.value })
-                            }
-                            placeholder="Buenos Aires"
-                            className="w-full px-4 py-3 bg-black/60 border border-emerald-500/30 rounded-xl text-white placeholder-gray-400 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
-                          />
-                          {formErrors.city && (
-                            <div className="flex items-center gap-2 text-red-400 text-sm">
-                              <AlertCircle className="w-4 h-4" />
-                              <span>{formErrors.city}</span>
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium text-emerald-400 font-mono uppercase tracking-wider">
-                            Código Postal *
-                          </label>
-                          <input
-                            type="text"
-                            value={checkout.customerInfo.postalCode}
-                            onChange={(e) =>
-                              updateCustomerInfo({ postalCode: e.target.value })
-                            }
-                            placeholder="1000"
-                            className="w-full px-4 py-3 bg-black/60 border border-emerald-500/30 rounded-xl text-white placeholder-gray-400 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
-                          />
-                          {formErrors.postalCode && (
-                            <div className="flex items-center gap-2 text-red-400 text-sm">
-                              <AlertCircle className="w-4 h-4" />
-                              <span>{formErrors.postalCode}</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Notes */}
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-emerald-400 font-mono uppercase tracking-wider flex items-center gap-2">
-                          <FileText className="w-4 h-4" />
-                          Notas adicionales (opcional)
-                        </label>
-                        <textarea
-                          value={checkout.customerInfo.notes}
-                          onChange={(e) =>
-                            updateCustomerInfo({ notes: e.target.value })
-                          }
-                          placeholder="Instrucciones especiales para el envío..."
-                          rows={3}
-                          className="w-full px-4 py-3 bg-black/60 border border-emerald-500/30 rounded-xl text-white placeholder-gray-400 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200 resize-none"
-                        />
-                      </div>
-
-                      <Button
-                        type="submit"
-                        className="w-full bg-gradient-to-r from-emerald-500 to-lime-500 hover:from-emerald-600 hover:to-lime-600 text-black font-bold py-4 text-lg transition-all duration-300 hover:scale-105"
-                      >
-                        <ArrowRight className="w-5 h-5 mr-2" />
-                        Continuar al Resumen
-                      </Button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-
-              {/* Order Summary Sidebar */}
-              <div className="space-y-6">
-                <div className="relative">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/30 to-purple-500/30 rounded-2xl blur-lg opacity-60" />
-                  <div className="relative bg-black/90 backdrop-blur-xl border border-blue-500/30 rounded-2xl p-6">
-                    <h3 className="text-xl font-bold text-white mb-6">
-                      Resumen del Pedido
-                    </h3>
-
-                    <div className="space-y-4 mb-6">
-                      {items.slice(0, 3).map((item) => (
-                        <div key={item.id} className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-lg overflow-hidden border-2 border-emerald-500/30">
-                            {item.image ? (
-                              <Image
-                                src={item.image}
-                                alt={item.name}
-                                width={48}
-                                height={48}
-                                className="object-cover w-full h-full"
-                              />
-                            ) : (
-                              <div
-                                className={`w-full h-full bg-gradient-to-r ${colorSchemes[item.color as keyof typeof colorSchemes]}/20 flex items-center justify-center`}
-                              >
-                                <ShoppingBag className="w-6 h-6 text-emerald-400" />
-                              </div>
-                            )}
-                          </div>
-                          <div className="flex-1">
-                            <div className="text-white font-medium text-sm">
-                              {item.name}
-                            </div>
-                            <div className="text-gray-400 text-xs">
-                              {item.quantity}x ${item.price.toLocaleString()}
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                      {items.length > 3 && (
-                        <div className="text-center text-gray-400 text-sm">
-                          +{items.length - 3} productos más
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="space-y-2 pt-4 border-t border-emerald-500/30">
-                      <div className="flex justify-between text-gray-400">
-                        <span>Subtotal ({totalItems} productos)</span>
-                        <span className="text-white">
-                          ${subtotal.toLocaleString()}
-                        </span>
-                      </div>
-                      <div className="flex justify-between text-gray-400">
-                        <span>Envío</span>
-                        <span
-                          className={
-                            shipping === 0 ? "text-emerald-400" : "text-white"
-                          }
-                        >
-                          {shipping === 0
-                            ? "Gratis"
-                            : `$${shipping.toLocaleString()}`}
-                        </span>
-                      </div>
-                      <div className="flex justify-between text-xl font-bold pt-2 border-t border-emerald-500/30">
-                        <span className="text-white">Total</span>
-                        <span className="text-emerald-400">
-                          ${finalTotal.toLocaleString()}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ) : (
-            // Step 2: Order Review
-            <div className="grid lg:grid-cols-3 gap-12">
-              {/* Order Details */}
-              <div className="lg:col-span-2 space-y-8">
-                {/* Customer Info Review */}
-                <div className="relative">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500/30 via-lime-500/30 to-emerald-500/30 rounded-3xl blur-xl opacity-60" />
-                  <div className="relative bg-black/90 backdrop-blur-xl border border-emerald-500/30 rounded-3xl p-8">
-                    <div className="flex items-center justify-between mb-6">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-lime-500 rounded-xl flex items-center justify-center">
-                          <User className="w-6 h-6 text-black" />
+                /* Step 1: Customer info form */
+                <form onSubmit={handleStep1Submit}>
+                  <div className="border border-white/[0.08]"
+                       style={{ clipPath: 'polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%)' }}>
+                    <div className="p-8">
+                      <div className="flex items-center gap-3 mb-8">
+                        <div className="w-8 h-8 flex items-center justify-center"
+                             style={{ background: 'rgba(57,255,20,0.1)', border: '1px solid rgba(57,255,20,0.2)',
+                                      clipPath: 'polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))' }}>
+                          <User className="w-4 h-4" style={{ color: '#39FF14' }} />
                         </div>
                         <div>
-                          <h3 className="text-xl font-bold text-white">
-                            Información de Envío
-                          </h3>
-                          <p className="text-gray-400">Revisa tus datos</p>
+                          <div className="ck-display font-bold text-white text-base">Información Personal</div>
+                          <div className="ck-mono text-[10px] text-[#3a5a3a] tracking-wide">Completá tus datos para el envío</div>
                         </div>
                       </div>
-                      <Button
-                        onClick={() => setCheckoutStep(1)}
-                        variant="outline"
-                        size="sm"
-                        className="border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10"
-                      >
-                        Editar
-                      </Button>
-                    </div>
 
-                    <div className="grid md:grid-cols-2 gap-6 text-sm">
-                      <div>
-                        <div className="text-gray-400 mb-1">Nombre</div>
-                        <div className="text-white font-medium">
-                          {checkout.customerInfo.fullName}
+                      <div className="space-y-5">
+
+                        {/* Full name */}
+                        <div>
+                          <label className={`${labelClass} text-[#3a5a3a]`}>
+                            <User className="w-3 h-3" /> Nombre completo *
+                          </label>
+                          <input type="text" placeholder="Juan Pérez"
+                                 value={checkout.customerInfo.fullName}
+                                 onChange={(e) => updateCustomerInfo({ fullName: e.target.value })}
+                                 className={inputClass} />
+                          {formErrors.fullName && <ErrorMsg msg={formErrors.fullName} />}
                         </div>
-                      </div>
-                      <div>
-                        <div className="text-gray-400 mb-1">Email</div>
-                        <div className="text-white font-medium">
-                          {checkout.customerInfo.email}
-                        </div>
-                      </div>
-                      <div>
-                        <div className="text-gray-400 mb-1">Teléfono</div>
-                        <div className="text-white font-medium">
-                          {checkout.customerInfo.phone}
-                        </div>
-                      </div>
-                      <div>
-                        <div className="text-gray-400 mb-1">Ciudad</div>
-                        <div className="text-white font-medium">
-                          {checkout.customerInfo.city}
-                        </div>
-                      </div>
-                      <div className="md:col-span-2">
-                        <div className="text-gray-400 mb-1">Dirección</div>
-                        <div className="text-white font-medium">
-                          {checkout.customerInfo.address}, CP:{" "}
-                          {checkout.customerInfo.postalCode}
-                        </div>
-                      </div>
-                      {checkout.customerInfo.notes && (
-                        <div className="md:col-span-2">
-                          <div className="text-gray-400 mb-1">Notas</div>
-                          <div className="text-white font-medium">
-                            {checkout.customerInfo.notes}
+
+                        {/* Email + Phone */}
+                        <div className="grid md:grid-cols-2 gap-5">
+                          <div>
+                            <label className={`${labelClass} text-[#3a5a3a]`}>
+                              <Mail className="w-3 h-3" /> Email *
+                            </label>
+                            <input type="email" placeholder="juan@email.com"
+                                   value={checkout.customerInfo.email}
+                                   onChange={(e) => updateCustomerInfo({ email: e.target.value })}
+                                   className={inputClass} />
+                            {formErrors.email && <ErrorMsg msg={formErrors.email} />}
+                          </div>
+                          <div>
+                            <label className={`${labelClass} text-[#3a5a3a]`}>
+                              <Phone className="w-3 h-3" /> Teléfono *
+                            </label>
+                            <input type="tel" placeholder="+54 11 1234-5678"
+                                   value={checkout.customerInfo.phone}
+                                   onChange={(e) => updateCustomerInfo({ phone: e.target.value })}
+                                   className={inputClass} />
+                            {formErrors.phone && <ErrorMsg msg={formErrors.phone} />}
                           </div>
                         </div>
-                      )}
+
+                        {/* Address */}
+                        <div>
+                          <label className={`${labelClass} text-[#3a5a3a]`}>
+                            <MapPin className="w-3 h-3" /> Dirección *
+                          </label>
+                          <input type="text" placeholder="Av. Corrientes 1234"
+                                 value={checkout.customerInfo.address}
+                                 onChange={(e) => updateCustomerInfo({ address: e.target.value })}
+                                 className={inputClass} />
+                          {formErrors.address && <ErrorMsg msg={formErrors.address} />}
+                        </div>
+
+                        {/* City + Postal */}
+                        <div className="grid md:grid-cols-2 gap-5">
+                          <div>
+                            <label className={`${labelClass} text-[#3a5a3a]`}>Ciudad *</label>
+                            <input type="text" placeholder="Buenos Aires"
+                                   value={checkout.customerInfo.city}
+                                   onChange={(e) => updateCustomerInfo({ city: e.target.value })}
+                                   className={inputClass} />
+                            {formErrors.city && <ErrorMsg msg={formErrors.city} />}
+                          </div>
+                          <div>
+                            <label className={`${labelClass} text-[#3a5a3a]`}>Código Postal *</label>
+                            <input type="text" placeholder="1000"
+                                   value={checkout.customerInfo.postalCode}
+                                   onChange={(e) => updateCustomerInfo({ postalCode: e.target.value })}
+                                   className={inputClass} />
+                            {formErrors.postalCode && <ErrorMsg msg={formErrors.postalCode} />}
+                          </div>
+                        </div>
+
+                        {/* Notes */}
+                        <div>
+                          <label className={`${labelClass} text-[#3a5a3a]`}>
+                            <FileText className="w-3 h-3" /> Notas adicionales
+                          </label>
+                          <textarea placeholder="Instrucciones especiales..."
+                                    rows={3}
+                                    value={checkout.customerInfo.notes}
+                                    onChange={(e) => updateCustomerInfo({ notes: e.target.value })}
+                                    className={`${inputClass} resize-none`} />
+                        </div>
+
+                        <button type="submit"
+                                className="ck-cta ck-display font-black text-black text-[11px] tracking-[0.2em] uppercase w-full py-4 flex items-center justify-center gap-2"
+                                style={{ background: '#39FF14' }}>
+                          <ArrowRight className="w-4 h-4" />
+                          Continuar al resumen
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+
+              ) : (
+
+                /* Step 2: Review */
+                <div className="space-y-5">
+
+                  {/* Customer info review */}
+                  <div className="border border-white/[0.08]"
+                       style={{ clipPath: 'polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%)' }}>
+                    <div className="p-6">
+                      <div className="flex items-center justify-between mb-5">
+                        <div className="ck-mono text-[9px] text-[#39FF14]/50 tracking-[0.3em] uppercase">
+                          Datos de envío
+                        </div>
+                        <button
+                          onClick={() => setCheckoutStep(1)}
+                          className="ck-btn-ghost ck-mono text-[10px] text-white/40 hover:text-white tracking-widest uppercase px-4 py-2 transition-colors"
+                          style={{ border: '1px solid rgba(255,255,255,0.06)' }}
+                        >
+                          Editar
+                        </button>
+                      </div>
+
+                      <div className="grid sm:grid-cols-2 lg:grid-cols-3 border-t border-l border-white/[0.06]">
+                        {[
+                          { label: 'Nombre',    value: checkout.customerInfo.fullName },
+                          { label: 'Email',     value: checkout.customerInfo.email },
+                          { label: 'Teléfono',  value: checkout.customerInfo.phone },
+                          { label: 'Ciudad',    value: checkout.customerInfo.city },
+                          { label: 'Dirección', value: `${checkout.customerInfo.address}, CP ${checkout.customerInfo.postalCode}` },
+                          ...(checkout.customerInfo.notes ? [{ label: 'Notas', value: checkout.customerInfo.notes }] : []),
+                        ].map(({ label, value }) => (
+                          <div key={label} className="p-4 border-b border-r border-white/[0.06]">
+                            <div className="ck-mono text-[9px] text-[#3a5a3a] tracking-[0.2em] uppercase mb-1">{label}</div>
+                            <div className="ck-display font-bold text-white text-[12px]">{value}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Products review */}
+                  <div className="border border-white/[0.08]"
+                       style={{ clipPath: 'polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%)' }}>
+                    <div className="p-6">
+                      <div className="ck-mono text-[9px] text-[#39FF14]/50 tracking-[0.3em] uppercase mb-5">
+                        Productos en el pedido
+                      </div>
+                      <div className="border-t border-white/[0.06]">
+                        {items.map((item) => {
+                          const accent = colorAccents[item.color] ?? '#39FF14';
+                          return (
+                            <div key={item.id} className="flex items-center gap-4 py-4 border-b border-white/[0.05] last:border-b-0">
+                              <div className="w-12 h-12 flex-shrink-0 overflow-hidden"
+                                   style={{ clipPath: 'polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%)' }}>
+                                {item.image ? (
+                                  <Image src={item.image} alt={item.name} width={48} height={48}
+                                         className="object-cover w-full h-full" />
+                                ) : (
+                                  <div className="w-full h-full bg-white/[0.03] flex items-center justify-center">
+                                    <ShoppingBag className="w-5 h-5 text-white/20" />
+                                  </div>
+                                )}
+                              </div>
+                              <div className="flex-1">
+                                <div className="ck-display font-bold text-white text-sm">{item.name}</div>
+                                <div className="ck-mono text-[10px] mt-0.5" style={{ color: accent }}>{item.subtitle}</div>
+                              </div>
+                              <div className="text-right">
+                                <div className="ck-display font-black text-white text-base">
+                                  ${(item.price * item.quantity).toLocaleString('es-AR')}
+                                </div>
+                                <div className="ck-mono text-[10px] text-[#3a5a3a]">
+                                  {item.quantity}× ${item.price.toLocaleString('es-AR')}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
                 </div>
+              )}
+            </div>
 
-                {/* Products Review */}
-                <div className="relative">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/30 to-purple-500/30 rounded-3xl blur-xl opacity-60" />
-                  <div className="relative bg-black/90 backdrop-blur-xl border border-blue-500/30 rounded-3xl p-8">
-                    <h3 className="text-xl font-bold text-white mb-6">
-                      Productos en tu Pedido
-                    </h3>
+            {/* ── ORDER SUMMARY SIDEBAR ── */}
+            <div className="flex flex-col gap-5 lg:sticky lg:top-[100px]">
+              <div className="border border-white/[0.08]"
+                   style={{ clipPath: 'polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%)' }}>
+                <div className="p-6">
+                  <div className="ck-mono text-[9px] text-[#39FF14]/50 tracking-[0.3em] uppercase mb-5">
+                    Resumen — {totalItems} prod.
+                  </div>
 
-                    <div className="space-y-6">
-                      {items.map((item) => (
-                        <div
-                          key={item.id}
-                          className="flex items-center gap-6 p-4 bg-black/40 rounded-2xl border border-emerald-500/20"
-                        >
-                          <div className="w-16 h-16 rounded-xl overflow-hidden border-2 border-emerald-500/30">
-                            {item.image ? (
-                              <Image
-                                src={item.image}
-                                alt={item.name}
-                                width={64}
-                                height={64}
-                                className="object-cover w-full h-full"
-                              />
-                            ) : (
-                              <div
-                                className={`w-full h-full bg-gradient-to-r ${colorSchemes[item.color as keyof typeof colorSchemes]}/20 flex items-center justify-center`}
-                              >
-                                <ShoppingBag className="w-8 h-8 text-emerald-400" />
-                              </div>
-                            )}
-                          </div>
-                          <div className="flex-1">
-                            <h4 className="text-lg font-bold text-white">
-                              {item.name}
-                            </h4>
-                            <p className="text-emerald-400 mb-2">
-                              {item.subtitle}
-                            </p>
-                            <div className="grid grid-cols-2 gap-4 text-sm text-gray-400">
-                              <div>
-                                THC:{" "}
-                                <span className="text-white">{item.thc}</span>
-                              </div>
-                              <div>
-                                Genotipo:{" "}
-                                <span className="text-white">
-                                  {item.genotype}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-2xl font-bold text-emerald-400">
-                              ${item.price.toLocaleString()}
-                            </div>
-                            <div className="text-sm text-gray-400">
-                              Cantidad: {item.quantity}
-                            </div>
-                            <div className="text-sm text-white font-medium">
-                              Total: $
-                              {(item.price * item.quantity).toLocaleString()}
-                            </div>
-                          </div>
+                  {/* Mini items */}
+                  <div className="space-y-3 mb-5">
+                    {items.slice(0, 3).map((item) => (
+                      <div key={item.id} className="flex items-center gap-3">
+                        <div className="w-10 h-10 flex-shrink-0 overflow-hidden"
+                             style={{ clipPath: 'polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 0 100%)' }}>
+                          {item.image ? (
+                            <Image src={item.image} alt={item.name} width={40} height={40}
+                                   className="object-cover w-full h-full" />
+                          ) : (
+                            <div className="w-full h-full bg-white/[0.03]" />
+                          )}
                         </div>
-                      ))}
+                        <div className="flex-1 min-w-0">
+                          <div className="ck-display font-bold text-white text-[11px] truncate">{item.name}</div>
+                          <div className="ck-mono text-[9px] text-[#3a5a3a]">×{item.quantity}</div>
+                        </div>
+                        <div className="ck-mono text-[11px] text-white">${item.price.toLocaleString('es-AR')}</div>
+                      </div>
+                    ))}
+                    {items.length > 3 && (
+                      <div className="ck-mono text-[10px] text-[#3a5a3a] text-center">
+                        +{items.length - 3} más
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="h-px bg-white/[0.06] mb-4" />
+
+                  <div className="space-y-2.5 mb-5">
+                    <div className="flex justify-between">
+                      <span className="ck-mono text-[11px] text-[#3a5a3a]">Subtotal</span>
+                      <span className="ck-mono text-[11px] text-white">${subtotal.toLocaleString('es-AR')}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="ck-mono text-[11px] text-[#3a5a3a]">Envío</span>
+                      <span className={`ck-mono text-[11px] ${shipping === 0 ? 'text-[#39FF14]' : 'text-white'}`}>
+                        {shipping === 0 ? 'Gratis' : `$${shipping.toLocaleString('es-AR')}`}
+                      </span>
                     </div>
                   </div>
-                </div>
-              </div>
 
-              {/* Final Summary and Submit */}
-              <div className="space-y-6">
-                <div className="relative">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500/50 via-lime-500/50 to-emerald-500/50 rounded-3xl blur-xl opacity-60" />
-                  <div className="relative bg-black/90 backdrop-blur-xl border border-emerald-500/30 rounded-3xl p-8">
-                    <h3 className="text-2xl font-bold text-white mb-6">
-                      Total del Pedido
-                    </h3>
+                  <div className="h-px bg-white/[0.06] mb-4" />
 
-                    <div className="space-y-4 mb-8">
-                      <div className="flex justify-between text-gray-400">
-                        <span>Subtotal ({totalItems} productos)</span>
-                        <span className="text-white">
-                          ${subtotal.toLocaleString()}
-                        </span>
-                      </div>
+                  <div className="flex justify-between items-baseline mb-6">
+                    <span className="ck-mono text-[10px] text-[#3a5a3a] tracking-widest uppercase">Total</span>
+                    <span className="ck-display font-black text-white text-2xl">
+                      ${finalTotal.toLocaleString('es-AR')}
+                    </span>
+                  </div>
 
-                      <div className="flex justify-between text-gray-400">
-                        <span>Envío</span>
-                        <span
-                          className={
-                            shipping === 0 ? "text-emerald-400" : "text-white"
-                          }
-                        >
-                          {shipping === 0
-                            ? "Gratis"
-                            : `$${shipping.toLocaleString()}`}
-                        </span>
-                      </div>
-
-                      <div className="border-t border-emerald-500/30 pt-4">
-                        <div className="flex justify-between text-2xl font-bold">
-                          <span className="text-white">Total Final</span>
-                          <span className="text-emerald-400">
-                            ${finalTotal.toLocaleString()}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <Button
+                  {checkout.step === 2 && (
+                    <button
                       onClick={handleFinalSubmit}
                       disabled={checkout.isSubmitting}
-                      className="w-full bg-gradient-to-r from-emerald-500 to-lime-500 hover:from-emerald-600 hover:to-lime-600 text-black font-bold py-4 text-lg transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                      className="ck-cta ck-display font-black text-black text-[11px] tracking-[0.2em] uppercase w-full py-4 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      style={{ background: '#39FF14' }}
                     >
                       {checkout.isSubmitting ? (
-                        <>
-                          <Clock className="w-5 h-5 mr-2 animate-spin" />
-                          Procesando Pedido...
-                        </>
+                        <><Clock className="w-4 h-4 animate-spin" /> Procesando...</>
                       ) : (
-                        <>
-                          <CheckCircle className="w-5 h-5 mr-2" />
-                          Finalizar Compra
-                        </>
+                        <><CheckCircle className="w-4 h-4" /> Finalizar compra</>
                       )}
-                    </Button>
-
-                    <div className="text-center text-sm text-gray-400 mt-4">
-                      Al finalizar aceptas nuestros términos y condiciones
-                    </div>
-                  </div>
-                </div>
-
-                {/* Security Info */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3 text-emerald-400">
-                    <Shield className="w-5 h-5" />
-                    <span className="text-white text-sm">Pago 100% seguro</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-emerald-400">
-                    <Truck className="w-5 h-5" />
-                    <span className="text-white text-sm">
-                      Envío discreto y seguro
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-3 text-emerald-400">
-                    <CheckCircle className="w-5 h-5" />
-                    <span className="text-white text-sm">
-                      Garantía de germinación
-                    </span>
-                  </div>
+                    </button>
+                  )}
                 </div>
               </div>
-            </div>
-          )}
-        </div>
-      </section>
 
-      <Footer />
-    </div>
+              {/* Trust signals */}
+              <div className="space-y-3 px-1">
+                {[
+                  { icon: Shield,       text: 'Pago 100% seguro' },
+                  { icon: Truck,        text: 'Envío discreto y seguro' },
+                  { icon: CheckCircle,  text: 'Garantía de germinación 98%' },
+                ].map(({ icon: Icon, text }) => (
+                  <div key={text} className="flex items-center gap-2.5">
+                    <Icon className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#39FF14' }} />
+                    <span className="ck-mono text-[10px] text-[#3a5a3a] tracking-wide">{text}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <Footer />
+      </div>
+    </>
   );
 }
 
+function ErrorMsg({ msg }: { msg: string }) {
+  return (
+    <div className="flex items-center gap-1.5 mt-1.5" style={{ fontFamily: "'Space Mono', monospace" }}>
+      <AlertCircle className="w-3 h-3 text-red-400/70 flex-shrink-0" />
+      <span className="text-[10px] text-red-400/70 tracking-wide">{msg}</span>
+    </div>
+  );
+}

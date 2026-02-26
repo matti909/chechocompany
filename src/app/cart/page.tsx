@@ -2,352 +2,335 @@
 
 import { useEffect, useState } from 'react';
 import { Footer } from '../components/footer';
-import { Button } from '@/components/ui/button';
 import useCartStore from '@/store/cart-store';
-import {
-  ShoppingBag,
-  Plus,
-  Minus,
-  Trash2,
-  ArrowLeft,
-  CreditCard,
-  Truck,
-  Shield,
-  Gift,
-  CheckCircle,
-  Zap,
-  Sparkles
-} from 'lucide-react';
+import { ShoppingBag, Plus, Minus, Trash2, ArrowLeft, Truck, Shield, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 
-const colorSchemes = {
-  pink: 'from-pink-500 to-purple-500',
-  emerald: 'from-emerald-500 to-lime-500',
-  blue: 'from-blue-500 to-purple-500',
-  orange: 'from-orange-500 to-yellow-500',
-  purple: 'from-purple-500 to-violet-500',
-  cyan: 'from-cyan-500 to-blue-500'
+const colorAccents: Record<string, string> = {
+  pink:    '#f472b6',
+  emerald: '#34d399',
+  blue:    '#fb923c',
+  orange:  '#fb923c',
+  purple:  '#c084fc',
+  cyan:    '#22d3ee',
 };
 
 export default function CartPage() {
-  const {
-    items,
-    totalItems,
-    totalPrice,
-    updateQuantity,
-    removeItem,
-    clearCart
-  } = useCartStore();
+  const { items, totalItems, totalPrice, updateQuantity, removeItem, clearCart } = useCartStore();
 
-  const [isClient, setIsClient] = useState(false);
-  const [promoCode, setPromoCode] = useState('');
-  const [discount, setDiscount] = useState(0);
+  const [isClient,   setIsClient]   = useState(false);
+  const [promoCode,  setPromoCode]  = useState('');
+  const [discount,   setDiscount]   = useState(0);
+  const [promoMsg,   setPromoMsg]   = useState('');
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  useEffect(() => { setIsClient(true); }, []);
 
   const applyPromoCode = () => {
     if (promoCode.toLowerCase() === 'chex10') {
-      setDiscount(0.1);
+      setDiscount(0.1); setPromoMsg('10% de descuento aplicado');
     } else if (promoCode.toLowerCase() === 'primera20') {
-      setDiscount(0.2);
+      setDiscount(0.2); setPromoMsg('20% de descuento aplicado');
     } else {
-      setDiscount(0);
+      setDiscount(0); setPromoMsg('Código inválido');
     }
   };
 
-  const subtotal = totalPrice;
+  const subtotal       = totalPrice;
   const discountAmount = subtotal * discount;
-  const shipping = subtotal > 100000 ? 0 : 8000; // Free shipping over $100k
-  const finalTotal = subtotal - discountAmount + shipping;
+  const shipping       = subtotal > 100000 ? 0 : 8000;
+  const finalTotal     = subtotal - discountAmount + shipping;
 
-  // Prevent hydration errors
-  if (!isClient) {
-    return null;
-  }
+  if (!isClient) return null;
 
   return (
-    <div className="min-h-screen bg-black">
-      {/* Hero Section */}
-      <section className="relative pt-24 pb-12 overflow-hidden">
-        {/* Background Effects */}
-        <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-r from-emerald-400/20 to-lime-400/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-16 w-48 h-48 bg-gradient-to-l from-blue-400/15 to-purple-400/15 rounded-full blur-3xl animate-pulse delay-1000" />
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Space+Mono:wght@400;700&display=swap');
+        .ct-display { font-family: 'Syne', sans-serif; }
+        .ct-mono    { font-family: 'Space Mono', monospace; }
+        .ct-cta {
+          clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+          transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+        .ct-cta:hover  { opacity: 0.88; transform: scale(1.015); }
+        .ct-cta:active { transform: scale(0.98); }
+        .ct-btn {
+          clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+          transition: background 0.18s ease, border-color 0.18s ease;
+        }
+        .ct-input {
+          background: transparent;
+          border: 1px solid rgba(255,255,255,0.08);
+          color: white;
+          outline: none;
+          transition: border-color 0.2s ease;
+          font-family: 'Space Mono', monospace;
+        }
+        .ct-input:focus { border-color: rgba(57,255,20,0.4); }
+        .ct-input::placeholder { color: rgba(255,255,255,0.2); }
+      `}</style>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6">
-          <div className="flex items-center gap-4 mb-8">
-            <Link href="/genetics">
-              <Button variant="outline" className="border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Continuar Comprando
-              </Button>
+      <div className="min-h-screen bg-[#050a05]">
+
+        {/* ── PAGE HEADER ── */}
+        <div className="border-b border-white/[0.08] pt-28 pb-10">
+          <div className="max-w-7xl mx-auto px-6">
+            <Link href="/genetics" className="ct-mono text-[10px] text-[#3a5a3a] hover:text-[#7a9a7a] tracking-widest uppercase transition-colors flex items-center gap-1.5 w-fit mb-8">
+              <ArrowLeft className="w-3 h-3" />
+              Continuar comprando
             </Link>
-          </div>
 
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-500 to-lime-500 text-black px-6 py-3 rounded-full text-sm font-bold uppercase tracking-wider shadow-lg backdrop-blur-sm mb-6">
-              <ShoppingBag className="w-4 h-4" />
-              <span>TU CARRITO</span>
-              <div className="w-2 h-2 bg-black rounded-full animate-pulse" />
-            </div>
-
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-emerald-300 to-lime-300 leading-none tracking-tight">
-              CARRITO DE
-              <br />
-              <span className="text-3xl md:text-4xl lg:text-5xl text-emerald-400 font-light tracking-wide">
-                compras
-              </span>
-            </h1>
-
-            {totalItems > 0 && (
-              <p className="text-xl text-gray-300 mt-4">
-                {totalItems} {totalItems === 1 ? 'producto' : 'productos'} en tu carrito
-              </p>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* Cart Content */}
-      <section className="relative pb-20">
-        <div className="max-w-7xl mx-auto px-6">
-          {items.length === 0 ? (
-            // Empty Cart
-            <div className="text-center py-20">
-              <div className="relative mx-auto w-32 h-32 mb-8">
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-lime-500/20 rounded-full blur-xl" />
-                <div className="relative w-32 h-32 bg-black/60 border border-emerald-500/30 rounded-full flex items-center justify-center">
-                  <ShoppingBag className="w-16 h-16 text-emerald-400" />
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="h-px w-6" style={{ background: '#39FF14' }} />
+                  <span className="ct-mono text-[10px] text-[#39FF14]/50 tracking-[0.35em] uppercase">
+                    Resumen de compra
+                  </span>
                 </div>
+                <h1 className="ct-display font-black text-white leading-none tracking-tight"
+                    style={{ fontSize: 'clamp(32px, 5vw, 60px)' }}>
+                  Tu Carrito
+                </h1>
               </div>
 
-              <h2 className="text-3xl font-bold text-white mb-4">Tu carrito está vacío</h2>
-              <p className="text-gray-400 mb-8 max-w-md mx-auto">
-                Explora nuestras genéticas premium y encuentra las semillas perfectas para tu cultivo
-              </p>
+              {totalItems > 0 && (
+                <div className="flex items-center gap-4 pb-1">
+                  <span className="ct-mono text-[10px] text-[#3a5a3a] tracking-widest">
+                    {totalItems} {totalItems === 1 ? 'producto' : 'productos'}
+                  </span>
+                  <button
+                    onClick={clearCart}
+                    className="ct-mono text-[10px] text-red-400/60 hover:text-red-400 tracking-widest uppercase transition-colors flex items-center gap-1.5"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                    Vaciar
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
 
+        {/* ── CONTENT ── */}
+        <div className="max-w-7xl mx-auto px-6 py-10">
+          {items.length === 0 ? (
+
+            /* Empty state */
+            <div className="flex flex-col items-center justify-center py-24 text-center">
+              <div
+                className="w-20 h-20 flex items-center justify-center mb-8"
+                style={{
+                  border: '1px solid rgba(255,255,255,0.06)',
+                  clipPath: 'polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px))',
+                }}
+              >
+                <ShoppingBag className="w-8 h-8 text-white/20" />
+              </div>
+              <h2 className="ct-display font-black text-white text-2xl mb-3">Carrito vacío</h2>
+              <p className="ct-mono text-[#3a5a3a] text-[12px] tracking-wide mb-8 max-w-xs">
+                Explorá nuestras genéticas premium y encontrá las semillas perfectas para tu cultivo
+              </p>
               <Link href="/genetics">
-                <Button className="bg-gradient-to-r from-emerald-500 to-lime-500 hover:from-emerald-600 hover:to-lime-600 text-black font-bold px-8 py-4 text-lg transition-all duration-300 hover:scale-105">
-                  <Sparkles className="w-5 h-5 mr-2" />
+                <button
+                  className="ct-cta ct-display font-black text-black text-[11px] tracking-[0.2em] uppercase px-8 py-4"
+                  style={{ background: '#39FF14' }}
+                >
                   Explorar Genéticas
-                </Button>
+                </button>
               </Link>
             </div>
+
           ) : (
-            // Cart with Items
-            <div className="grid lg:grid-cols-3 gap-12">
-              {/* Cart Items */}
-              <div className="lg:col-span-2 space-y-6">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-2xl font-bold text-white">Productos</h2>
-                  <Button
-                    onClick={clearCart}
-                    variant="outline"
-                    className="border-red-500/30 text-red-400 hover:bg-red-500/10"
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Vaciar carrito
-                  </Button>
-                </div>
 
-                {items.map((item) => (
-                  <div key={item.id} className="group relative">
-                    <div className={`absolute -inset-1 bg-gradient-to-r ${colorSchemes[item.color as keyof typeof colorSchemes]}/20 rounded-2xl blur-lg opacity-60 group-hover:opacity-80 transition-opacity duration-500`} />
+            <div className="grid lg:grid-cols-[1fr_360px] gap-8 items-start">
 
-                    <div className="relative bg-black/90 backdrop-blur-xl border border-emerald-500/30 rounded-2xl p-6">
-                      <div className="grid md:grid-cols-4 gap-6 items-center">
-                        {/* Product Image */}
-                        <div className="relative">
-                          <div className={`w-24 h-24 rounded-xl overflow-hidden border-2 border-emerald-500/30`}>
-                            {item.image ? (
-                              <Image
-                                src={item.image}
-                                alt={item.name}
-                                width={96}
-                                height={96}
-                                className="object-cover w-full h-full"
-                              />
-                            ) : (
-                              <div className={`w-full h-full bg-gradient-to-r ${colorSchemes[item.color as keyof typeof colorSchemes]}/20 flex items-center justify-center`}>
-                                <ShoppingBag className="w-8 h-8 text-emerald-400" />
-                              </div>
-                            )}
+              {/* ── ITEMS LIST ── */}
+              <div className="border-t border-white/[0.08]">
+                {items.map((item) => {
+                  const accent = colorAccents[item.color] ?? '#39FF14';
+                  return (
+                    <div key={item.id} className="grid grid-cols-[80px_1fr] gap-5 py-6 border-b border-white/[0.06]">
+
+                      {/* Image */}
+                      <div className="w-20 h-20 overflow-hidden flex-shrink-0"
+                           style={{ clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%)' }}>
+                        {item.image ? (
+                          <Image src={item.image} alt={item.name} width={80} height={80}
+                                 className="object-cover w-full h-full" />
+                        ) : (
+                          <div className="w-full h-full bg-white/[0.03] flex items-center justify-center">
+                            <ShoppingBag className="w-6 h-6 text-white/20" />
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Info + controls */}
+                      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                        <div>
+                          <div className="ct-display font-black text-white text-base leading-tight mb-1">
+                            {item.name}
+                          </div>
+                          <div className="ct-mono text-[10px] mb-2" style={{ color: accent }}>
+                            {item.subtitle}
+                          </div>
+                          <div className="flex gap-4 ct-mono text-[10px] text-[#3a5a3a]">
+                            <span>THC {item.thc}</span>
+                            <span>{item.genotype}</span>
                           </div>
                         </div>
 
-                        {/* Product Info */}
-                        <div className="md:col-span-2">
-                          <h3 className="text-xl font-bold text-white mb-1">{item.name}</h3>
-                          <p className="text-emerald-400 mb-2">{item.subtitle}</p>
-                          <div className="grid grid-cols-2 gap-4 text-sm text-gray-400">
-                            <div>THC: <span className="text-white">{item.thc}</span></div>
-                            <div>Genotipo: <span className="text-white">{item.genotype}</span></div>
-                          </div>
-                        </div>
-
-                        {/* Quantity and Price */}
-                        <div className="flex flex-col items-end gap-4">
-                          <div className="text-right">
-                            <div className="text-2xl font-bold text-emerald-400">${item.price.toLocaleString()}</div>
-                            <div className="text-sm text-gray-400">por 3 semillas</div>
+                        <div className="flex sm:flex-col items-center sm:items-end gap-4 sm:gap-3 flex-shrink-0">
+                          {/* Price */}
+                          <div className="ct-display font-black text-white text-lg leading-none">
+                            ${item.price.toLocaleString('es-AR')}
                           </div>
 
-                          <div className="flex items-center gap-3">
-                            <Button
-                              size="sm"
-                              variant="outline"
+                          {/* Quantity */}
+                          <div className="flex items-center gap-2">
+                            <button
                               onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                              className="w-8 h-8 p-0 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10"
+                              className="ct-btn w-7 h-7 flex items-center justify-center text-white/50 hover:text-white"
+                              style={{ border: '1px solid rgba(255,255,255,0.08)' }}
                             >
-                              <Minus className="w-4 h-4" />
-                            </Button>
-
-                            <span className="w-8 text-center text-white font-semibold">{item.quantity}</span>
-
-                            <Button
-                              size="sm"
-                              variant="outline"
+                              <Minus className="w-3 h-3" />
+                            </button>
+                            <span className="ct-mono text-[12px] text-white w-5 text-center">
+                              {item.quantity}
+                            </span>
+                            <button
                               onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                              className="w-8 h-8 p-0 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10"
+                              className="ct-btn w-7 h-7 flex items-center justify-center text-white/50 hover:text-white"
+                              style={{ border: '1px solid rgba(255,255,255,0.08)' }}
                             >
-                              <Plus className="w-4 h-4" />
-                            </Button>
+                              <Plus className="w-3 h-3" />
+                            </button>
                           </div>
 
-                          <Button
-                            size="sm"
-                            variant="outline"
+                          {/* Remove */}
+                          <button
                             onClick={() => removeItem(item.id)}
-                            className="border-red-500/30 text-red-400 hover:bg-red-500/10"
+                            className="ct-mono text-[9px] text-red-400/40 hover:text-red-400 tracking-widest uppercase transition-colors flex items-center gap-1"
                           >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
+                            <Trash2 className="w-3 h-3" />
+                          </button>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
-              {/* Order Summary */}
-              <div className="space-y-6">
-                {/* Summary Card */}
-                <div className="relative">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500/50 via-lime-500/50 to-emerald-500/50 rounded-3xl blur-xl opacity-60" />
-                  <div className="relative bg-black/90 backdrop-blur-xl border border-emerald-500/30 rounded-3xl p-8">
-                    <h3 className="text-2xl font-bold text-white mb-6">Resumen del Pedido</h3>
+              {/* ── ORDER SUMMARY ── */}
+              <div className="flex flex-col gap-5 lg:sticky lg:top-[100px]">
 
-                    <div className="space-y-4 mb-6">
-                      <div className="flex justify-between text-gray-400">
-                        <span>Subtotal ({totalItems} productos)</span>
-                        <span className="text-white">${subtotal.toLocaleString()}</span>
-                      </div>
+                {/* Totals */}
+                <div className="border border-white/[0.08]"
+                     style={{ clipPath: 'polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%)' }}>
+                  <div className="p-6">
+                    <div className="ct-mono text-[9px] text-[#39FF14]/50 tracking-[0.3em] uppercase mb-5">
+                      Resumen del pedido
+                    </div>
 
-                      {discount > 0 && (
-                        <div className="flex justify-between text-emerald-400">
-                          <span>Descuento ({(discount * 100).toFixed(0)}%)</span>
-                          <span>-${discountAmount.toLocaleString()}</span>
-                        </div>
-                      )}
-
-                      <div className="flex justify-between text-gray-400">
-                        <span>Envío</span>
-                        <span className={shipping === 0 ? 'text-emerald-400' : 'text-white'}>
-                          {shipping === 0 ? 'Gratis' : `$${shipping.toLocaleString()}`}
+                    <div className="space-y-3 mb-5">
+                      <div className="flex justify-between">
+                        <span className="ct-mono text-[11px] text-[#3a5a3a]">
+                          Subtotal ({totalItems} prod.)
+                        </span>
+                        <span className="ct-mono text-[11px] text-white">
+                          ${subtotal.toLocaleString('es-AR')}
                         </span>
                       </div>
-
-                      {shipping === 0 && (
-                        <div className="flex items-center gap-2 text-emerald-400 text-sm">
-                          <CheckCircle className="w-4 h-4" />
-                          <span>¡Envío gratis aplicado!</span>
+                      {discount > 0 && (
+                        <div className="flex justify-between">
+                          <span className="ct-mono text-[11px] text-[#39FF14]/60">
+                            Descuento ({(discount * 100).toFixed(0)}%)
+                          </span>
+                          <span className="ct-mono text-[11px] text-[#39FF14]">
+                            −${discountAmount.toLocaleString('es-AR')}
+                          </span>
                         </div>
                       )}
-
-                      <div className="border-t border-emerald-500/30 pt-4">
-                        <div className="flex justify-between text-xl font-bold">
-                          <span className="text-white">Total</span>
-                          <span className="text-emerald-400">${finalTotal.toLocaleString()}</span>
-                        </div>
+                      <div className="flex justify-between">
+                        <span className="ct-mono text-[11px] text-[#3a5a3a]">Envío</span>
+                        <span className={`ct-mono text-[11px] ${shipping === 0 ? 'text-[#39FF14]' : 'text-white'}`}>
+                          {shipping === 0 ? 'Gratis' : `$${shipping.toLocaleString('es-AR')}`}
+                        </span>
                       </div>
+                    </div>
+
+                    <div className="h-px w-full bg-white/[0.06] mb-5" />
+
+                    <div className="flex justify-between items-baseline mb-6">
+                      <span className="ct-mono text-[10px] text-[#3a5a3a] tracking-widest uppercase">Total</span>
+                      <span className="ct-display font-black text-white text-2xl">
+                        ${finalTotal.toLocaleString('es-AR')}
+                      </span>
                     </div>
 
                     <Link href="/cart/checkout">
-                      <Button className="w-full bg-gradient-to-r from-emerald-500 to-lime-500 hover:from-emerald-600 hover:to-lime-600 text-black font-bold py-4 text-lg transition-all duration-300 hover:scale-105 mb-4">
-                        <CreditCard className="w-5 h-5 mr-2" />
-                        Proceder al Pago
-                      </Button>
+                      <button
+                        className="ct-cta ct-display font-black text-black text-[11px] tracking-[0.2em] uppercase w-full py-4"
+                        style={{ background: '#39FF14' }}
+                      >
+                        Proceder al pago
+                      </button>
                     </Link>
-
-                    <div className="text-center text-sm text-gray-400">
-                      Pago seguro con encriptación SSL
-                    </div>
                   </div>
                 </div>
 
-                {/* Promo Code */}
-                <div className="relative">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/30 to-purple-500/30 rounded-2xl blur-lg opacity-60" />
-                  <div className="relative bg-black/90 backdrop-blur-xl border border-blue-500/30 rounded-2xl p-6">
-                    <h4 className="text-lg font-bold text-white mb-4">Código de Descuento</h4>
-
-                    <div className="flex gap-2 mb-4">
-                      <input
-                        type="text"
-                        placeholder="Ingresa tu código"
-                        value={promoCode}
-                        onChange={(e) => setPromoCode(e.target.value)}
-                        className="flex-1 px-4 py-3 bg-black/60 border border-blue-500/30 rounded-xl text-white placeholder-gray-400 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
-                      />
-                      <Button
-                        onClick={applyPromoCode}
-                        className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold px-6"
-                      >
-                        Aplicar
-                      </Button>
-                    </div>
-
-                    {discount > 0 && (
-                      <div className="flex items-center gap-2 text-emerald-400 text-sm">
-                        <CheckCircle className="w-4 h-4" />
-                        <span>¡Código aplicado! {(discount * 100).toFixed(0)}% de descuento</span>
-                      </div>
-                    )}
-
-                    <div className="text-xs text-gray-400 mt-2">
-                      Códigos disponibles: CHEX10 (10% off), PRIMERA20 (20% off)
-                    </div>
+                {/* Promo code */}
+                <div className="border border-white/[0.06] p-5"
+                     style={{ clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%)' }}>
+                  <div className="ct-mono text-[9px] text-[#3a5a3a] tracking-[0.25em] uppercase mb-3">
+                    Código de descuento
                   </div>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Ej: CHEX10"
+                      value={promoCode}
+                      onChange={(e) => setPromoCode(e.target.value)}
+                      className="ct-input flex-1 px-3 py-2.5 text-[11px] tracking-wider"
+                      style={{ clipPath: 'polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%)' }}
+                    />
+                    <button
+                      onClick={applyPromoCode}
+                      className="ct-btn ct-mono text-[10px] font-bold text-black tracking-widest uppercase px-4 py-2.5"
+                      style={{ background: '#39FF14', clipPath: 'polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))' }}
+                    >
+                      OK
+                    </button>
+                  </div>
+                  {promoMsg && (
+                    <div className={`ct-mono text-[10px] mt-2 tracking-wide ${discount > 0 ? 'text-[#39FF14]' : 'text-red-400/70'}`}>
+                      {promoMsg}
+                    </div>
+                  )}
                 </div>
 
                 {/* Benefits */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3 text-emerald-400">
-                    <Truck className="w-5 h-5" />
-                    <span className="text-white">Envío gratis en compras +$100k</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-emerald-400">
-                    <Shield className="w-5 h-5" />
-                    <span className="text-white">Garantía de germinación 98%</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-emerald-400">
-                    <Gift className="w-5 h-5" />
-                    <span className="text-white">Semilla gratis en tu cumpleaños</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-emerald-400">
-                    <Zap className="w-5 h-5" />
-                    <span className="text-white">Soporte técnico 24/7</span>
-                  </div>
+                <div className="space-y-3 px-1">
+                  {[
+                    { icon: Truck,        text: 'Envío gratis en compras +$100.000' },
+                    { icon: Shield,       text: 'Garantía de germinación 98%' },
+                    { icon: CheckCircle,  text: 'Empaque discreto y seguro' },
+                  ].map(({ icon: Icon, text }) => (
+                    <div key={text} className="flex items-center gap-2.5">
+                      <Icon className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#39FF14' }} />
+                      <span className="ct-mono text-[10px] text-[#3a5a3a] tracking-wide">{text}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
+
             </div>
           )}
         </div>
-      </section>
 
-      <Footer />
-    </div>
+        <Footer />
+      </div>
+    </>
   );
 }

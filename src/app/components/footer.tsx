@@ -14,8 +14,8 @@ const navLinks = [
 ];
 
 const legalLinks = [
-  { label: "Privacidad", href: "#" },
-  { label: "Términos",   href: "#" },
+  { label: "Privacidad", href: "/privacidad" },
+  { label: "Términos",   href: "/terminos" },
 ];
 
 export function Footer() {
@@ -181,7 +181,7 @@ export function Footer() {
             <div className="flex items-center gap-6">
               {legalLinks.map((l) => (
                 <Link
-                  key={l.href}
+                  key={l.label}
                   href={l.href}
                   className="ft-link ft-mono text-[#2a4a2a] text-[10px] tracking-wide"
                 >

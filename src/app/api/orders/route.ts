@@ -97,9 +97,20 @@ export async function POST(request: NextRequest) {
     );
 
   } catch (error) {
-    console.error("Error creating order:", error);
+    const err = error as Error & { cause?: unknown; code?: string };
+    console.error("Error creating order:", {
+      message: err.message,
+      cause:   err.cause,
+      code:    err.code,
+      stack:   err.stack,
+    });
     return NextResponse.json(
-      { error: 'Failed to create order', details: error instanceof Error ? error.message : 'Unknown error' },
+      {
+        error:   'Failed to create order',
+        details: err.message,
+        cause:   String(err.cause ?? ''),
+        code:    err.code ?? '',
+      },
       { status: 500 }
     );
   }
