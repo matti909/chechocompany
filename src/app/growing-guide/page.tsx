@@ -256,8 +256,6 @@ export default function GrowingGuidePage() {
                       borderBottom: "1px solid rgba(255,255,255,0.05)",
                       cursor: "pointer",
                       background: "transparent",
-                      border: "none",
-                      borderBottom: "1px solid rgba(255,255,255,0.05)",
                     }}
                   >
                     <StepIcon
