@@ -15,7 +15,7 @@ interface NewsItem {
   excerpt: string;
   date: string;
   category: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
   accent: string;
   isExternal: boolean;
   sourceUrl: string;
@@ -78,7 +78,7 @@ export function NewsSection() {
     init();
   }, []);
 
-  const allItems: NewsItem[] = [
+  const allItems: NewsItem[] = ([
     scrapedNews ? {
       id: 'scraped-reprocann',
       title: 'Registro REPROCANN',
@@ -115,7 +115,7 @@ export function NewsSection() {
       sourceUrl: 'https://www.argentina.gob.ar/normativa/nacional/decreto-883-2020-344131/texto',
       tags: ['Decreto 883/2020', 'Normativa', 'Argentina'],
     } : null,
-  ].filter((i): i is NewsItem => i !== null);
+  ] as (NewsItem | null)[]).filter((i): i is NewsItem => i !== null);
 
   return (
     <>
