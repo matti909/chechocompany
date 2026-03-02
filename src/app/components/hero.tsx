@@ -141,9 +141,8 @@ export function Hero() {
             <div className="flex flex-col sm:flex-row sm:items-end gap-8">
               <div ref={descRef} className="flex-1">
                 <p className="hr-mono text-[#7a9a7a] text-sm leading-relaxed max-w-sm">
-                  Semillas fotoperiódicas regulares argentinas con 90% de
-                  probabilidad de feminización. Las más fuertes y rápidas del
-                  mercado.
+                  Semillas regulares argentinas con 90% de probabilidad de
+                  feminización. Las más fuertes y rápidas del mercado.
                 </p>
               </div>
 
