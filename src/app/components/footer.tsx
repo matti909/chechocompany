@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -7,15 +7,15 @@ import { toast } from "sonner";
 import { useAuthStore } from "@/store/auth-store";
 
 const navLinks = [
-  { label: "Genéticas",  href: "/genetics" },
-  { label: "Guía",       href: "/guia" },
-  { label: "Contacto",   href: "/contacto" },
-  { label: "Noticias",   href: "/#noticias" },
+  { label: "Genéticas", href: "/genetics" },
+  { label: "Guía", href: "/guia" },
+  { label: "Contacto", href: "/contacto" },
+  { label: "Noticias", href: "/#noticias" },
 ];
 
 const legalLinks = [
   { label: "Privacidad", href: "/privacidad" },
-  { label: "Términos",   href: "/terminos" },
+  { label: "Términos", href: "/terminos" },
 ];
 
 export function Footer() {
@@ -28,7 +28,8 @@ export function Footer() {
     e.preventDefault();
     if (!session) {
       toast.error("Debes iniciar sesión", {
-        description: "Por favor inicia sesión para acceder al carrito de compras",
+        description:
+          "Por favor inicia sesión para acceder al carrito de compras",
         duration: 4000,
       });
       return;
@@ -60,7 +61,6 @@ export function Footer() {
       `}</style>
 
       <footer className="bg-[#050a05] text-white border-t border-white/[0.08]">
-
         {/* ── Top band: brand statement ── */}
         <div className="border-b border-white/[0.08]">
           <div className="max-w-7xl mx-auto px-6 py-12 flex flex-col lg:flex-row lg:items-end justify-between gap-8">
@@ -69,12 +69,12 @@ export function Footer() {
                 className="ft-display font-black leading-none tracking-tight text-white mb-3"
                 style={{ fontSize: "clamp(32px, 5vw, 64px)" }}
               >
-                Chex{" "}
-                <span style={{ color: "#39FF14" }}>Seeds</span>
+                Chex <span style={{ color: "#39FF14" }}>Seeds</span>
                 <span style={{ color: "rgba(255,255,255,0.15)" }}>.</span>
               </div>
               <p className="ft-mono text-[#3a5a3a] text-xs tracking-wide">
-                Empujando límites culturales desde 2014 — Buenos Aires, Argentina
+                Empujando límites culturales desde 2014 — Buenos Aires,
+                Argentina
               </p>
             </div>
 
@@ -96,14 +96,15 @@ export function Footer() {
         {/* ── Main grid ── */}
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border-b border-white/[0.08]">
-
             {/* Col 1 — About */}
             <div className="py-12 md:pr-12 md:border-r border-white/[0.08]">
               <span className="ft-mono text-[10px] text-[#39FF14]/40 tracking-[0.3em] uppercase block mb-5">
                 Nosotros
               </span>
               <p className="ft-mono text-[#3a5a3a] text-[11px] leading-relaxed mb-6">
-                Desarrollamos y producimos semillas fotoperiódicas regulares con 90% de probabilidad de feminización. Cada genética cuenta con trazabilidad real y libre de plagas.
+                Desarrollamos y producimos semillas REGULARES con 90% de
+                probabilidad de feminización. Cada genética cuenta con
+                trazabilidad real y libre de plagas.
               </p>
               <a
                 href="https://instagram.com"
@@ -130,7 +131,10 @@ export function Footer() {
                     className="ft-link ft-display font-semibold text-[#7a9a7a] text-sm flex items-center justify-between group"
                   >
                     {l.label}
-                    <ArrowUpRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: "#39FF14" }} />
+                    <ArrowUpRight
+                      className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                      style={{ color: "#39FF14" }}
+                    />
                   </Link>
                 ))}
                 <a
@@ -139,7 +143,10 @@ export function Footer() {
                   className="ft-link ft-display font-semibold text-[#7a9a7a] text-sm flex items-center justify-between group cursor-pointer"
                 >
                   Carrito
-                  <ArrowUpRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: "#39FF14" }} />
+                  <ArrowUpRight
+                    className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                    style={{ color: "#39FF14" }}
+                  />
                 </a>
               </nav>
             </div>
@@ -150,12 +157,10 @@ export function Footer() {
                 Newsletter
               </span>
               <p className="ft-mono text-[#3a5a3a] text-[11px] leading-relaxed mb-5">
-                Novedades, lanzamientos y ofertas exclusivas directamente a tu inbox.
+                Novedades, lanzamientos y ofertas exclusivas directamente a tu
+                inbox.
               </p>
-              <form
-                className="space-y-3"
-                onSubmit={(e) => e.preventDefault()}
-              >
+              <form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
                 <input
                   type="email"
                   placeholder="tu@email.com"

@@ -1,8 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { gsap } from "gsap";
-import { User, UserCircle, Settings, LogOut } from "lucide-react";
+import { LogOut, Settings, ChevronDown } from "lucide-react";
 import { useAuthStore } from "@/store/auth-store";
 import { signOut } from "@/lib/auth-client";
 
@@ -11,109 +10,138 @@ interface UserMenuProps {
 }
 
 export function UserMenu({ onLoginClick }: UserMenuProps) {
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const userMenuRef = useRef<HTMLDivElement>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
   const { session, clearSession } = useAuthStore();
 
-  // Close menu when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        userMenuRef.current &&
-        !userMenuRef.current.contains(event.target as Node)
-      ) {
-        setIsUserMenuOpen(false);
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
       }
     };
-
-    if (isUserMenuOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isUserMenuOpen]);
+    if (isOpen) document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isOpen]);
 
   const handleLogout = async () => {
     try {
       await signOut();
       clearSession();
-      setIsUserMenuOpen(false);
+      setIsOpen(false);
     } catch (error) {
       console.error("Error logging out:", error);
     }
   };
 
-  // User logged in
+  /* ── Logged in ── */
   if (session) {
+    const initial = session.user.email?.charAt(0).toUpperCase() ?? "U";
+    const name = session.user.name || session.user.email?.split("@")[0];
+
     return (
-      <div ref={userMenuRef} className="relative">
-        <div
-          className="relative group cursor-pointer"
-          onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-          onMouseEnter={(e) => {
-            gsap.to(e.currentTarget, {
-              scale: 1.1,
-              duration: 0.3,
-              ease: "power2.out",
-            });
-          }}
-          onMouseLeave={(e) => {
-            gsap.to(e.currentTarget, {
-              scale: 1,
-              duration: 0.3,
-              ease: "power2.out",
-            });
-          }}
+      <div ref={menuRef} className="relative">
+        {/* Trigger */}
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="flex items-center gap-2 group"
+          style={{ background: "none", border: "none", cursor: "pointer" }}
         >
-          <div className="absolute inset-0 bg-emerald-500/20 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          <div className="relative p-2 rounded-full bg-gradient-to-r from-emerald-500/20 to-lime-500/20 border-2 border-emerald-400/60 group-hover:border-emerald-400 transition-colors duration-300">
-            <UserCircle className="w-5 h-5 text-emerald-400" />
+          {/* Avatar */}
+          <div
+            className="w-7 h-7 flex items-center justify-center flex-shrink-0 transition-all duration-200"
+            style={{
+              clipPath: "polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 5px 100%, 0 calc(100% - 5px))",
+              background: "#39FF14",
+              outline: isOpen ? "2px solid #39FF14" : "2px solid transparent",
+              outlineOffset: "2px",
+            }}
+          >
+            <span
+              className="font-bold leading-none"
+              style={{ fontFamily: "'Syne', sans-serif", fontSize: "11px", color: "#050a05" }}
+            >
+              {initial}
+            </span>
           </div>
-        </div>
+          <ChevronDown
+            className="w-3 h-3 transition-transform duration-200"
+            style={{
+              color: "rgba(255,255,255,0.4)",
+              transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
+            }}
+          />
+        </button>
 
-        {/* User Dropdown Menu */}
-        {isUserMenuOpen && (
-          <div className="absolute right-0 mt-3 w-64 bg-black/95 backdrop-blur-xl border border-emerald-500/30 rounded-2xl shadow-2xl shadow-emerald-500/20 overflow-hidden z-50">
-            {/* User Info */}
-            <div className="px-4 py-4 border-b border-emerald-500/20 bg-gradient-to-r from-emerald-500/10 to-lime-500/10">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-emerald-500 to-lime-500 flex items-center justify-center">
-                  <span className="text-black font-bold text-lg">
-                    {session.user.email?.charAt(0).toUpperCase()}
-                  </span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-white font-semibold truncate">
-                    {session.user.name || session.user.email?.split("@")[0]}
-                  </p>
-                  <p className="text-gray-400 text-sm truncate">
-                    {session.user.email}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Menu Items */}
-            <div className="py-2">
-              <button
-                className="w-full flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-emerald-500/10 transition-colors"
-                onClick={() => {
-                  setIsUserMenuOpen(false);
-                  // TODO: Navigate to settings
+        {/* Dropdown */}
+        {isOpen && (
+          <div
+            className="absolute right-0 mt-3 w-56 z-50 overflow-hidden"
+            style={{
+              background: "rgba(5,10,5,0.98)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              clipPath: "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))",
+            }}
+          >
+            {/* User info */}
+            <div
+              className="px-4 py-4"
+              style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+            >
+              <p
+                className="font-bold text-white truncate"
+                style={{ fontFamily: "'Syne', sans-serif", fontSize: "13px" }}
+              >
+                {name}
+              </p>
+              <p
+                className="truncate mt-0.5"
+                style={{
+                  fontFamily: "'Space Mono', monospace",
+                  fontSize: "10px",
+                  color: "rgba(255,255,255,0.3)",
                 }}
               >
-                <Settings className="w-5 h-5 text-emerald-400" />
-                <span className="font-medium">Configuración</span>
+                {session.user.email}
+              </p>
+            </div>
+
+            {/* Items */}
+            <div className="py-1">
+              <button
+                className="w-full flex items-center gap-3 px-4 py-3 transition-colors duration-150 hover:bg-white/[0.03]"
+                onClick={() => setIsOpen(false)}
+                style={{ background: "none", border: "none", cursor: "pointer" }}
+              >
+                <Settings className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "rgba(255,255,255,0.3)" }} />
+                <span
+                  style={{
+                    fontFamily: "'Space Mono', monospace",
+                    fontSize: "11px",
+                    color: "rgba(255,255,255,0.5)",
+                    letterSpacing: "0.05em",
+                  }}
+                >
+                  Configuración
+                </span>
               </button>
 
               <button
-                className="w-full flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                className="w-full flex items-center gap-3 px-4 py-3 transition-colors duration-150 hover:bg-red-500/[0.05]"
                 onClick={handleLogout}
+                style={{ background: "none", border: "none", cursor: "pointer" }}
               >
-                <LogOut className="w-5 h-5 text-red-400" />
-                <span className="font-medium">Cerrar Sesión</span>
+                <LogOut className="w-3.5 h-3.5 flex-shrink-0 text-red-400/60" />
+                <span
+                  style={{
+                    fontFamily: "'Space Mono', monospace",
+                    fontSize: "11px",
+                    color: "rgba(239,68,68,0.6)",
+                    letterSpacing: "0.05em",
+                  }}
+                >
+                  Cerrar sesión
+                </span>
               </button>
             </div>
           </div>
@@ -122,30 +150,45 @@ export function UserMenu({ onLoginClick }: UserMenuProps) {
     );
   }
 
-  // User not logged in
+  /* ── Not logged in — login button ── */
   return (
-    <div
-      className="relative group cursor-pointer"
+    <button
       onClick={onLoginClick}
-      onMouseEnter={(e) => {
-        gsap.to(e.currentTarget, {
-          scale: 1.1,
-          duration: 0.3,
-          ease: "power2.out",
-        });
-      }}
-      onMouseLeave={(e) => {
-        gsap.to(e.currentTarget, {
-          scale: 1,
-          duration: 0.3,
-          ease: "power2.out",
-        });
-      }}
+      className="group"
+      style={{ background: "none", border: "none", cursor: "pointer", padding: 0 }}
     >
-      <div className="absolute inset-0 bg-emerald-500/20 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-      <div className="relative p-2 rounded-full bg-black/40 border border-emerald-500/30 group-hover:border-emerald-400/60 transition-colors duration-300">
-        <User className="w-5 h-5 text-emerald-400" />
+      <div
+        className="flex items-center gap-2 px-4 py-2 transition-all duration-200"
+        style={{
+          clipPath: "polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 7px 100%, 0 calc(100% - 7px))",
+          border: "1px solid rgba(255,255,255,0.15)",
+          background: "transparent",
+        }}
+        onMouseEnter={e => {
+          (e.currentTarget as HTMLElement).style.border = "2px solid #39FF14";
+          const span = e.currentTarget.querySelector("span");
+          if (span) span.style.color = "#39FF14";
+        }}
+        onMouseLeave={e => {
+          (e.currentTarget as HTMLElement).style.border = "1px solid rgba(255,255,255,0.15)";
+          const span = e.currentTarget.querySelector("span");
+          if (span) span.style.color = "rgba(255,255,255,0.5)";
+        }}
+      >
+        <span
+          style={{
+            fontFamily: "'Space Mono', monospace",
+            fontSize: "10px",
+            fontWeight: 700,
+            letterSpacing: "0.15em",
+            textTransform: "uppercase",
+            color: "rgba(255,255,255,0.5)",
+            transition: "color 0.2s",
+          }}
+        >
+          Login
+        </span>
       </div>
-    </div>
+    </button>
   );
 }
