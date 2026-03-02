@@ -114,7 +114,7 @@ const geneticsData = {
       "La más rápida que existe",
       "Potente y resistente"
     ],
-    image: "/sems/cali.jpeg",
+    image: "/Esquizofrenia-20251004T225522Z-1-001/Frente-esq_.jpg",
     color: "emerald",
     icon: Clock
   },

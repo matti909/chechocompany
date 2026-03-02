@@ -10,6 +10,7 @@ const sql = neon(process.env.DATABASE_URL!);
 const MIGRATIONS = [
   "src/db/migrations/0000_heavy_vulture.sql",
   "src/db/migrations/0001_lonely_corsair.sql",
+  "src/db/migrations/0002_mercadopago_fields.sql",
 ];
 
 async function main() {

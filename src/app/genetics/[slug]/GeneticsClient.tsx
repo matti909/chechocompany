@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ShoppingBag } from "lucide-react";
 import Link from "next/link";
@@ -10,6 +10,7 @@ import { RadarChart } from "@/components/charts";
 import useCartStore from "@/store/cart-store";
 import { useSession } from "@/lib/auth-client";
 import { gsap } from "gsap";
+import { useTransitionStore } from "@/store/transition-store";
 
 export interface GeneticsData {
   name: string;
@@ -101,10 +102,40 @@ export function GeneticsClient({ genetics }: GeneticsClientProps) {
   const { addItem } = useCartStore();
   const { data: session } = useSession();
   const infoRef = useRef<HTMLDivElement>(null);
+  const imageColRef = useRef<HTMLDivElement>(null);
 
   const accent     = colorAccents[genetics.color] ?? '#39FF14';
   const type       = getType(genetics.composition);
   const typeAccent = TYPE_ACCENTS[type];
+
+  const { rect: cardRect, reset } = useTransitionStore();
+
+  // FLIP: animate hero image column from card rect → natural position
+  useLayoutEffect(() => {
+    const el = imageColRef.current;
+    if (!el || !cardRect) return;
+
+    const colRect = el.getBoundingClientRect();
+    const scaleX = cardRect.width / colRect.width;
+    const scaleY = cardRect.height / colRect.height;
+    const dx = (cardRect.left + cardRect.width / 2) - (colRect.left + colRect.width / 2);
+    const dy = (cardRect.top + cardRect.height / 2) - (colRect.top + colRect.height / 2);
+
+    gsap.set(el, { x: dx, y: dy, scaleX, scaleY, transformOrigin: "center center", zIndex: 2 });
+    gsap.to(el, {
+      x: 0,
+      y: 0,
+      scaleX: 1,
+      scaleY: 1,
+      duration: 0.6,
+      ease: "power3.inOut",
+      onComplete: () => {
+        gsap.set(el, { clearProps: "all" });
+        reset();
+      },
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (infoRef.current) {
@@ -264,6 +295,7 @@ export function GeneticsClient({ genetics }: GeneticsClientProps) {
 
             {/* Image column */}
             <div
+              ref={imageColRef}
               className="relative lg:border-r border-white/[0.08] overflow-hidden"
               style={{ minHeight: '520px' }}
             >

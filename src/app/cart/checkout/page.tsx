@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { createPaymentPreference } from "@/lib/mercadopago";
 import { Footer } from "../../components/footer";
 import useCartStore from "@/store/cart-store";
 import { useAuthStore } from "@/store/auth-store";
@@ -68,44 +69,55 @@ export default function CheckoutPage() {
     setSubmitting(true);
     try {
       const orderNumber = `CHX-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
-      const orderData = {
-        customerInfo: checkout.customerInfo,
-        items, subtotal, shipping, total: finalTotal, orderNumber,
-        userId: session?.user?.id || null,
-      };
 
-      toast.loading("Procesando tu pedido...", { id: "order-processing" });
+      toast.loading("Guardando pedido...", { id: "order-processing" });
 
+      // 1. Guardar orden en DB con status pending_payment
       const orderResponse = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderData),
+        body: JSON.stringify({
+          customerInfo: checkout.customerInfo,
+          items,
+          subtotal,
+          shipping,
+          total: finalTotal,
+          orderNumber,
+          userId: session?.user?.id || null,
+          status: "pending_payment",
+        }),
       });
       if (!orderResponse.ok) {
         const err = await orderResponse.json();
         throw new Error(err.error || "Error al guardar el pedido");
       }
-      toast.success("Pedido guardado", { id: "order-processing" });
 
-      await fetch("/api/order-confirmation", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderData),
+      toast.loading("Redirigiendo a MercadoPago...", { id: "order-processing" });
+
+      // 2. Crear preferencia de pago en MP y obtener URL
+      const paymentUrl = await createPaymentPreference({
+        orderNumber,
+        customerData: checkout.customerInfo,
+        cartItems: items.map((item) => ({
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          image: item.image,
+        })),
+        cartTotal: finalTotal,
       });
 
-      await fetch("/api/notify-whatsapp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderData),
-      });
+      if (!paymentUrl) throw new Error("No se pudo obtener la URL de pago");
 
-      toast.success(`¡Pedido completado! Nº: ${orderNumber}`, {
-        duration: 5000,
-        description: "Recibirás un email con los detalles",
-      });
-      completeOrder();
+      // 3. Redirigir a MercadoPago (no limpiar carrito aún — lo hace /checkout/success)
+      window.location.href = paymentUrl;
+
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Error al procesar el pedido", { id: "order-processing" });
+      toast.error(
+        error instanceof Error ? error.message : "Error al procesar el pedido",
+        { id: "order-processing" }
+      );
       setSubmitting(false);
     }
   };

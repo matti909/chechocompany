@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { gsap } from "gsap";
 import { ArrowUpRight } from "lucide-react";
+import { useTransitionStore } from "@/store/transition-store";
 
 interface Genetic {
   id: string;
@@ -68,6 +69,13 @@ export function GeneticsClient({ genetics }: { genetics: Genetic[] }) {
   const [filtered, setFiltered] = useState(genetics);
   const heroRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
+  const setTransition = useTransitionStore((s) => s.setTransition);
+
+  const handleCardClick = (e: React.MouseEvent, genetic: Genetic) => {
+    const imgEl = (e.currentTarget as HTMLElement).querySelector("[data-img]") as HTMLElement;
+    const rect = imgEl?.getBoundingClientRect() ?? (e.currentTarget as HTMLElement).getBoundingClientRect();
+    setTransition(rect, genetic.image);
+  };
 
   // Hero entrance
   useEffect(() => {
@@ -271,10 +279,12 @@ export function GeneticsClient({ genetics }: { genetics: Genetic[] }) {
                   <Link
                     key={genetic.id}
                     href={`/genetics/${genetic.slug}`}
+                    onClick={(e) => handleCardClick(e, genetic)}
                     className="gc-card block bg-[#0a0f0a]"
                   >
                     {/* Image */}
                     <div
+                      data-img
                       className="relative overflow-hidden"
                       style={{ aspectRatio: "3/4" }}
                     >

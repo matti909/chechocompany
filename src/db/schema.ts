@@ -82,7 +82,12 @@ export const orders = pgTable("orders", {
   total: decimal("total", { precision: 10, scale: 2 }).notNull(),
 
   // Status
-  status: text("status").notNull().default("pending"), // pending, processing, shipped, delivered, cancelled
+  // pending_payment → paid → processing → shipped → delivered | rejected | cancelled
+  status: text("status").notNull().default("pending_payment"),
+
+  // MercadoPago
+  mercadopagoPaymentId: text("mercadopago_payment_id"),
+  mercadopagoStatus: text("mercadopago_status"), // approved, rejected, in_process, pending
 
   // Additional Notes
   notes: text("notes"),

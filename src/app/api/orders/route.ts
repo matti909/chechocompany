@@ -33,12 +33,13 @@ interface OrderRequest {
   total: number;
   orderNumber: string;
   userId?: string;
+  status?: string;
 }
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json() as OrderRequest;
-    const { customerInfo, items, subtotal, shipping, total, orderNumber, userId } = body;
+    const { customerInfo, items, subtotal, shipping, total, orderNumber, userId, status } = body;
 
     // Validate required fields
     if (!customerInfo || !items || !orderNumber) {
@@ -64,7 +65,7 @@ export async function POST(request: NextRequest) {
       subtotal: subtotal.toString(),
       shippingCost: shipping.toString(),
       total: total.toString(),
-      status: 'pending',
+      status: status ?? 'pending_payment',
       notes: customerInfo.notes || null,
     });
 

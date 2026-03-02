@@ -18,7 +18,7 @@ heightOutdoor: Medio
 harvestTime: Principios de septiembre
 effectType: Eufórico cerebral equilibrado
 specialFeature: Especial para clonar
-image: /Esquizofrenia-20251004T225522Z-1-001/Frente esq_.jpg
+image: /Esquizofrenia-20251004T225522Z-1-001/Frente-esq_.jpg
 color: emerald
 prices:
   pack6: 54000
