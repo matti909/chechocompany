@@ -10,42 +10,46 @@ const features = [
   {
     num: "01",
     icon: Dna,
-    title: "FEMINIZADAS",
-    description: "Alta probabilidad de plantas hembras con genética estabilizada al máximo.",
+    title: "REGULARES",
+    description:
+      "Alta probabilidad de plantas hembras con genética estabilizada al máximo.",
   },
   {
     num: "02",
     icon: FlaskConical,
     title: "GENÉTICA DE ELITE",
-    description: "Resistencia y estabilidad excepcional en cada cepa que producimos.",
+    description:
+      "Resistencia y estabilidad excepcional en cada cepa que producimos.",
   },
   {
     num: "03",
     icon: Leaf,
     title: "COSECHA RÁPIDA",
-    description: "Ciclos de floración optimizados para el máximo rendimiento posible.",
+    description:
+      "Ciclos de floración optimizados para el máximo rendimiento posible.",
   },
   {
     num: "04",
     icon: ScanLine,
     title: "TRAZABILIDAD REAL",
-    description: "Transparencia total en el origen y la evolución de cada genética.",
+    description:
+      "Transparencia total en el origen y la evolución de cada genética.",
   },
 ];
 
 const stats = [
-  { value: "90%",  label: "Feminización" },
-  { value: "3+",   label: "Genéticas Premium" },
+  { value: "90%", label: "Feminización" },
+  { value: "3+", label: "Genéticas Premium" },
   { value: "2014", label: "Establecidos" },
   { value: "100%", label: "Control de Calidad" },
 ];
 
 export function AboutSection() {
-  const sectionRef   = useRef<HTMLElement>(null);
-  const headingRef   = useRef<HTMLDivElement>(null);
-  const contentRef   = useRef<HTMLDivElement>(null);
-  const statsRef     = useRef<HTMLDivElement>(null);
-  const featuresRef  = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const headingRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
+  const featuresRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -53,28 +57,43 @@ export function AboutSection() {
         if (!entry.isIntersecting) return;
 
         const tl = gsap.timeline();
-        tl
-          .fromTo(headingRef.current,
-            { opacity: 0, x: -50 },
-            { opacity: 1, x: 0, duration: 1, ease: "power4.out" }
-          )
-          .fromTo(contentRef.current,
+        tl.fromTo(
+          headingRef.current,
+          { opacity: 0, x: -50 },
+          { opacity: 1, x: 0, duration: 1, ease: "power4.out" },
+        )
+          .fromTo(
+            contentRef.current,
             { opacity: 0, y: 24 },
             { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" },
-            "-=0.5"
+            "-=0.5",
           )
-          .fromTo(Array.from(statsRef.current?.children ?? []),
+          .fromTo(
+            Array.from(statsRef.current?.children ?? []),
             { opacity: 0, y: 16 },
-            { opacity: 1, y: 0, duration: 0.45, stagger: 0.07, ease: "power2.out" },
-            "-=0.4"
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.45,
+              stagger: 0.07,
+              ease: "power2.out",
+            },
+            "-=0.4",
           )
-          .fromTo(Array.from(featuresRef.current?.children ?? []),
+          .fromTo(
+            Array.from(featuresRef.current?.children ?? []),
             { opacity: 0, y: 16 },
-            { opacity: 1, y: 0, duration: 0.45, stagger: 0.08, ease: "power2.out" },
-            "-=0.2"
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.45,
+              stagger: 0.08,
+              ease: "power2.out",
+            },
+            "-=0.2",
           );
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
 
     if (sectionRef.current) observer.observe(sectionRef.current);
@@ -127,10 +146,8 @@ export function AboutSection() {
         {/* ── Hero grid: heading / copy | image ── */}
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid lg:grid-cols-[1fr_420px] border-b border-white/[0.08]">
-
             {/* Left column */}
             <div className="py-16 lg:py-24 lg:pr-16 flex flex-col justify-between gap-12">
-
               {/* Heading */}
               <div ref={headingRef}>
                 <h2
@@ -148,18 +165,24 @@ export function AboutSection() {
               {/* Copy + CTA */}
               <div ref={contentRef} className="space-y-5 max-w-md">
                 <p className="text-[#7a9a7a] text-base leading-relaxed">
-                  Desarrollamos y producimos semillas fotoperiódicas regulares con{" "}
+                  Desarrollamos y producimos semillas regulares con{" "}
                   <span style={{ color: "#39FF14" }} className="font-semibold">
                     90% de probabilidad de feminización
                   </span>
-                  , diseñadas para entregar las más fuertes y rápidas del mercado.
+                  , diseñadas para entregar las más fuertes y rápidas del
+                  mercado.
                 </p>
                 <p className="text-[#7a9a7a] text-base leading-relaxed">
                   Cada genética cuenta con{" "}
-                  <span className="text-white font-medium">trazabilidad real</span>, garantizando transparencia en
-                  el origen y evolución. Semillas{" "}
-                  <span className="text-white font-medium">libres de plagas</span> con estándares de excelencia y
-                  potencia.
+                  <span className="text-white font-medium">
+                    trazabilidad real
+                  </span>
+                  , garantizando transparencia en el origen y evolución.
+                  Semillas{" "}
+                  <span className="text-white font-medium">
+                    libres de plagas
+                  </span>{" "}
+                  con estándares de excelencia y potencia.
                 </p>
 
                 <div className="pt-3">
@@ -249,8 +272,12 @@ export function AboutSection() {
                 className={[
                   "group relative py-10 px-6",
                   "border-b border-white/[0.08]",
-                  i < features.length - 1 ? "lg:border-r lg:border-white/[0.08]" : "",
-                  i % 2 === 0 ? "sm:border-r sm:border-white/[0.08] lg:border-r-0" : "",
+                  i < features.length - 1
+                    ? "lg:border-r lg:border-white/[0.08]"
+                    : "",
+                  i % 2 === 0
+                    ? "sm:border-r sm:border-white/[0.08] lg:border-r-0"
+                    : "",
                   i < 2 ? "sm:border-b" : "",
                   "hover:bg-white/[0.015] transition-colors duration-300",
                 ].join(" ")}
@@ -268,9 +295,7 @@ export function AboutSection() {
                   <div className="ab-mono text-[#39FF14]/35 text-[10px] tracking-[0.3em] mb-5">
                     — {f.num}
                   </div>
-                  <f.icon
-                    className="w-5 h-5 text-[#39FF14]/50 group-hover:text-[#39FF14] transition-colors duration-300"
-                  />
+                  <f.icon className="w-5 h-5 text-[#39FF14]/50 group-hover:text-[#39FF14] transition-colors duration-300" />
                   <h3 className="ab-display font-bold text-white text-[13px] tracking-wider uppercase pt-1">
                     {f.title}
                   </h3>
