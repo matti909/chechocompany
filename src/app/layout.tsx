@@ -29,6 +29,9 @@ export const metadata: Metadata = {
   title: "Chex Seeds | Semillas de Cannabis Premium",
   description:
     "Genéticas de cannabis autoflorecientes de la más alta calidad. Semillas feminizadas con 98% de germinación garantizada. Envíos discretos a todo el país.",
+  openGraph: {
+    images: ["/logoseed.png"],
+  },
 };
 
 export default function RootLayout({
