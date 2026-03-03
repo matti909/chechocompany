@@ -28,7 +28,7 @@ const bebasNeue = Bebas_Neue({
 export const metadata: Metadata = {
   title: "Chex Seeds | Semillas de Cannabis Premium",
   description:
-    "Genéticas de cannabis autoflorecientes de la más alta calidad. Semillas feminizadas con 98% de germinación garantizada. Envíos discretos a todo el país.",
+    "Genéticas de cannabis regulares de la más alta calidad. Semillas con 90% de germinación femenina garantizada. Envíos discretos a todo el país.",
   openGraph: {
     images: ["/logoseed.png"],
   },
