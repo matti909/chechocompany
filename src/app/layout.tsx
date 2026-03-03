@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   description:
     "Genéticas de cannabis regulares de la más alta calidad. Semillas con 90% de germinación femenina garantizada. Envíos discretos a todo el país.",
   openGraph: {
-    images: ["/logoseed.png"],
+    images: ["/logochex.png"],
   },
 };
 
